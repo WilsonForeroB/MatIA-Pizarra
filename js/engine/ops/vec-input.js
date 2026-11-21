@@ -4,10 +4,11 @@
      F(x,y) = (e1, e2)  ·  F = \left(e1,\ e2\right)              → función vectorial (campo)
      x = r\cos\theta, y = r\sin\theta                             → cambio de variables
    y además, opcionalmente, P = (1, 2) (punto) y u = (3, 4) o \vec{u} = … (dirección). */
-MatIA.define('engine/ops/vec-input', ['engine/core', 'engine/ops/expr'], (ME, $expr) => {
+MatIA.define('engine/ops/vec-input', ['engine/core', 'engine/ops/expr', 'engine/ops/analisis'], (ME, $expr, $analisis) => {
   'use strict';
   const { MErr } = ME;
   const { parseExpr, varsOf, simpAll, N, L, evalNum } = $expr;
+  const { normalizeFn } = $analisis;
 
   const ORDER = ['x', 'y', 'z', 't', 'u', 'v', 'w', 'r', 's', '\\rho', '\\theta', '\\varphi', '\\phi'];
   const orderVars = (vs) => [...vs].sort((a, b) => {
@@ -16,7 +17,38 @@ MatIA.define('engine/ops/vec-input', ['engine/core', 'engine/ops/expr'], (ME, $e
   });
 
   /* Limpia lo que MathLive añade y no aporta. */
-  const clean = (s) => s.replace(/\\left|\\right/g, '').replace(/\\[,;:!]|\\quad|\\qquad|\\ |~/g, ' ').replace(/\\cdot/g, '\\cdot ').replace(/\\(vec|mathbf)\s+/g, '\\$1').trim();
+  const clean = (s) => fnArgs(normalizeFn(s.replace(/\\left|\\right/g, '').replace(/\\langle/g, '(').replace(/\\rangle/g, ')').replace(/\\(hat|overrightarrow|vv)\b/g, '\\vec')
+    .replace(/\\[,;:!]|\\quad|\\qquad|\\ |~/g, ' ').replace(/\\cdot/g, '\\cdot ').replace(/\\(vec|mathbf)\s+/g, '\\$1'))).trim();
+
+  /* \sin 2x, \sin xy, \cos 2\theta: el argumento de la función es todo el monomio pegado (sen(2x), sen(xy)),
+     como en los libros; el analizador general solo cogería el primer factor (sen 2 · x). */
+  const FNS = /^\\(sin|cos|tan|cot|sec|csc|arcsin|arccos|arctan|sinh|cosh|tanh|ln|log)(?![a-zA-Z])/;
+  const GR = /^\\(theta|rho|varphi|phi|alpha|beta|gamma|lambda|mu|sigma|tau|omega|pi)(?![a-zA-Z])/;
+  function fnArgs(s) {
+    let out = '', i = 0;
+    while (i < s.length) {
+      const m = s[i] === '\\' ? FNS.exec(s.slice(i)) : null;
+      if (!m) { out += s[i++]; continue; }
+      let j = i + m[0].length;
+      const pw = /^\^(\{[^{}]*\}|[0-9a-zA-Z])/.exec(s.slice(j));
+      if (pw) j += pw[0].length;
+      while (s[j] === ' ') j++;
+      const a0 = j;
+      let k = 0;
+      const num = /^\d+(\.\d+)?/.exec(s.slice(j));
+      if (num) { j += num[0].length; k++; }
+      for (;;) {
+        let g;
+        if (/[a-zA-Z]/.test(s[j] || '')) { j++; k++; }
+        else if (s[j] === '\\' && (g = GR.exec(s.slice(j)))) { j += g[0].length; k++; while (s[j] === ' ' && /[a-zA-Z\\]/.test(s[j + 1] || '') && !FNS.test(s.slice(j + 1))) j++; }
+        else break;
+      }
+      const arg = s.slice(a0, j).trim();
+      if (k >= 2 && !/^[\^_{(\[!]/.test(s[j] || '')) { out += s.slice(i, a0) + '(' + arg + ')'; i = j; }
+      else { out += s.slice(i, a0); i = a0; }
+    }
+    return out;
+  }
 
   /* Divide por un separador al nivel superior (fuera de (), [], {}). */
   function splitTopStr(s, sep) {
@@ -66,7 +98,8 @@ MatIA.define('engine/ops/vec-input', ['engine/core', 'engine/ops/expr'], (ME, $e
   function parseVecInput(latex, opts = {}) {
     const src = clean(String(latex || '').replace(/=\s*$/, ''));
     if (!src) throw new MErr('La línea está vacía.');
-    const segs = splitTopStr(src, ',');
+    if (declOf(src)) throw new MErr('Falta la expresión de la función: escribe algo después de «=», por ejemplo ' + src + ' = x^2y.');
+    const segs = [].concat(...splitTopStr(src, ';').map((x) => splitTopStr(x, ',')));
     let point = null, dir = null, decl = null, head = null;
     const change = [];
     const rest = [];
@@ -80,13 +113,16 @@ MatIA.define('engine/ops/vec-input', ['engine/core', 'engine/ops/expr'], (ME, $e
         const dc = declOf(eq[0]);
         if (!head && (dc || (nm && !change.length))) {
           // ¿cambio de variables?  x = r cos θ  (nombre de una letra minúscula sin argumentos y sin tupla)
-          if (!dc && nm && /^[xyz]$/.test(nm) && !tup) { change.push({ out: nm, src: eq[1] }); continue; }
+          if (!dc && nm && /^[xyzuvw]$/.test(nm) && !tup) { change.push({ out: nm, src: eq[1] }); continue; }
           head = { lhs: eq[0], rhs: eq[1], decl: dc, name: dc ? dc.name : nm };
           continue;
         }
-        if (nm && /^[xyz]$/.test(nm) && !tup) { change.push({ out: nm, src: eq[1] }); continue; }
+        if (nm && /^[xyzuvw]$/.test(nm) && !tup) { change.push({ out: nm, src: eq[1] }); continue; }
         throw new MErr('No entiendo «' + seg + '». Escribe la función y, si quieres, P = (…) y u = (…).');
       }
+      // P(1, 2) sin «=»: el punto escrito como en geometría
+      const pm = /^([PQA])\s*(\(.*\))$/.exec(seg.trim());
+      if (pm && !point && tupleOf(pm[2])) { try { point = pointOf(tupleOf(pm[2]), 'P'); continue; } catch (e) { /* no es un punto */ } }
       rest.push(seg);
     }
     // «z = expr» sola es la función, no un cambio de variables
@@ -142,6 +178,15 @@ MatIA.define('engine/ops/vec-input', ['engine/core', 'engine/ops/expr'], (ME, $e
     return simpAll(subst(a, env));
   }
   const numEnv = (vars, point) => { const env = {}; vars.forEach((v, i) => { env[v] = point.val[i]; }); return env; };
+  /* ¿Hay en la expresión una división por 0 (o 0 elevado a negativo, ln 0) en P? La simplificación exacta
+     convertiría 0/|0| en 0 (por ejemplo ∂|x|/∂x = x/|x| en x = 0), así que se mira antes de simplificar. */
+  function zeroDenAt(a, vars, point) {
+    const env = numEnv(vars, point);
+    const z = (b) => { try { const v = evalNum(b, env); return Number.isFinite(v) && Math.abs(v) < 1e-12; } catch (e) { return false; } };
+    const neg = (b) => { try { return evalNum(b, env) < 0; } catch (e) { return false; } };
+    const walk = (b) => !!b && ((b.t === 'div' && z(b.b)) || (b.t === 'pow' && neg(b.b) && z(b.a)) || (b.t === 'fn' && (b.f === 'ln' || b.f === 'log') && z(b.a)) || walk(b.a) || walk(b.b));
+    return walk(a);
+  }
 
-  return { parseVecInput, splitTopStr, tupleOf, subst, atPoint, numEnv, orderVars, N };
+  return { parseVecInput, splitTopStr, tupleOf, subst, atPoint, numEnv, orderVars, zeroDenAt, N };
 });

@@ -1,14 +1,16 @@
 /* Cálculo vectorial: matriz jacobiana, divergencia, rotacional y laplaciano. */
-MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops/common', 'engine/ops/analisis', 'engine/ops/vec-input'], (ME, $expr, $common, $analisis, $vec) => {
+MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops/common', 'engine/ops/analisis', 'engine/ops/vec-input', 'engine/ops/vectorial'], (ME, $expr, $common, $analisis, $vec, $vectorial) => {
   'use strict';
   /* El desarrollo ya dibuja el «=» entre l y r: no lo repetimos al principio de r. */
   const tidy = (rows) => rows.map((r) => Object.assign({}, r, { r: String(r.r || '').replace(/^\s*=\s*/, '') }));
   const { F, MErr, fLatex } = ME;
   const fr = ME.fr;
-  const { N, varsOf, simpAll, evalNum, L } = $expr;
+  const { N, varsOf, simpAll, evalNum } = $expr;
+  // \sin^{2} xy → \sin^{2} x\cdot y (si no, parece sen²(xy))
+  const L = (a) => $expr.L(a).replace(/(\\[a-z]+\^\{[^{}]*\} [a-zA-Z])(?=[a-zA-Z(\\])/g, '$1\\cdot ');
   const { derivBlock } = $common;
   const { D } = $analisis;
-  const { parseVecInput, atPoint, numEnv } = $vec;
+  const { parseVecInput, atPoint, numEnv, zeroDenAt } = $vec;
 
   /* ---------- utilidades ---------- */
   const vtex = (v) => (v.startsWith('\\') ? v + ' ' : v);
@@ -16,7 +18,18 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
   const hasFn = (a) => !!a && (a.t === 'fn' || hasFn(a.a) || hasFn(a.b));
   const countFn = (a) => (a ? (a.t === 'fn' ? 1 : 0) + countFn(a.a) + countFn(a.b) : 0);
   const isZeroAst = (a) => a.t === 'num' && a.v.n === 0n;
-  const deriv = (a, v) => simpAll(D(a, v, new Set()));
+  /* Forma canónica (términos semejantes juntos, una sola fracción) si es segura; si no, simpAll. */
+  const hasRaw = (a) => !!a && (a.t === 'raw' || hasRaw(a.a) || hasRaw(a.b));
+  function canonS(a) {
+    const s = simpAll(a);
+    let c;
+    try { c = $vectorial.canon(a); } catch (e) { return s; }
+    if (hasRaw(c)) return s;
+    const vs = [...varsOf(s)];
+    const ok = testPoints(vs, 4).every((env) => { const x = ev(s, env), y = ev(c, env); return !Number.isFinite(x) || (Number.isFinite(y) && Math.abs(x - y) <= 1e-7 * Math.max(1, Math.abs(x))); });
+    return ok && L(c).length <= L(s).length + 20 ? c : s;
+  }
+  const deriv = (a, v) => canonS(D(a, v, new Set()));
   const dec = (s) => s.replace('.', '{,}');
 
   function numL(v) {
@@ -35,15 +48,24 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
   const isNice = (v) => { if (Math.abs(v) < 1e-12) return true; for (let q = 1; q <= 12; q++) { if (Math.abs(Math.round(v * q) / q - v) < 1e-9) return true; const p0 = Math.round(v / Math.PI * q); if (p0 !== 0 && Math.abs(p0 * Math.PI / q - v) < 1e-9) return true; } return false; };
 
   /* Valor de una expresión en el punto: exacto si se puede; si queda alguna función, numérico. */
-  function evalAt(ast, vars, point) {
+  /* long: para una fila con un solo valor, «\sin 2\approx 0{,}9093» en lugar de «≈ 0,9093» (el «=» ya está dibujado) */
+  function evalAt(ast, vars, point, long) {
+    if (zeroDenAt(ast, vars, point)) return { latex: '\\text{no definido}', ast: null, approx: false, bad: true };
     const s = atPoint(ast, vars, point);
     if (!hasFn(s)) return { latex: L(s), ast: s, approx: false };
     let v = NaN;
     try { v = evalNum(ast, numEnv(vars, point)); } catch (e) { /* no definido */ }
     if (!Number.isFinite(v)) return { latex: '\\text{no definido}', ast: null, approx: false, bad: true };
     const nice = isNice(v);
-    return { latex: (nice ? '' : '\\approx ') + numL(v), ast: null, approx: !nice, num: v };
+    const ex = long && !nice && L(s).length <= 80 ? L(s) : '';
+    return { latex: ex + (nice ? '' : '\\approx ') + numL(v), ast: null, approx: !nice, num: v };
   }
+  /* La función (o el campo) tiene que estar definida en P */
+  function checkAt(exprs, vars, point) {
+    const env = numEnv(vars, point);
+    if (exprs.some((e) => !Number.isFinite(ev(e, env)))) throw new MErr('La función no está definida en P = (' + point.latex.join(', ').replace(/\\pi\s*/g, 'π') + '): elige otro punto.');
+  }
+  const ptTxt = (s) => s.replace(/\\pi\s*/g, 'π').replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2').replace(/\\sqrt\{([^{}]+)\}/g, '√$1').replace(/^-/, '−');
   const ev = (a, env) => { try { return evalNum(a, env); } catch (e) { return NaN; } };
   const testPoints = (vars, k) => Array.from({ length: k }, (_, i) => { const env = {}; vars.forEach((v, j) => { env[v] = 0.37 + 0.41 * ((i * 3 + j * 5) % 7) + 0.113 * i; }); return env; });
   const numZero = (a, vars) => testPoints(vars, 6).every((env) => { const v = ev(a, env); return Number.isFinite(v) && Math.abs(v) < 1e-9; });
@@ -51,8 +73,11 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
   const sumSimp = (xs) => {
     const ls = xs.map(L);
     if (xs.length > 1 && ls.every((x) => x === ls[0]) && !isZeroAst(xs[0])) return simpAll(N.mul(N.num(F(xs.length)), xs[0]));
-    return simpAll(sumAst(xs));
+    return canonS(sumAst(xs));
   };
+  /* ¿Las dos sumas tienen los mismos términos (solo cambia el orden)? Entonces no se repite la línea. */
+  const termsOf = (t) => { const out = []; let d = 0, cur = ''; for (const c of t.replace(/\s+/g, '')) { if ('({['.includes(c)) d++; else if (')}]'.includes(c)) d--; if (d === 0 && (c === '+' || c === '-') && cur) { out.push(cur); cur = ''; } cur += c; } out.push(cur); return out.map((x) => (/^[+-]/.test(x) ? x : '+' + x)).sort().join(''); };
+  const sameTerms = (a, b) => a === b || termsOf(a) === termsOf(b);
   const sumAst = (xs) => xs.reduce((s, x) => (s ? N.add(s, x) : x), null);
   const fracP = (num, v, order) => '\\frac{\\partial' + (order > 1 ? '^{' + order + '}' : '') + ' ' + num + '}{\\partial ' + vtex(v) + (order > 1 ? '^{' + order + '}' : '') + '}';
   const needVars = (p) => { if (p.vars.length > 4) throw new MErr('Hay demasiadas variables (' + p.vars.length + '); el máximo es 4.'); };
@@ -64,19 +89,23 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
     if (dv.some((x) => !Number.isFinite(x))) return null;
     if (dv.every((x) => Math.abs(x) < 1e-9)) return { c: 0, ast: N.num(F(0)) };
     const cands = [];
-    const per = vars.map((v) => { const o = []; for (let e = 0; e <= 3; e++) for (const t of ['', 'sin', 'cos']) o.push({ v, e, t }); return o; });
+    // con exponenciales también se prueban factores e^{v}, e^{2v} (x = e^u cos v, y = e^u sin v → |J| = e^{2u})
+    const hasE = (a) => !!a && ((a.t === 'c' && a.n === 'e') || (a.t === 'fn' && a.f === 'exp') || hasE(a.a) || hasE(a.b));
+    const xs = hasE(d) && vars.length <= 2 ? [0, 1, 2] : [0];
+    const per = vars.map((v) => { const o = []; for (let e = 0; e <= 3; e++) for (const t of ['', 'sin', 'cos']) for (const x of xs) o.push({ v, e, t, x }); return o; });
     const rec = (i, cur) => {
       if (i === vars.length) { cands.push(cur.slice()); return; }
       for (const o of per[i]) { cur.push(o); rec(i + 1, cur); cur.pop(); }
     };
     rec(0, []);
-    const cost = (c) => c.reduce((s, o) => s + (o.e ? 1 + (o.e > 1 ? 0.5 : 0) : 0) + (o.t ? 1 : 0), 0);
+    const cost = (c) => c.reduce((s, o) => s + (o.e ? 1 + (o.e > 1 ? 0.5 : 0) : 0) + (o.t ? 1 : 0) + (o.x ? 1 : 0), 0);
     cands.sort((a, b) => cost(a) - cost(b));
     const build = (c) => {
       const fs = [];
       for (const o of c) {
         if (o.e) fs.push(o.e === 1 ? N.v(o.v) : N.pow(N.v(o.v), N.num(F(o.e))));
         if (o.t) fs.push(N.fn(o.t, N.v(o.v)));
+        if (o.x) fs.push(N.pow(N.c('e'), o.x === 1 ? N.v(o.v) : N.mul(N.num(F(o.x)), N.v(o.v))));
       }
       return fs.length ? fs.reduce((s, x) => N.mul(s, x)) : null;
     };
@@ -141,7 +170,7 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
     rows.push({
       l: isChange ? '\\left(' + p.outs.join(',') + '\\right)' : p.name + paren(vars.map(vtex).join(',')),
       r: isChange ? '\\left(' + p.exprs.map(L).join(',\\ ') + '\\right)' : '\\left(' + p.exprs.map(L).join(',\\ ') + '\\right)',
-      note: isChange ? 'Cambio de variables: ' + m + ' ecuaciones y ' + n + ' variables nuevas (' + vars.map(vtext).join(', ') + ')' : 'Función vectorial con ' + m + ' componente' + (m > 1 ? 's' : '') + ' y ' + n + ' variable' + (n > 1 ? 's' : ''),
+      note: isChange ? 'Cambio de variables: ' + m + ' ecuaciones y ' + n + ' variables' + (/^[xyz]$/.test(p.outs[0]) ? ' nuevas' : '') + ' (' + vars.map(vtext).join(', ') + ')' : 'Función vectorial con ' + m + ' componente' + (m > 1 ? 's' : '') + ' y ' + n + ' variable' + (n > 1 ? 's' : ''),
     });
     if (!isChange) p.exprs.forEach((e, i) => rows.push({ l: comp(i), r: L(e), note: 'Componente ' + (i + 1) + ' de ' + p.name }));
     const J = p.exprs.map((e) => vars.map((v) => deriv(e, v)));
@@ -162,20 +191,25 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
     if (m === n) {
       const raw = detExpanded(J);
       const lbl = isChange ? '\\left|\\frac{\\partial(' + p.outs.join(',') + ')}{\\partial(' + vars.join(',') + ')}\\right|' : '|J_{' + p.name + '}|';
-      const expandedL = n === 2 ? L(raw) : L(raw);
-      const simp = simpAll(raw);
+      // 3×3: a·(e·i − f·h) − b·(d·i − f·g) + c·(d·h − e·g) con cada entrada entre paréntesis si hace falta (no «0x» ni «zz»)
+      const pe = (x) => { const t = L(x); return /[+-]/.test(t) ? '\\left(' + t + '\\right)' : t; };
+      const m2L = (a, b, c, d) => '\\left(' + pe(a) + '\\cdot ' + pe(d) + '-' + pe(b) + '\\cdot ' + pe(c) + '\\right)';
+      const expandedL = n === 3
+        ? pe(J[0][0]) + '\\cdot ' + m2L(J[1][1], J[1][2], J[2][1], J[2][2]) + '-' + pe(J[0][1]) + '\\cdot ' + m2L(J[1][0], J[1][2], J[2][0], J[2][2]) + '+' + pe(J[0][2]) + '\\cdot ' + m2L(J[1][0], J[1][1], J[2][0], J[2][1])
+        : L(raw);
+      const simp = canonS(raw);
       const rawRow = (n === 2 ? 'a\\,d-b\\,c' : n === 3 ? 'a(ei-fh)-b(di-fg)+c(dh-eg)' : '') ;
       rows.push({
         l: lbl, r: vmat(Jl) + (n === 2 && expandedL.length < 160 ? '=' + expandedL : ''),
         note: n === 2 ? 'Determinante 2×2: ad − bc' : n === 3 ? 'Determinante 3×3: desarrollo por la primera fila (a·(ei−fh) − b·(di−fg) + c·(dh−eg))' : 'Determinante desarrollado por la primera fila',
       });
       void rawRow;
-      if (n === 3 && expandedL.length < 160) rows.push({ l: '', r: expandedL, note: 'Desarrollamos' });
+      if (n === 3 && expandedL.replace(/\\left|\\right|\\cdot /g, '').length < 160) rows.push({ l: '', r: expandedL, note: 'Desarrollamos' });
       let fin = simp, usedId = false;
       const s = simplifyDet(simp, vars);
       if (s) { if (L(s.ast) !== L(simp)) usedId = countFn(simp) > 0; fin = s.ast; sg = s.c < 0 ? -1 : 1; }
       if (L(simp) !== expandedL && (L(simp).length < 160 || fin === simp)) rows.push({ l: '', r: '=' + L(simp), note: 'Simplificamos' });
-      if (fin !== simp && L(fin) !== L(simp)) rows.push({ l: '', r: '=' + L(fin), note: usedId ? 'Usando sen²θ + cos²θ = 1 (identidad pitagórica)' : 'Simplificamos' });
+      if (fin !== simp && L(fin) !== L(simp)) rows.push({ l: '', r: '=' + L(fin), note: usedId ? (vars.includes('\\theta') ? 'Usando sen²θ + cos²θ = 1 (identidad pitagórica)' : 'Usando sen² + cos² = 1 (identidad pitagórica)') : 'Simplificamos' });
       detAst = fin;
       Jdet = fin;
       if (isChange) {
@@ -199,21 +233,22 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
     // en un punto
     if (p.point) {
       const P = p.point;
+      checkAt(p.exprs, vars, P);
       const Jp = J.map((fila) => fila.map((d) => evalAt(d, vars, P)));
       rows.push({ l: 'P', r: '\\left(' + P.latex.join(',\\ ') + '\\right)', note: 'Punto donde evaluamos' });
-      rows.push({ l: label.replace(/J_\{(.*)\}/, 'J_{$1}') + '(P)', r: pmat(Jp.map((f) => f.map((e) => e.latex))), note: 'Sustituimos ' + vars.map((v, i) => vtext(v) + ' = ' + vtext(P.latex[i].replace(/\\pi\s*/g, 'π'))).join(', '), boxed: m !== n });
+      rows.push({ l: label.replace(/J_\{(.*)\}/, 'J_{$1}') + '(P)', r: pmat(Jp.map((f) => f.map((e) => e.latex))), note: 'Sustituimos ' + vars.map((v, i) => vtext(v) + ' = ' + ptTxt(P.latex[i])).join(', '), boxed: m !== n });
       if (m === n) {
         const approx = Jp.some((r) => r.some((e) => e.approx || e.bad));
         const raw = detExpanded(J);
-        const dp = evalAt(simpAll(raw), vars, P);
+        const dp = evalAt(simpAll(raw), vars, P, true);
         let valStr = dp.latex, num = dp.num;
         if (num === undefined) { num = ev(simpAll(raw), numEnv(vars, P)); }
         const absTxt = isChange && Number.isFinite(num) && num < 0 ? numL(Math.abs(num)) : null;
         void approx;
         rows.push({ l: '|J(P)|', r: (isChange && absTxt ? '\\left|' + valStr + '\\right|=' + absTxt : valStr), note: 'Determinante en P', boxed: true });
         if (!Number.isFinite(num)) rows.push({ l: '', r: '\\text{—}', note: 'El jacobiano no está definido en P' });
-        else if (Math.abs(num) > 1e-9) rows.push({ l: '', r: '|J(P)|\\neq 0', note: 'F es localmente invertible cerca de P (teorema de la función inversa)' });
-        else rows.push({ l: '', r: '|J(P)|=0', note: 'El determinante se anula en P: el teorema de la función inversa no garantiza que F sea invertible cerca de P' });
+        else if (Math.abs(num) > 1e-9) rows.push({ l: '', r: '|J(P)|\\neq 0', note: (isChange ? 'El cambio' : p.name) + ' es localmente invertible cerca de P (teorema de la función inversa)' });
+        else rows.push({ l: '', r: '|J(P)|=0', note: 'El determinante se anula en P: el teorema de la función inversa no garantiza que ' + (isChange ? 'el cambio' : p.name) + ' sea invertible cerca de P' });
       }
     }
     void Jdet; void detAst;
@@ -280,11 +315,12 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
       vars.forEach((v, i) => rows.push({ l: fracP(nm, v, 2), r: '=' + L(sec[i]), note: 'Derivada segunda respecto de ' + v + ' (derivamos dos veces)' }));
       const rawSum = sumAst(sec), tot = sumSimp(sec);
       const zero = isZeroAst(tot) || numZero(tot, vars);
-      rows.push({ l: '\\Delta ' + nm, r: vars.map((v) => fracP(nm, v, 2)).join('+') + '=' + sumL(sec) + (L(rawSum) === L(zero ? N.num(F(0)) : tot) ? '' : '=' + L(zero ? N.num(F(0)) : tot)), note: 'Laplaciano: suma de las segundas derivadas puras', boxed: true });
+      rows.push({ l: '\\Delta ' + nm, r: vars.map((v) => fracP(nm, v, 2)).join('+') + '=' + sumL(sec) + (sameTerms(sumL(sec), L(zero ? N.num(F(0)) : tot)) ? '' : '=' + L(zero ? N.num(F(0)) : tot)), note: 'Laplaciano: suma de las segundas derivadas puras', boxed: true });
       if (zero) rows.push({ l: '', r: '\\Delta ' + nm + '=0', note: nm + ' es armónica (su laplaciano es cero)' });
       if (P0) {
-        const e = evalAt(zero ? N.num(F(0)) : tot, vars, P0);
-        rows.push({ l: '\\Delta ' + nm + '(P)', r: e.latex, note: 'Laplaciano en P = (' + P0.latex.join(', ').replace(/\\pi\s*/g, 'π') + ')', boxed: true });
+        checkAt([f], vars, P0);
+        const e = evalAt(zero ? N.num(F(0)) : tot, vars, P0, true);
+        rows.push({ l: '\\Delta ' + nm + '(P)', r: e.latex, note: 'Laplaciano en P = (' + P0.latex.map(ptTxt).join(', ') + ')', boxed: true });
       }
       return [derivBlock(tidy(rows))];
     }
@@ -304,7 +340,7 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
     const dterms = names.map((n, i) => dm[i][i]);
     const rawD = sumAst(dterms), dv = sumSimp(dterms);
     const dzero = isZeroAst(dv) || numZero(dv, vars);
-    rows.push({ l: '\\nabla\\cdot ' + nmB, r: names.map((n, i) => fracP(n, vars[i], 1)).join('+') + '=' + sumL(dterms) + (L(rawD) === L(dzero ? N.num(F(0)) : dv) ? '' : '=' + L(dzero ? N.num(F(0)) : dv)), note: 'Divergencia: suma de las derivadas ∂P/∂x + ∂Q/∂y' + (m === 3 ? ' + ∂R/∂z' : '') + (dzero ? '. Es cero: el campo es solenoidal (incompresible)' : ''), boxed: true });
+    rows.push({ l: '\\nabla\\cdot ' + nmB, r: names.map((n, i) => fracP(n, vars[i], 1)).join('+') + '=' + sumL(dterms) + (sameTerms(sumL(dterms), L(dzero ? N.num(F(0)) : dv)) ? '' : '=' + L(dzero ? N.num(F(0)) : dv)), note: 'Divergencia: suma de las derivadas ∂P/∂x + ∂Q/∂y' + (m === 3 ? ' + ∂R/∂z' : '') + (dzero ? '. Es cero: el campo es solenoidal (incompresible)' : ''), boxed: true });
 
     // rotacional
     let rotComps, rotZero;
@@ -321,7 +357,7 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
         { n: 'z', lbl: '\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}', a: dm[1][0], b: dm[0][1], t: 'Q_x − P_y' },
       ];
       rotComps = defs.map((d) => {
-        const raw = sd(d.a, d.b), s = simpAll(raw), z = isZeroAst(s) || numZero(s, vars);
+        const raw = sd(d.a, d.b), s = canonS(raw), z = isZeroAst(s) || numZero(s, vars);
         const fin = z ? N.num(F(0)) : s;
         rows.push({ l: '(\\nabla\\times ' + nmB + ')_{' + d.n + '}', r: d.lbl + '=' + L(raw) + (L(raw) === L(fin) ? '' : '=' + L(fin)), note: 'Componente ' + d.n + ': ' + d.t.replace('P_z', '∂P/∂z').replace('R_x', '∂R/∂x').replace('R_y', '∂R/∂y').replace('Q_z', '∂Q/∂z').replace('Q_x', '∂Q/∂x').replace('P_y', '∂P/∂y') });
         return fin;
@@ -329,15 +365,23 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
       rotZero = rotComps.every(isZeroAst);
       rows.push({ l: '\\nabla\\times ' + nmB, r: '\\left(' + rotComps.map(L).join(',\\ ') + '\\right)', note: 'Rotacional (vector)', boxed: true });
     } else {
-      const raw = sd(dm[1][0], dm[0][1]), s = simpAll(raw), z = isZeroAst(s) || numZero(s, vars);
+      const raw = sd(dm[1][0], dm[0][1]), s = canonS(raw), z = isZeroAst(s) || numZero(s, vars);
       const fin = z ? N.num(F(0)) : s;
       rows.push({ l: '\\nabla\\times ' + nmB, r: '\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}=' + L(raw) + (L(raw) === L(fin) ? '' : '=' + L(fin)), note: 'Rotacional en el plano: solo tiene componente k, ∂Q/∂x − ∂P/∂y', boxed: true });
       rotComps = [fin];
       rotZero = isZeroAst(fin);
     }
     if (rotZero) {
-      rows[rows.length - 1].note += '. Rotacional nulo: el campo es conservativo (irrotacional), existe un potencial φ con ∇φ = F (si el dominio no tiene agujeros)';
-      const phi = potential(C, vars);
+      // F = (−y, x)/(x² + y²) tiene rotacional nulo y no es conservativo: su dominio (el plano sin el origen) tiene un agujero.
+      // (En el espacio quitar un punto no estorba, pero quitar una recta sí: ahí solo lo avisamos.)
+      const o = {}; vars.forEach((v) => { o[v] = 0; });
+      const undef0 = C.some((c) => !Number.isFinite(ev(c, o)));
+      const hole = undef0 && m === 2;
+      const phi = undef0 ? null : potential(C, vars);
+      rows[rows.length - 1].note += hole
+        ? '. Rotacional nulo: el campo es irrotacional, pero no está definido en el origen (su dominio tiene un agujero), así que eso no basta para asegurar que sea conservativo'
+        : phi ? '. Rotacional nulo: el campo es irrotacional y está definido en todo ' + (m === 3 ? 'el espacio' : 'el plano') + ', así que es conservativo: existe un potencial φ con ∇φ = F'
+          : '. Rotacional nulo: el campo es irrotacional; si su dominio no tiene agujeros, es conservativo (existe un potencial φ con ∇φ = F)';
       if (phi) {
         const lead = '\\varphi=' + L(phi);
         rows.push({ l: '\\varphi', r: '=' + L(phi) + '+C', note: 'Potencial: integramos P respecto de x, Q respecto de y' + (m === 3 ? ', R respecto de z' : '') + ' sin repetir términos', boxed: true });
@@ -348,10 +392,11 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
     }
 
     if (P0) {
-      const dd = evalAt(dzero ? N.num(F(0)) : dv, vars, P0);
-      rows.push({ l: '\\nabla\\cdot ' + nmB + '(P)', r: dd.latex, note: 'Divergencia en P = (' + P0.latex.join(', ').replace(/\\pi\s*/g, 'π') + ')', boxed: true });
+      checkAt(C, vars, P0);
+      const dd = evalAt(dzero ? N.num(F(0)) : dv, vars, P0, true);
+      rows.push({ l: '\\nabla\\cdot ' + nmB + '(P)', r: dd.latex, note: 'Divergencia en P = (' + P0.latex.map(ptTxt).join(', ') + ')', boxed: true });
       const rr = rotComps.map((c) => evalAt(c, vars, P0).latex);
-      rows.push({ l: '\\nabla\\times ' + nmB + '(P)', r: m === 3 ? '\\left(' + rr.join(',\\ ') + '\\right)' : rr[0], note: 'Rotacional en P', boxed: true });
+      rows.push({ l: '\\nabla\\times ' + nmB + '(P)', r: m === 3 ? '\\left(' + rr.join(',\\ ') + '\\right)' : evalAt(rotComps[0], vars, P0, true).latex, note: 'Rotacional en P', boxed: true });
     }
     return [derivBlock(tidy(rows))];
   }

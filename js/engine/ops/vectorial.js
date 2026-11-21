@@ -6,10 +6,11 @@ MatIA.define('engine/ops/vectorial', ['engine/core', 'engine/ops/expr', 'engine/
   const { add, sub, mul, div, neg, isZ, ZERO, ONE } = ME.fr;
   const { N, simpAll, evalNum, varsOf } = $expr;
   // LaTeX del árbol con dos retoques: 7\cdot \sqrt{2} → 7\sqrt{2};  (|x|)^3 → |x|^3
-  const L = (a) => $expr.L(a).replace(/(\d)\\cdot \\sqrt/g, '$1\\sqrt').replace(/\\left\(\\left\|([^|]*)\\right\|\\right\)/g, '\\left|$1\\right|');
+  // y además \sin^{2} xy → \sin^{2} x\cdot y (si no, parece sen²(xy))
+  const L = (a) => $expr.L(a).replace(/(\d)\\cdot \\sqrt/g, '$1\\sqrt').replace(/(\\[a-z]+\^\{[^{}]*\} [a-zA-Z])(?=[a-zA-Z(\\])/g, '$1\\cdot ').replace(/\\left\(\\left\|([^|]*)\\right\|\\right\)/g, '\\left|$1\\right|');
   const { derivBlock, sqrtSimp } = $common;
   const { D } = $analisis;
-  const { parseVecInput, atPoint, numEnv } = $vin;
+  const { parseVecInput, atPoint, numEnv, zeroDenAt } = $vin;
 
   /* ====================== Números: exacto si se puede, si no aproximado ====================== */
   function numL0(v) {
@@ -339,7 +340,7 @@ MatIA.define('engine/ops/vectorial', ['engine/core', 'engine/ops/expr', 'engine/
   // LaTeX sencillo → texto para las notas
   const txt = (s) => s.replace(/\\mathrm\{e\}/g, 'e').replace(/\\pi\s*/g, 'π').replace(/\\approx\s*/g, '≈ ')
     .replace(/\^\{2\}/g, '²').replace(/\^\{3\}/g, '³').replace(/\\cdot\s*/g, '·').replace(/\\left|\\right|\\[,;!]|\\ /g, '')
-    .replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2').replace(/\\sqrt\{([^{}]+)\}/g, '√$1').replace(/\{,\}/g, ',').replace(/[\\{}]/g, '').replace(/(^|[(\s])-/g, '$1−');
+    .replace(/\\sqrt\{([^{}]+)\}/g, '√$1').replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2').replace(/\{,\}/g, ',').replace(/[\\{}]/g, '').replace(/(^|[(\s,])-/g, '$1−');
   const sqL = (s) => (/^([0-9]+|[a-zA-Z])$/.test(s) ? s + '^{2}' : '\\left(' + s + '\\right)^{2}');
   const RULE_TXT = { 'constante por función': 'constante por función' };
   const rulesT = (R) => [...R].filter((r) => r !== 'constante' || R.size === 1).map((r) => RULE_TXT[r] || r).join(', ');
@@ -372,6 +373,7 @@ MatIA.define('engine/ops/vectorial', ['engine/core', 'engine/ops/expr', 'engine/
     return F0.vars.map((v) => { const R = new Set(); D(freeze(F0.f, v), v, R); const d = canon(D(F0.f, v, new Set())); return { v, d, R }; });
   }
   function valAt(F0, ast, what) {
+    if (zeroDenAt(ast, F0.vars, F0.point)) throw new MErr(what + ' no está definida en P = ' + txt(F0.pointT) + '.');
     let V;
     try { V = vOf(atPoint(ast, F0.vars, F0.point)); } catch (e) { V = { x: NaN }; }
     let x = V.x;
@@ -564,7 +566,8 @@ MatIA.define('engine/ops/vectorial', ['engine/core', 'engine/ops/expr', 'engine/
       let r2;
       if (!approx) r2 = CL(g.reduce((s, x, i) => N.add(s, N.mul(x.ast, shift(vars[i], i))), f0.ast));
       else r2 = linNum([f0.x, ...g.map((x) => x.x)], vars, F0.point.val);
-      rows.push({ l: 'z', r: (approx ? '\\approx ' : '') + r1 + (r2 !== r1 ? '\\;\\Rightarrow\\; z' + (approx ? '\\approx ' : '=') + r2 : ''), note: 'Plano tangente a la superficie z = ' + nm + '(' + vars.map(vT).join(', ') + ') en el punto (' + F0.point.latex.map(txt).join(', ') + ', ' + txt(vShow(f0)) + '): z = ' + nm + '(P) + ' + nm + '_' + vT(vars[0]) + '(P)(' + vT(vars[0]) + ' − a) + ' + nm + '_' + vT(vars[1]) + '(P)(' + vT(vars[1]) + ' − b)', boxed: true });
+      // el «=» ya lo dibuja el desarrollo: con valores aproximados se avisa en la nota (no «z = ≈ …»)
+      rows.push({ l: 'z', r: r1 + (r2 !== r1 ? '\\;\\Rightarrow\\; z' + (approx ? '\\approx ' : '=') + r2 : ''), note: 'Plano tangente a la superficie z = ' + nm + '(' + vars.map(vT).join(', ') + ') en el punto (' + F0.point.latex.map(txt).join(', ') + ', ' + txt(vShow(f0)) + '): z = ' + nm + '(P) + ' + nm + '_' + vT(vars[0]) + '(P)(' + vT(vars[0]) + ' − a) + ' + nm + '_' + vT(vars[1]) + '(P)(' + vT(vars[1]) + ' − b)' + (approx ? '. Coeficientes redondeados a 4 decimales' : ''), boxed: true });
     } else if (!crit) {
       const r1 = linL(g, '') + '=0';
       let r2;
@@ -642,15 +645,26 @@ MatIA.define('engine/ops/vectorial', ['engine/core', 'engine/ops/expr', 'engine/
       const d = detV(M);
       dets.push(d);
       const s = vSign(d);
-      rows.push({ l: '\\Delta_{' + k + '}', r: (k === 1 ? '' : vmat(M.map((r) => r.map(vShow))) + '=') + vShow(d) + (s > 0 ? '>0' : s < 0 ? '<0' : ''), note: k === 1 ? 'Menores principales: esquinas superiores izquierdas de H(P), de tamaño 1, 2' + (n === 3 ? ', 3' : '') : 'Menor principal de tamaño ' + k + ' (determinante ' + k + '×' + k + ' de la esquina superior izquierda)' });
+      rows.push({ l: '\\Delta_{' + k + '}', r: (k === 1 ? vLong(d) : vmat(M.map((r) => r.map(vShow))) + eqOr(vShow(d))) + (s > 0 ? '>0' : s < 0 ? '<0' : ''), note: k === 1 ? 'Menores principales: esquinas superiores izquierdas de H(P), de tamaño 1, 2' + (n === 3 ? ', 3' : '') : 'Menor principal de tamaño ' + k + ' (determinante ' + k + '×' + k + ' de la esquina superior izquierda)' });
     }
     const sg = dets.map(vSign);
     let cls, why;
     if (sg.every((s) => s > 0)) { cls = 'pos'; why = 'Todos los menores principales son positivos (criterio de Sylvester)'; }
     else if (sg.every((s, i) => (i % 2 === 0 ? s < 0 : s > 0))) { cls = 'neg'; why = 'Los menores alternan de signo empezando en negativo: Δ1 < 0, Δ2 > 0' + (n === 3 ? ', Δ3 < 0' : '') + ' (criterio de Sylvester)'; }
     else if (sg[n - 1] !== 0) { cls = 'ind'; why = 'Δ' + n + ' = det H(P) ≠ 0 pero los signos no siguen ninguno de los dos patrones de Sylvester'; }
-    else { cls = 'deg'; why = 'Δ' + n + ' = det H(P) = 0: la matriz es semidefinida o indefinida y el criterio de Sylvester no decide'; }
-    const clsL = { pos: '\\text{definida positiva}', neg: '\\text{definida negativa}', ind: '\\text{indefinida}', deg: '\\text{semidefinida o dudosa}' }[cls];
+    else {
+      // det H(P) = 0, pero si un menor principal 2×2 (no solo el de la esquina) es negativo o hay dos elementos
+      // de la diagonal con signos opuestos, H(P) toma valores de los dos signos: es indefinida (punto de silla)
+      const dg = HV.map((r, i) => vSign(r[i]));
+      let mi = null;
+      for (let i = 0; i < n && !mi; i++) for (let j = i + 1; j < n && !mi; j++) {
+        if (dg[i] * dg[j] < 0) mi = 'los elementos ' + (i + 1) + ',' + (i + 1) + ' y ' + (j + 1) + ',' + (j + 1) + ' de la diagonal tienen signos opuestos';
+        else if (vSign(detV([[HV[i][i], HV[i][j]], [HV[j][i], HV[j][j]]])) < 0) mi = 'el menor principal formado por las filas y columnas ' + (i + 1) + ' y ' + (j + 1) + ' es negativo';
+      }
+      if (mi) { cls = 'ind'; why = 'Δ' + n + ' = det H(P) = 0, pero ' + mi + ': H(P) toma valores positivos y negativos, así que es indefinida'; }
+      else { cls = 'deg'; why = 'Δ' + n + ' = det H(P) = 0: la matriz es semidefinida y el criterio de Sylvester no decide'; }
+    }
+    const clsL = { pos: '\\text{definida positiva}', neg: '\\text{definida negativa}', ind: '\\text{indefinida}', deg: '\\text{semidefinida (dudoso)}' }[cls];
     rows.push({ l: 'H_{' + nm + '}\\left(' + P + '\\right)', r: clsL, note: why, boxed: true });
     if (crit) {
       const res = { pos: ['\\text{mínimo relativo}', 'Punto crítico con hessiana definida positiva: ' + nm + ' tiene un mínimo relativo en P'], neg: ['\\text{máximo relativo}', 'Punto crítico con hessiana definida negativa: ' + nm + ' tiene un máximo relativo en P'], ind: ['\\text{punto de silla}', 'Punto crítico con hessiana indefinida: ' + nm + ' crece en unas direcciones y decrece en otras (punto de silla)'], deg: ['\\text{caso dudoso}', 'El criterio no decide: hay que estudiar ' + nm + ' cerca de P por otros medios'] }[cls];
