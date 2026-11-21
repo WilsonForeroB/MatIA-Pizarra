@@ -5,6 +5,8 @@ MatIA.define('blocks/graph', ['core/dom', 'model/board', 'blocks/svg-utils', 'bl
   const { body } = dom;
   const { SVGNS, niceStep, fmtNum, markPath, markLegend } = svgu;
 
+  const DASH = ['', '8 5', '2 5', '10 4 2 4', '4 4', '12 6'];
+
   function buildGraph(b, bd, ro) {
     const box = document.createElement('div');
     box.className = 'graph';
@@ -18,17 +20,21 @@ MatIA.define('blocks/graph', ['core/dom', 'model/board', 'blocks/svg-utils', 'bl
     const err = document.createElement('div');
     err.className = 'g-err';
     box.append(svg, legend, err);
+    let lastY = [-5, 5];
     function draw() {
       svg.textContent = ''; legend.textContent = ''; err.textContent = '';
       const fs = [];
-      b.fns.forEach((src, k) => { try { fs.push({ F: R('engine/ops').compileFn(src), k, src }); } catch (e) { err.textContent = 'Aviso: no puedo dibujar «' + src + '»: ' + e.message; } });
+      const ops = R('engine/ops');
+      b.fns.forEach((src, k) => { if (!String(src).trim()) return; try { fs.push({ F: ops.compileFn(typeof ops.normalizeFn === 'function' ? ops.normalizeFn(src) : src), k, src }); } catch (e) { err.textContent = 'Aviso: no puedo dibujar «' + src + '»: ' + e.message; } });
       svg.setAttribute('aria-label', 'Gráfica de ' + (fs.map((f) => f.src).join('; ') || 'ninguna función') + ' entre x = ' + b.xmin + ' y x = ' + b.xmax);
       const x0 = b.xmin, x1 = b.xmax, n = 900;
       const samples = fs.map(({ F }) => { const pts = []; for (let i = 0; i <= n; i++) { const x = x0 + (x1 - x0) * i / n; pts.push([x, F.f(x)]); } return pts; });
       const ys = samples.flat().map((p) => p[1]).filter(Number.isFinite).sort((a, c) => a - c);
       const mks = (b.marks || []).filter((m) => m.x >= x0 && m.x <= x1);
       let y0 = -5, y1 = 5;
-      if (ys.length) {
+      const fixedY = Number.isFinite(b.ymin) && Number.isFinite(b.ymax) && b.ymin < b.ymax;
+      if (fixedY) { y0 = b.ymin; y1 = b.ymax; }
+      else if (ys.length) {
         const q = (t) => ys[Math.min(ys.length - 1, Math.max(0, Math.floor(t * (ys.length - 1))))];
         y0 = q(0.02); y1 = q(0.98);
         if (y1 - y0 < 1e-9) { y0 -= 1; y1 += 1; }
@@ -37,6 +43,7 @@ MatIA.define('blocks/graph', ['core/dom', 'model/board', 'blocks/svg-utils', 'bl
         if (y1 < 0 && -y1 < (y1 - y0) * 0.6) y1 = (y1 - y0) * 0.05;
         for (const m of mks) { const mg = (y1 - y0) * 0.08; if (m.y - mg < y0) y0 = m.y - mg; if (m.y + mg > y1) y1 = m.y + mg; }
       }
+      lastY = [y0, y1];
       const sx = (x) => pad + (x - x0) / (x1 - x0) * (W - 2 * pad);
       const sy = (y) => H - pad - (y - y0) / (y1 - y0) * (H - 2 * pad);
       const el = (tag, attrs, cls) => { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (cls) e.setAttribute('class', cls); svg.appendChild(e); return e; };
@@ -63,7 +70,7 @@ MatIA.define('blocks/graph', ['core/dom', 'model/board', 'blocks/svg-utils', 'bl
         const color = 'var(--data-' + ((fs[i].k % 6) + 1) + ')';
         const path = el('path', { d }, 'g-curve');
         path.style.stroke = color;
-        if (i > 0) path.style.strokeDasharray = ['', '8 5', '2 5', '10 4 2 4', '4 4', '12 6'][i % 6];
+        if (DASH[fs[i].k % 6]) path.style.strokeDasharray = DASH[fs[i].k % 6];
         const lg = document.createElement('span');
         lg.style.setProperty('--sw', color);
         lg.textContent = fs[i].src.replace(/\\left|\\right|\\cdot/g, '').replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)').replace(/\\sqrt\{([^{}]+)\}/g, '√($1)').replace(/\\(sin|cos|tan|ln|log|pi)/g, (m, f) => (f === 'pi' ? 'π' : f)).replace(/[{}\\]/g, '').replace(/\^2/g, '²').replace(/\^3/g, '³');
@@ -93,22 +100,113 @@ MatIA.define('blocks/graph', ['core/dom', 'model/board', 'blocks/svg-utils', 'bl
     if (!ro) {
       const ctrl = document.createElement('div');
       ctrl.className = 'g-ctrl';
-      const mk = (label, val, set) => { const l = document.createElement('label'); l.textContent = label + ' '; const i = document.createElement('input'); i.type = 'number'; i.step = 'any'; i.value = val; i.addEventListener('change', () => { const v = parseFloat(i.value); if (Number.isFinite(v)) { set(v); if (b.xmax - b.xmin < 1e-6) b.xmax = b.xmin + 1; S.save(); draw(); } }); l.appendChild(i); return l; };
-      const fi = document.createElement('input');
-      fi.className = 'g-fns';
-      fi.value = b.fns.join(' ; ');
-      fi.setAttribute('aria-label', 'Funciones separadas por punto y coma');
-      fi.title = 'Funciones separadas por ; (LaTeX), por ejemplo f(x)=x^2 ; g(x)=\\sin x';
-      fi.addEventListener('change', () => { b.fns = fi.value.split(';').map((t) => t.trim()).filter(Boolean).slice(0, 6); S.save(); draw(); });
-      const fl = document.createElement('label'); fl.textContent = 'Funciones '; fl.style.display = 'flex'; fl.style.flex = '1 1 260px'; fl.style.gap = '6px'; fl.style.alignItems = 'center'; fl.appendChild(fi);
-      ctrl.append(mk('x desde', b.xmin, (v) => { b.xmin = v; }), mk('hasta', b.xmax, (v) => { b.xmax = v; }), fl);
+      const fnList = document.createElement('div');
+      fnList.className = 'g-fnlist';
+      fnList.setAttribute('role', 'group');
+      fnList.setAttribute('aria-label', 'Funciones de la gráfica');
+      const swatch = (k) => {
+        const sv = document.createElementNS(SVGNS, 'svg');
+        sv.setAttribute('viewBox', '0 0 28 10'); sv.setAttribute('class', 'g-fn-sw'); sv.setAttribute('aria-hidden', 'true');
+        const ln = document.createElementNS(SVGNS, 'line');
+        ln.setAttribute('x1', 2); ln.setAttribute('x2', 26); ln.setAttribute('y1', 5); ln.setAttribute('y2', 5);
+        ln.style.stroke = 'var(--data-' + ((k % 6) + 1) + ')'; ln.style.strokeWidth = '3'; ln.style.strokeLinecap = 'round';
+        if (DASH[k % 6]) ln.style.strokeDasharray = DASH[k % 6];
+        sv.appendChild(ln); return sv;
+      };
+      const change = () => { S.save(); draw(); };
+      function renderFns() {
+        fnList.textContent = '';
+        const useMF = MatIA.require('ui/state').mlReady && customElements.get('math-field');
+        b.fns.forEach((src, k) => {
+          const row = document.createElement('div');
+          row.className = 'g-fn';
+          let f;
+          if (useMF) {
+            f = document.createElement('math-field');
+            f.dataset.aux = '1';
+            R('blocks/editor').configureField(f);
+            f.value = src;
+            f.addEventListener('input', () => { b.fns[k] = f.getValue('latex'); change(); });
+          } else {
+            f = document.createElement('input');
+            f.type = 'text'; f.dataset.aux = '1'; f.value = src;
+            f.addEventListener('input', () => { b.fns[k] = f.value; change(); });
+          }
+          f.classList.add('g-fn-field');
+          f.setAttribute('aria-label', 'Función ' + (k + 1));
+          f.addEventListener('keydown', (e) => {
+            e.stopPropagation();
+            if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); f.blur(); }
+          });
+          const rm = document.createElement('button');
+          rm.type = 'button'; rm.className = 'mi-btn mi-btn--sm g-fn-rm'; rm.textContent = '×';
+          rm.title = 'Quitar función ' + (k + 1); rm.setAttribute('aria-label', 'Quitar función ' + (k + 1));
+          rm.addEventListener('click', () => { b.fns.splice(k, 1); renderFns(); change(); });
+          row.append(swatch(k), f, rm);
+          fnList.appendChild(row);
+        });
+        const add = document.createElement('button');
+        add.type = 'button'; add.className = 'mi-btn mi-btn--sm g-fn-add'; add.textContent = '+ Añadir función';
+        add.disabled = b.fns.length >= 6;
+        add.title = 'Añadir otra función (máximo 6)'; add.setAttribute('aria-label', 'Añadir función');
+        add.addEventListener('click', () => {
+          if (b.fns.length >= 6) return;
+          b.fns.push(''); renderFns(); S.save();
+          const fl = fnList.querySelectorAll('.g-fn-field'); const last = fl[fl.length - 1]; if (last) last.focus();
+        });
+        fnList.appendChild(add);
+      }
+      renderFns();
+      const inputs = {};
+      const num = (label, key, aria) => {
+        const l = document.createElement('label'); l.textContent = label + ' ';
+        const i = document.createElement('input'); i.type = 'number'; i.step = 'any'; i.setAttribute('aria-label', aria);
+        if (key[1] === 'y') i.placeholder = 'auto';
+        i.addEventListener('change', () => {
+          const v = parseFloat(i.value);
+          if (key === 'ymin' || key === 'ymax') {
+            if (Number.isFinite(v)) b[key] = v; else delete b[key];
+            if (Number.isFinite(b.ymin) && Number.isFinite(b.ymax) && b.ymax <= b.ymin) { delete b.ymin; delete b.ymax; }
+          } else if (Number.isFinite(v)) { b[key] = v; if (b.xmax - b.xmin < 1e-6) b.xmax = b.xmin + 1; }
+          sync(); change();
+        });
+        inputs[key] = i; l.appendChild(i); return l;
+      };
+      function sync() { for (const k in inputs) inputs[k].value = Number.isFinite(b[k]) ? b[k] : ''; }
+      const rangeGrp = document.createElement('div'); rangeGrp.className = 'g-range';
+      rangeGrp.append(num('x desde', 'xmin', 'x desde'), num('hasta', 'xmax', 'x hasta'), num('y desde', 'ymin', 'y desde (vacío = automático)'), num('hasta', 'ymax', 'y hasta (vacío = automático)'));
+      const zoom = (k) => {
+        const cx = (b.xmin + b.xmax) / 2, hx = (b.xmax - b.xmin) / 2 * k;
+        b.xmin = +(cx - hx).toFixed(6); b.xmax = +(cx + hx).toFixed(6);
+        const cy = (lastY[0] + lastY[1]) / 2, hy = (lastY[1] - lastY[0]) / 2 * k;
+        b.ymin = +(cy - hy).toFixed(6); b.ymax = +(cy + hy).toFixed(6);
+      };
+      const pan = (dx, dy) => {
+        const w = b.xmax - b.xmin; b.xmin = +(b.xmin + dx * w).toFixed(6); b.xmax = +(b.xmax + dx * w).toFixed(6);
+        if (dy) { const h = lastY[1] - lastY[0]; b.ymin = +(lastY[0] + dy * h).toFixed(6); b.ymax = +(lastY[1] + dy * h).toFixed(6); }
+      };
+      const fit = () => {
+        delete b.ymin; delete b.ymax;
+        const xs = (b.marks || []).map((m) => m.x).filter(Number.isFinite);
+        if (xs.length) { const a = Math.min(...xs), c = Math.max(...xs), m = Math.max((c - a) * 0.15, 1); b.xmin = +(a - m).toFixed(6); b.xmax = +(c + m).toFixed(6); }
+        else { b.xmin = -5; b.xmax = 5; }
+      };
+      const zbar = document.createElement('div');
+      zbar.className = 'g-zoom'; zbar.setAttribute('role', 'group'); zbar.setAttribute('aria-label', 'Zoom y desplazamiento');
+      [['+', 'Acercar', () => zoom(1 / 1.25)], ['−', 'Alejar', () => zoom(1.25)], ['←', 'Desplazar a la izquierda', () => pan(-0.2, 0)], ['↑', 'Desplazar hacia arriba', () => pan(0, 0.2)], ['↓', 'Desplazar hacia abajo', () => pan(0, -0.2)], ['→', 'Desplazar a la derecha', () => pan(0.2, 0)], ['Ajustar', 'Ajustar al rango automático', fit]].forEach(([t, title, fn]) => {
+        const bt = document.createElement('button');
+        bt.type = 'button'; bt.className = 'mi-btn mi-btn--sm'; bt.textContent = t; bt.title = title; bt.setAttribute('aria-label', title);
+        bt.addEventListener('click', () => { draw(); fn(); sync(); change(); });
+        zbar.appendChild(bt);
+      });
+      sync();
+      ctrl.append(fnList, zbar, rangeGrp);
       box.appendChild(ctrl);
-      // zoom con la rueda y arrastre para desplazar
-      svg.addEventListener('wheel', (e) => { e.preventDefault(); const k = e.deltaY > 0 ? 1.15 : 1 / 1.15; const c = (b.xmin + b.xmax) / 2, h = (b.xmax - b.xmin) / 2 * k; b.xmin = +(c - h).toFixed(4); b.xmax = +(c + h).toFixed(4); ctrl.querySelectorAll('input[type=number]')[0].value = b.xmin; ctrl.querySelectorAll('input[type=number]')[1].value = b.xmax; S.save(); draw(); }, { passive: false });
+      // arrastrar para desplazar (la rueda desplaza la página)
       let drag = null;
       svg.addEventListener('pointerdown', (e) => { if (body.dataset.mode === 'draw' || e.pointerType === 'pen') return; drag = { x: e.clientX, a: b.xmin, b: b.xmax, w: svg.getBoundingClientRect().width }; svg.setPointerCapture(e.pointerId); e.stopPropagation(); });
       svg.addEventListener('pointermove', (e) => { if (!drag) return; const dx = (e.clientX - drag.x) / drag.w * (drag.b - drag.a) * (720 / 664); b.xmin = +(drag.a - dx).toFixed(4); b.xmax = +(drag.b - dx).toFixed(4); draw(); });
-      svg.addEventListener('pointerup', () => { if (drag) { drag = null; ctrl.querySelectorAll('input[type=number]')[0].value = b.xmin; ctrl.querySelectorAll('input[type=number]')[1].value = b.xmax; S.save(); } });
+      svg.addEventListener('pointerup', () => { if (drag) { drag = null; sync(); S.save(); } });
     }
     bd.appendChild(box);
     draw();

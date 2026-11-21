@@ -72,10 +72,14 @@ MatIA.define('model/schema', [], () => {
     },
     graph(x, base) {
     const xmin = Number.isFinite(+x.xmin) ? +x.xmin : -5, xmax = Number.isFinite(+x.xmax) ? +x.xmax : 5;
-    return Object.assign(base, { type: 'graph', marks: cleanMarks(x.marks, false), fns: (Array.isArray(x.fns) ? x.fns : []).map(String).slice(0, 6), xmin: Math.min(xmin, xmax - 0.001), xmax });
+    return Object.assign(base, { type: 'graph', marks: cleanMarks(x.marks, false), fns: (Array.isArray(x.fns) ? x.fns : []).map(String).slice(0, 6), xmin: Math.min(xmin, xmax - 0.001), xmax }, (typeof x.ymin === 'number' && typeof x.ymax === 'number' && Number.isFinite(x.ymin) && Number.isFinite(x.ymax) && x.ymin < x.ymax) ? { ymin: x.ymin, ymax: x.ymax } : {});
     },
   };
-  const sanitizeText = (x, base) => Object.assign(base, { type: x.type === 'text' ? 'text' : 'math', v: typeof x.v === 'string' ? x.v : '', result: !!x.result });
+  const sanitizeText = (x, base) => {
+    const o = Object.assign(base, { type: x.type === 'text' ? 'text' : 'math', v: typeof x.v === 'string' ? x.v : '', result: !!x.result });
+    if (o.type === 'math' && typeof x.note === 'string' && x.note.trim()) o.note = x.note.slice(0, 500); // explicación a la derecha
+    return o;
+  };
 
   function sanitizeBlock(x) {
     const base = { id: uid(), align: ['left', 'center', 'right'].includes(x.align) ? x.align : 'left', boxed: !!x.boxed };

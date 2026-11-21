@@ -31,6 +31,20 @@ MatIA.define('ui/calc', ['core/dom', 'model/board', 'model/schema', 'ui/state', 
       return;
     }
     if (!b || b.type !== 'math' || !b.v.trim()) { toast('Escribe una operación en una línea, por ejemplo A·B = o 3/4 + 1/6 =, y pulsa Calcular.'); return; }
+    // integrales: ∫ f dx = F(x) + C, o ∫ₐᵇ f dx = valor (exacto o aproximado)
+    if (/^\s*\\int\b/.test(b.v)) {
+      try {
+        const r = R('engine/ops').integralLine(b.v);
+        const mf = R('blocks/editor').fieldOf(R('blocks/editor').elById(b.id));
+        mf.value = r.latex;
+        b.v = r.latex;
+        S.save();
+        R('blocks/editor').focusBlock(b.id, 'end');
+      } catch (e) {
+        toast(e instanceof R('engine/core').MErr ? e.message + ' Prueba Operaciones ▾ → Integral paso a paso.' : 'No he podido calcular esta integral.', 'aviso');
+      }
+      return;
+    }
     try {
       const r = R('engine/core').compute(b.v, otherDefs(b.id));
       if (r.info) { toast(r.info); return; }

@@ -26,7 +26,7 @@ MatIA.define('ui/graphics-panel', ['core/dom', 'model/schema', 'ui/toast'], (dom
       let fns = ['f(x)=x^2'];
       if (src) { try { R('engine/ops').compileFn(src); fns = [src]; } catch (err) { /* la línea no es una función */ } }
       insertSpecs(after, [{ type: 'graph', fns, xmin: -5, xmax: 5 }], b);
-      if (fns[0] === 'f(x)=x^2' && src !== 'f(x)=x^2') toast('Escribe tu función en el campo «Funciones» de la gráfica (varias separadas por ;).');
+      if (fns[0] === 'f(x)=x^2' && src !== 'f(x)=x^2') toast('Escribe o añade tus funciones en la lista de la gráfica.');
     } else if (k === '3d') {
       let fn = 'z=\\sin(x)\\cos(y)';
       if (src) { try { compile3d(src); if (/y/.test(src)) fn = src; } catch (err) { /* no es f(x, y) */ } }

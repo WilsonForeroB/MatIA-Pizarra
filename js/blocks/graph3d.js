@@ -135,13 +135,15 @@ MatIA.define('blocks/graph3d', ['core/dom', 'model/board', 'blocks/svg-utils', '
       const num = (label, key) => { const l = document.createElement('label'); l.textContent = label + ' '; const i = document.createElement('input'); i.type = 'number'; i.step = 'any'; i.value = b[key]; i.addEventListener('change', () => { const v = parseFloat(i.value); if (Number.isFinite(v)) { b[key] = v; if (b.xmax - b.xmin < 1e-6) b.xmax = b.xmin + 1; if (b.ymax - b.ymin < 1e-6) b.ymax = b.ymin + 1; S.save(); draw(); } }); l.appendChild(i); return l; };
       const reset = document.createElement('button'); reset.type = 'button'; reset.className = 'mi-btn mi-btn--sm'; reset.textContent = 'Vista inicial';
       reset.addEventListener('click', () => { b.az = -0.8; b.el = 0.55; b.zoom = 1; S.save(); draw(); });
-      inner.append(fl, num('x desde', 'xmin'), num('hasta', 'xmax'), num('y desde', 'ymin'), num('hasta', 'ymax'), reset);
+      const zb = (t, title, k) => { const z = document.createElement('button'); z.type = 'button'; z.className = 'mi-btn mi-btn--sm'; z.textContent = t; z.title = title; z.setAttribute('aria-label', title); z.addEventListener('click', () => { b.zoom = Math.max(0.3, Math.min(4, b.zoom * k)); draw(); S.save(); }); return z; };
+      const zgrp = document.createElement('div'); zgrp.className = 'g-zoom'; zgrp.setAttribute('role', 'group'); zgrp.setAttribute('aria-label', 'Zoom');
+      zgrp.append(zb('+', 'Acercar', 1.2), zb('−', 'Alejar', 1 / 1.2));
+      inner.append(fl, num('x desde', 'xmin'), num('hasta', 'xmax'), num('y desde', 'ymin'), num('hasta', 'ymax'), zgrp, reset);
       box.appendChild(inner);
       let drag = null;
       cv3.addEventListener('pointerdown', (e) => { if (body.dataset.mode === 'draw' || e.pointerType === 'pen') return; e.stopPropagation(); drag = { x: e.clientX, y: e.clientY, az: b.az, el: b.el }; cv3.setPointerCapture(e.pointerId); });
       cv3.addEventListener('pointermove', (e) => { if (!drag) return; b.az = drag.az + (e.clientX - drag.x) * 0.01; b.el = Math.max(-1.45, Math.min(1.45, drag.el + (e.clientY - drag.y) * 0.01)); requestAnimationFrame(draw); });
       cv3.addEventListener('pointerup', () => { if (drag) { drag = null; S.save(); } });
-      cv3.addEventListener('wheel', (e) => { e.preventDefault(); b.zoom = Math.max(0.3, Math.min(4, b.zoom * (e.deltaY > 0 ? 0.9 : 1.1))); draw(); clearTimeout(cv3._t); cv3._t = setTimeout(() => S.save(), 400); }, { passive: false });
       new ResizeObserver(() => draw()).observe(cv3);
       redrawers.add(draw);
     }

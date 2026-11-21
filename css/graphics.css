@@ -149,3 +149,15 @@
 .graph .g-legend{display:flex;flex-wrap:wrap;gap:4px 16px;font:400 14px/20px var(--font-serif);color:var(--ink)}
 .graph .g-legend span::before{content:"";display:inline-block;width:18px;height:3px;margin-right:6px;vertical-align:middle;background:var(--sw);border-radius:2px}
 :is(.graph,.g3d) .g-err{color:var(--warning);font:400 13px/20px var(--font-sans)}
+
+/* Lista de funciones y zoom de la gráfica 2D */
+.graph .g-fnlist{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-2);width:100%}
+.graph .g-fn{display:flex;align-items:center;gap:var(--space-2);width:100%}
+.graph .g-fn-sw{flex:none;width:28px;height:10px}
+.graph .g-fn-field{flex:1 1 auto;min-width:0;font-size:16px;color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:2px 8px}
+.graph .g-fn-field:focus-within{outline:2px solid var(--focus-ring);outline-offset:1px}
+.graph .g-fn-rm{flex:none;color:var(--warning)}
+.graph .g-zoom,.g3d .g-zoom{display:flex;flex-wrap:wrap;gap:var(--space-1)}
+.graph .g-range{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-3)}
+@media (max-width:520px){.graph .g-range label{flex:1 1 40%}.graph .g-range input[type=number]{width:100%;box-sizing:border-box}}
+@media print{.graph .g-ctrl,.g3d .g-ctrl{display:none}}
