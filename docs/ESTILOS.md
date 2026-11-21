@@ -33,6 +33,7 @@ Estructura del bloque:
 | `--mod-math-soft` | `#e3ebfa` | Fondo suave del módulo matemáticas |
 | `--on-mod` | `#ffffff` | Texto sobre `--mod-math` |
 | `--data-1` … `--data-8` | `#009b71`, `#0072b2`, `#b87f00`, `#bc6f9a`, `#d55e00`, `#4590ba`, `#7b5ea7`, `#8f8f00` | Series de datos: gráficas, redes, tablas de verdad, colores de trazo (`.sw`) |
+| `--selection` / `--selection-strong` | `#cfe2f6` / `#0072b2` | Selección de texto y bloques en azul. No usar el verde de marca, que es el de la línea activa. |
 | `--warning` | `#a8480c` | Avisos, salto de página, errores, `×` de borrar |
 | `--pio-tile` | `#fff6d6` | Fondo de la mascota Pío |
 | `color-scheme` | `light` | Scrollbars y controles nativos |
@@ -58,6 +59,7 @@ Valores del tema oscuro (iguales en los dos bloques):
 | `--focus-ring` | `#7fe0ae` |
 | `--mod-math` / `--mod-math-soft` / `--on-mod` | `#7fa8f5` / `#14274a` / `#0b1220` |
 | `--data-1` … `--data-8` | `#2fc79a`, `#4aa3df`, `#f5b62e`, `#e59ac3`, `#f0824a`, `#7cc8f2`, `#a58bd4`, `#d6d34a` |
+| `--selection` / `--selection-strong` | `#1e4467` / `#4aa3df` |
 | `--warning` | `#f2a068` |
 | `--pio-tile` | `#fff6d6` (sin cambio) |
 | `color-scheme` | `dark` |

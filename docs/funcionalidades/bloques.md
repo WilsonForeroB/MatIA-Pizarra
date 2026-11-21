@@ -113,6 +113,8 @@ Atajos globales que afectan a bloques (fuera del rango leído, `pizarra.html:802
 
 ## 9. Desarrollo alineado por el «=» (`deriv`) en detalle
 
+**Desde una línea de fórmula** (`deriv.js`, `startDeriv`): cualquier línea `math` se convierte en desarrollo, tenga o no «=». Con «=» el texto se reparte en `l` y `r`; sin «=», todo pasa a `l` y el cursor queda a la derecha para seguir escribiendo. La explicación `note` de la línea (botón 💬, `blocks/editor.js` `makeNote`) pasa a `rows[0].note`.
+
 Datos: `rows[{l, r, note, boxed}]` (ver FORMATO-JSON §4.3).
 
 **Render** `buildDeriv(b, bd, ro)` (4875-4942): crea `div.deriv[role=group]` y una `div.drow` por fila, cada una con 4 celdas hijas directas en una rejilla CSS con variables `--gr`, `--gm`, `--gn` (4939: `--gr`=fila, `--gm`=2i+1, `--gn`=2i+2; sirven al CSS para numerar «3.1, 3.2…»):

@@ -1,6 +1,6 @@
 # Gráficos y bloques visuales
 
-Tipos tratados: `table`, `graph`, `graph3d`, `chart`, `ptree`, `geo`, `venn`, `net`, más el asistente de red neuronal, el asistente de Bayes, el panel «Gráficos» y la exportación como imagen. Todo está en la IIFE de `pizarra.html` (rango 5739-6982). Formato de datos de cada tipo: `docs/FORMATO-JSON.md`; ciclo de vida común (crear, borrar, activar): `docs/funcionalidades/bloques.md`.
+Tipos tratados: `table`, `graph`, `graph3d`, `solid` (§13), `chart`, `ptree`, `geo`, `venn`, `net`, más el asistente de red neuronal, el asistente de Bayes, el panel «Gráficos» y la exportación como imagen. Todo está en la IIFE de `pizarra.html` (rango 5739-6982). Formato de datos de cada tipo: `docs/FORMATO-JSON.md`; ciclo de vida común (crear, borrar, activar): `docs/funcionalidades/bloques.md`.
 
 ## 0. Piezas compartidas
 
@@ -35,20 +35,22 @@ Ninguno de los tipos visuales se edita con el teclado de bloque: el listener cen
 ## 2. `graph` — `buildGraph(b, bd, ro)` (5812-5920)
 
 - **Ve el usuario**: gráfica 2D de hasta 6 funciones con rejilla, ejes, escala automática en Y, leyenda y marcas notables (máx., mín., inflexión, absolutos) con su leyenda.
-- **Controles** (solo si `!ro`, 5895-5917): campos numéricos «x desde / hasta», campo de texto «Funciones» separadas por `;` (máx. 6), **rueda** = zoom sobre X, **arrastrar** = desplazar X (se ignora si el modo es `draw` o es lápiz, 5913).
+- **Controles** (solo si `!ro`, 5895-5917): una lista visible de funciones (un campo por función, «+ Añadir función» hasta 6, × para quitar), campos «x desde / hasta» e «y desde / hasta» (vacíos = automático), y un panel de botones Acercar, Alejar, ←↑↓→ y Ajustar. **La rueda ya no hace zoom**; **arrastrar** desplaza (se ignora si el modo es `draw` o es lápiz, 5913).
+- **Texto plano**: las funciones pasan por `OPS.normalizeFn` (`engine/ops/analisis.js`) antes de `compileFn`, así que `sin x`, `sen x`, `ln x` o `x^(1/2)` funcionan. Ver `operaciones-analisis.md` §5.
+- Capturas: `docs/img/grafica-2d.png`.
 - **Cómo se dibuja**: SVG de viewBox 720×400, `pad=28`. `draw()` (5833-5893):
   1. compila cada función con `OPS.compileFn(src)` (error → mensaje «Aviso: no puedo dibujar…» en `.g-err`);
   2. muestrea 900 puntos; rango Y = percentiles 2%–98% con margen y ajustes para que el eje 0 quede visible; las marcas amplían el rango;
   3. rejilla y ticks con `niceStep`; ejes; curvas como `path` cortando en discontinuidades (saltos > 1,5× el rango) y límites; color `var(--data-<k%6+1>)`, trazo discontinuo por función (`i>0`);
   4. leyenda con la fuente de la función normalizada a texto; marcas con `markPath` y etiquetas que evitan solaparse; anillo para absolutos.
-- **Estado persistente**: `b.fns`, `b.xmin`, `b.xmax` (+ `b.marks`). El Y no se guarda.
+- **Estado persistente**: `b.fns`, `b.xmin`, `b.xmax`, `b.ymin`, `b.ymax` (opcionales, solo si el usuario fija el rango Y) y `b.marks`.
 - **Exportable** (PNG/SVG/copiar).
 - **Particularidades**: el factor `720 / 664` del arrastre (5914) es un número mágico (ancho útil del SVG en pantalla); el zoom con rueda modifica el modelo sin comprobar `xmax>xmin` mínimo.
 
 ## 3. `graph3d` — `compile3d` (5928-5937) y `buildGraph3d(b, bd, ro)` (5938-6064)
 
 - **Ve el usuario**: superficie `z = f(x,y)` sombreada en canvas, caja y ejes, rótulos x/y/z, valores extremos de z, marcas 3D (mín., máx., silla) con línea discontinua a la base y leyenda; pie `g-cap` con la ecuación y los rangos.
-- **Controles** (si `!ro`, 6026-6062): campo «z = f(x, y)», cuatro campos de rango, botón «Vista inicial» (`az=-0.8, el=0.55, zoom=1`), **arrastrar** = rotar (`az`, `el` acotado ±1,45), **rueda** = zoom (0,3–4; guarda con retardo de 400 ms).
+- **Controles** (si `!ro`, 6026-6062): campo «z = f(x, y)», cuatro campos de rango, botón «Vista inicial» (`az=-0.8, el=0.55, zoom=1`), **arrastrar** = rotar (`az`, `el` acotado ±1,45), botones **+** y **−** para acercar y alejar (la rueda ya no hace zoom; antes sí).
 - **Cómo se dibuja**: `<canvas>` 2D propio (sin WebGL). `draw(expScale)` (5958-6024): malla 38×38, normaliza z al percentil 1–99, proyecta con rotación `az`/`el` (`P(X,Y,Z)`), ordena cuadriláteros por profundidad (algoritmo del pintor), colorea con degradado `data-2 → data-1 → data-3` y sombreado según la normal en pantalla; usa `cssVar` para colores del tema. `dpr` incluye `expScale` para exportar a doble resolución.
 - **Compilación**: `compile3d(src)` quita el prefijo `z=`/`f(x,y)=`, parsea con `OPS.parseExpr(rhs,{var:'x'})`, comprueba que solo haya variables `x` e `y` (si no, `ME.MErr`) y evalúa con `OPS.evalNum(ast,{x,y})`; `latex = OPS.L(ast)`.
 - **Ciclo de vida**: registra `draw` en `redrawers` (tema) y un `ResizeObserver` por bloque que **nunca se desconecta** (6063); `draw` se da de baja de `redrawers` cuando `!box.isConnected` (5960). `cv3._draw = draw` lo usa la exportación.
@@ -140,6 +142,16 @@ En los casos por defecto lanza un `toast` que explica dónde escribir la funció
 - **Acoplamientos**: depende de nombres de **clases CSS** de cada tipo (`.c-title`, `.g-legend span`, `.mk-legend span`, `.v-res`, `.g3d .g-cap`, `.ptree`, y el selector `.graph svg, .net svg, .venn svg, .chart svg, .ptree svg, .geo svg`, 6215), de `openPop/showPop/closePop` (5516-5539), de `isDark`, `root`, `refreshColors`, `cssVar` y `toast`.
 
 ---
+
+## 13. `solid` — sólido de revolución (`js/blocks/solid.js`, `js/blocks/canvas3d.js`)
+
+- **Ve el usuario**: en vertical, el perfil 2D de y = f(x) entre `a` y `b` con la recta de giro (`.sol-profile`), debajo el sólido 3D que gira (`.sol-wrap`, canvas) con botones de zoom, y al final el volumen con su integral y el método (`.sol-vol`). Captura: `docs/img/solido-revolucion.png`.
+- **Controles** (si `!ro`): campo de la función, campos `a` y `b`, selector de eje (`x`, `y`, `y = k`, `x = k`) con campo `k` visible solo para las rectas, **arrastrar** para girar la vista (`az`, `el`) y botones **+ / −** de zoom.
+- **Volumen**: `volume(F, b)` integra numéricamente con Simpson (1000 subintervalos). Si el giro es horizontal (`x` o `y = k`) usa discos o arandelas, `π∫(f−k)²`; si es vertical (`y` o `x = k`) usa capas cilíndricas, `2π∫|x−k|·|f|`. `exactVolume` intenta el valor exacto con `OPS.integralLine` (p. ej. `8π`), y en capas solo si `x−k` y `f` no cambian de signo en `[a, b]`; si no puede, muestra el aproximado.
+- **Canvas 3D**: `canvas3d.js` es un proyector 2D propio (`c3.projector({az, el, zoom, W, H, k})`), compartido por el sólido; no usa WebGL.
+- **Sin pizarra**: `solid.js` no requiere `model/board`; usa `MatIA.require` con enlace tardío. **Debe cargarse antes que `model/board.js`** (el saneador de `solid` tiene que estar registrado al crearse el tablero).
+- **Menú**: Gráficos ▾ → «Sólido de revolución».
+- **Estado**: `fn`, `a`, `b`, `axis`, `k`, `az`, `el`, `zoom` (ver `FORMATO-JSON.md` §4.12).
 
 ## Acoplamientos problemáticos (gráficos)
 

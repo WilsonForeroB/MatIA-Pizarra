@@ -79,13 +79,14 @@ Tipos de bloque:
 | `text` | Línea de texto. |
 | `deriv` | Desarrollo alineado por el «=»: filas con lado izquierdo `l`, lado derecho `r` y explicación `note`. |
 | `table` | Tabla de Ruffini, de verdad o de valores. |
-| `graph` | Gráfica 2D de una o varias funciones, con `marks` opcionales (máximos, mínimos, inflexión, absolutos). |
+| `graph` | Gráfica 2D de una o varias funciones (`fns`), con `xmin`/`xmax` y `ymin`/`ymax` opcionales (vacíos = automático) y `marks` opcionales (máximos, mínimos, inflexión, absolutos). |
 | `graph3d` | Superficie z = f(x, y) con su rango, su vista (`az`, `el`, `zoom`) y `marks` opcionales (mínimos, máximos, puntos de silla). |
 | `chart` | Gráfico estadístico: `kind` = `bars` (barras, con `hi` resaltadas), `box` (diagrama de caja) o `normal` (campana con el área entre `a` y `b`). |
 | `ptree` | Árbol de probabilidad: causas con `p`, `l` = P(suceso \| causa) y los productos de cada camino. |
 | `geo` | Dibujo de trigonometría y geometría: `kind` (`unit` circunferencia goniométrica con `deg` y `label`, `unitAll` ángulos notables, `tri` triángulo con `a`, `b`, `c`, `A`, `B`, `C`, `lines` rectas `lines[{a,b,c,name,dash}]` (ax + by + c = 0) y puntos `points[{x,y,name,kind}]`, `transv` paralelas y secante con `deg`). |
 | `venn` | Diagrama de Venn: `n` (2 o 3), `expr` (expresión sombreada) o `shade` (zonas elegidas a mano, como máscaras A = 1, B = 2, C = 4) y `showEls`. |
 | `net` | Grafo: `nodes` (con `label`, `x`, `y` y tipo de capa), `edges` (con peso opcional `w`), `directed` y rótulos de capa `caps`. |
+| `solid` | Sólido de revolución: `fn`, `a`, `b`, `axis` (`x`, `y`, `y=k` o `x=k`), `k`, y la vista `az`, `el`, `zoom`. |
 
 `strokes` guarda el dibujo a mano alzada de cada página. Los archivos antiguos sin `app` ni `formato` también se abren.
 
@@ -98,8 +99,10 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 - **+ Nueva línea**: en la barra y al final de la página (útil con lápiz o pantalla táctil). Intro sigue funcionando igual.
 - **Duplicar** (⧉, botón «Duplicar» o **Ctrl+D**): copia la línea activa justo debajo (fórmulas, textos, tablas, gráficas, desarrollos…). Dentro de un desarrollo, ⧉ o Ctrl+D duplican solo ese paso.
 - **Menús**: Matriz, Sistema, Desarrollo, **Símbolos ▾** (básicos —potencia, subíndice, fracción, raíz, paréntesis, traspuesta, inversa, flecha de paso—, lógica, conjuntos, números, relaciones, operaciones, flechas, probabilidad, **trigonometría y geometría** —°, ′, ″, sen, tg, ∠, △, ∥, ⊥, Pitágoras, teoremas del seno y del coseno, Herón, fórmulas de suma y de ángulo doble, distancias— y griegas) y **Cálculo ▾** (derivadas, integrales y límites). Los símbolos van todos dentro de los desplegables para que la barra no ocupe espacio.
-- **Desarrollo** (Alt+L): pasos alineados por el «=» con explicación a la derecha. Intro copia la fila anterior para editar solo lo que cambia.
-- **Calcular** (Ctrl+=) actúa sobre la línea en la que escribes.
+- **Desarrollo** (Alt+L): pasos alineados por el «=» con explicación a la derecha. Intro copia la fila anterior para editar solo lo que cambia. Convierte **cualquier línea de fórmula**, tenga o no «=».
+- **Explicación en la línea**: el botón 💬 de una línea de fórmula añade una explicación a su derecha, en la misma línea.
+- **Selección en azul**: para no confundirla con el verde de la línea activa.
+- **Calcular** (Ctrl+=) actúa sobre la línea en la que escribes. Con una integral (`\int f\,dx` o `\int_a^b f\,dx`) escribe la primitiva + C o el valor de la integral definida.
 - **Operaciones ▾**: al elegir una operación aparece la barra **«Elige la línea»** y la pizarra lo muestra en color:
   - las líneas que sirven parpadean con un borde de color y las que no (gráficas, tablas…) se atenúan;
   - la línea activa queda resaltada con la etiqueta «↵ Línea N», y la barra dice «Vas a aplicar «…» a la línea N»;
@@ -123,11 +126,12 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 | Lógica y conjuntos | Tabla de verdad con su clasificación; unión, intersección, diferencia, complementario, partes y producto cartesiano; **diagrama de Venn** de la expresión de la línea. |
 | Trigonometría | **Convertir ángulos**: `150°`, `35°20′15″`, `\frac{5\pi}{6}` o `2.5 rad` (varios separados por comas dan una tabla); grados ↔ radianes exactos con π, grados-minutos-segundos y ángulo coterminal. **Razones trigonométricas** de `\sin 150°`, `210°` o `\cos\frac{5\pi}{3}`: cuadrante, ángulo de referencia, valores exactos (múltiplos de 15°), tabla de las seis razones y circunferencia goniométrica con seno, coseno y tangente. **Tabla de ángulos notables** de 0° a 360° (no necesita línea). |
 | Geometría | **Resolver triángulos** `a=5, b=7, C=60°` con los teoremas del seno y del coseno: LLL, LAL, ALA/AAL y el caso ambiguo LLA (0, 1 o 2 triángulos), con área, perímetro, tipo y dibujo. **Rectas**: dos rectas (`2x+3y-6=0, y=2x+1`) dan la posición relativa (secantes, perpendiculares, paralelas o coincidentes), el punto de corte, el ángulo y la distancia entre paralelas; una recta y un punto (`3x+4y=10, P=(1,6)`) dan la distancia, la paralela y la perpendicular por el punto y el pie de la perpendicular; dos puntos (`A=(1,2), B=(4,6)`) dan la recta, la distancia y el punto medio. **Paralelas cortadas por una secante** `65°`: los 8 ángulos y sus relaciones. Todo con su dibujo. |
-| Cálculo | Derivada con las reglas aplicadas; **máximos y mínimos de f(x)** (puntos críticos, clasificación con f″ o con el signo de f′, puntos de inflexión, tabla de crecimiento, extremos absolutos en ±∞ o en un intervalo `x∈[a,b]` y gráfica con los puntos marcados); **extremos de f(x, y)** (gradiente, puntos críticos, hessiana y clasificación en mínimo, máximo o punto de silla, con la superficie 3D marcada); gráfica de funciones y tabla de valores. |
+| Cálculo | Derivada con las reglas aplicadas; **máximos y mínimos de f(x)** (puntos críticos, clasificación con f″ o con el signo de f′, puntos de inflexión, tabla de crecimiento, extremos absolutos en ±∞ o en un intervalo `x∈[a,b]` y gráfica con los puntos marcados); **extremos de f(x, y)** (gradiente, puntos críticos, hessiana y clasificación en mínimo, máximo o punto de silla, con la superficie 3D marcada); gráfica de funciones y tabla de valores. **Integrales**: `\int f\,dx` da la primitiva + C y `\int_a^b f\,dx` la regla de Barrow (exacta o aproximada); **Integral paso a paso** (Operaciones ▾ → Cálculo) muestra los pasos. |
 
 - **Gráficos ▾**:
-  - **Gráfica 2D**: funciones y = f(x); usa la función de la línea activa y admite varias separadas por `;`. Se acerca con la rueda y se mueve arrastrando.
-  - **Gráfica 3D**: superficies z = f(x, y), coloreadas de bajo a alto. Se gira arrastrando, se acerca con la rueda y se cambian la función y los rangos de x e y.
+  - **Gráfica 2D**: funciones y = f(x), una por campo, con «+ Añadir función» (hasta 6) y × para quitar. Acepta texto plano (`sin x`, `sen x`, `ln x`, `x^(1/2)`). Los botones Acercar, Alejar, ←↑↓→ y Ajustar mueven la vista, y los campos «x desde/hasta» e «y desde/hasta» fijan el rango (vacíos = automático). La rueda ya no hace zoom.
+  - **Gráfica 3D**: superficies z = f(x, y), coloreadas de bajo a alto. Se gira arrastrando, se acerca y se aleja con los botones + y −, y se cambian la función y los rangos de x e y.
+  - **Sólido de revolución**: perfil 2D y sólido 3D que gira, con su volumen (exacto, p. ej. 8π, o aproximado) y el método usado (discos, arandelas o capas).
   - **Grafo**: herramientas Mover, Nodo (clic en un hueco), Arista (arrastrar de un nodo a otro) y Borrar. Doble clic para renombrar un nodo o poner peso a una arista. Puede ser dirigido o no, y el botón **Matriz de adyacencia** añade la matriz y los grados debajo.
   - **Diagrama de Venn**: 2 o 3 conjuntos (A, B, C) dentro del universal U. Escribe la expresión (A ∩ B, A ∪ B, A ∖ B, Aᶜ, (A ∪ B)ᶜ, A Δ B…) con el teclado o con sus botones y se sombrea su zona, con color y rayado. Si en la página has definido `A = {…}`, `B = {…}`, `C = {…}` o `U = {…}`, cada elemento aparece en su zona y debajo sale el conjunto resultado. Con un clic en una zona la sombreas o la quitas a mano.
   - **Asistente de red neuronal**: escribe las neuronas por capa (por ejemplo `3, 4, 4, 2`) y monta el grafo por capas: entradas x₁…, ocultas h¹₁… y salidas ŷ₁…, con sesgo (+1) y pesos w opcionales. También está en el grafo, con el botón «Red neuronal…».
@@ -147,12 +151,13 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 - Trigonometría: no resuelve todavía ecuaciones trigonométricas ni arcoseno o arcocoseno de un valor; la geometría es del plano (2D).
 - La discusión con parámetro admite un parámetro y sistemas cuadrados.
 - Los autovalores irracionales se dan con la fórmula exacta en el caso de grado 2. En grados mayores solo se buscan raíces racionales.
+- Integrales: no integra productos de funciones (x·sen x), cocientes racionales generales ni sustituciones no lineales; sí polinomios, potencias, exponenciales, trigonométricas, 1/x, 1/(1+u²), 1/√(1−u²) y ln(ax+b), con argumento lineal.
 
 ## Desarrollo
 
 - Código modular sin compilación: scripts clásicos registrados con `MatIA.define` (funciona con `file://`). Ver [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 - Estilos: [`docs/ESTILOS.md`](docs/ESTILOS.md). Formato de las clases: [`docs/FORMATO-JSON.md`](docs/FORMATO-JSON.md). Fichas por funcionalidad: [`docs/funcionalidades/`](docs/funcionalidades/).
-- Pruebas (opcionales, con Node y Playwright): `node tests/golden/run.js compare index.html`, `node tests/e2e.js legacy/pizarra.html index.html` y `node tests/storage.js`.
+- Pruebas (opcionales, con Node y Playwright): `node tests/golden/run.js compare index.html`, `node tests/e2e.js legacy/pizarra.html index.html`, `node tests/storage.js`, `node tests/engine-features.js` (normalización de funciones e integrales, sin navegador), `node tests/features.js` (gráfica 2D, explicación en la línea, Desarrollo, integrales y sólidos) y `node tests/solid.js` (sólido de revolución).
 - No guarda credenciales ni datos personales. El historial vive solo en la carpeta local de quien la usa.
 
 ## Autoría y derechos

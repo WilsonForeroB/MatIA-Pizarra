@@ -70,6 +70,7 @@ Orden de despacho en `sanitize`: `deriv`, `table`, `graph3d`, `chart`, `ptree`, 
 | --- | --- | --- | --- |
 | `v` | string LaTeX | `''` | Valor del `math-field` (`getValue('latex')`). |
 | `result` | boolean | `false` | `true` si la línea la creó una operación (`specToBlock`, 7083): se pinta con clase `is-result`. Se pone a `false` en cuanto el usuario edita (4856). |
+| `note` | string | — | Explicación de la línea, a la derecha de la fórmula (botón 💬, `blocks/editor.js` `makeNote`). Se elimina al vacía el campo. Al convertir la línea en desarrollo (`deriv.js`) pasa a `rows[0].note`. |
 
 ### 4.2 `text` (línea de texto)
 
@@ -116,9 +117,11 @@ Validación 4658-4661.
 | `fns` | `string[]` (máx. 6) | `[]` | Funciones en LaTeX o `f(x)=...`; se compilan con `OPS.compileFn`. |
 | `xmin` | número | `-5` | Se fuerza `xmin ≤ xmax − 0.001`. |
 | `xmax` | número | `5` | |
+| `ymin` | número\|ausente | automático | Opcional. Rango vertical fijo; solo se usa si `ymin < ymax`. Ausente = automático. |
+| `ymax` | número\|ausente | automático | Opcional. Igual que `ymin`. |
 | `marks` | `mark[]` (máx. 40) | `[]` | `cleanMarks(x.marks,false)`. |
 
-`mark` 2D: `{ x:number, y:number, kind, label }`; `kind` ∈ `min, max, absmin, absmax, infl, saddle, deg` (`MARK_KINDS`, 4585); `label` string máx. 40. Marcas con `x`/`y` no finitas o `kind` ajeno se descartan. El rango Y **no se guarda**: se calcula al dibujar.
+`mark` 2D: `{ x:number, y:number, kind, label }`; `kind` ∈ `min, max, absmin, absmax, infl, saddle, deg` (`MARK_KINDS`, 4585); `label` string máx. 40. Marcas con `x`/`y` no finitas o `kind` ajeno se descartan. El rango Y **solo se guarda si lo fija el usuario** (`ymin`/`ymax`); si no, se calcula al dibujar.
 
 ### 4.6 `graph3d`
 
@@ -214,7 +217,24 @@ Validación 4649-4657.
 | `directed` | boolean | `false` | Flechas. |
 | `h` | número 260–1200 | `420` | Alto del viewBox. |
 
-### 4.12 Tipos que `sanitize` NO trata como bloque propio
+### 4.12 `solid` (sólido de revolución)
+
+Saneado en `js/blocks/solid.js` (`model/schema.register('solid', …)`). Si `a ≥ b`, se usa `a = 0`, `b = 4`.
+
+| Campo | Tipo | Defecto | Significado |
+| --- | --- | --- | --- |
+| `fn` | string | `'f(x)=\\sqrt{x}'` | Perfil y = f(x), en LaTeX o texto plano (pasa por `normalizeFn`). |
+| `a`, `b` | número | `0`, `4` | Intervalo de integración. |
+| `axis` | `'x'`\|`'y'`\|`'y=k'`\|`'x=k'` | `'x'` | Eje o recta de giro. `k` solo se usa con `y=k` y `x=k`. |
+| `k` | número | `0` | Posición de la recta de giro (`y = k` o `x = k`). |
+| `az`, `el` | número (rad) | `-0.8`, `0.5` | Vista 3D (azimut y elevación). |
+| `zoom` | número | `1` | Zoom de la vista 3D. |
+
+Ejemplo: `{ "type": "solid", "fn": "f(x)=x^2", "a": 0, "b": 2, "axis": "x", "az": -0.8, "el": 0.5, "zoom": 1 }`.
+
+El volumen no se guarda: se recalcula al dibujar (discos o arandelas si el giro es horizontal, capas cilíndricas si es vertical).
+
+### 4.13 Tipos que `sanitize` NO trata como bloque propio
 
 Cualquier otro `type` se carga como `math` con `v` (si es string) y `result`. Los campos extra de un bloque se **descartan** (`Object.assign(base, {...})` solo copia lo listado).
 

@@ -15,7 +15,7 @@ index.html              ← único punto de ensamblado: HTML + <link> de estilos
 css/                    ← estilos (orden de carga = orden de la cascada original)
   tokens.css            · colores, tipografía, espacios (claro/oscuro)
   components/matia.css  · componentes mi-* del sistema de diseño
-  layout.css · blocks.css · components/{popovers,dialogs,tools}.css · graphics.css · print.css · responsive.css
+  layout.css · blocks.css · components/{popovers,dialogs,tools}.css · graphics.css · solid.css · print.css · responsive.css
 js/
   core/                 ← infraestructura, sin lógica de la pizarra
     namespace.js        · cargador MatIA.define / MatIA.require / MatIA.start
@@ -27,12 +27,14 @@ js/
     board.js            · estado único (S.board), autoguardado en localStorage, toJSON
   engine/               ← motor matemático puro (sin DOM): se prueba en Node
     core/*.js + core.js · fracciones BigInt, tokenizador LaTeX, parser, Gauss y sistemas  → 'engine/core'
-    ops/*.js  + ops.js  · operaciones paso a paso por tema                               → 'engine/ops'
+    ops/*.js  + ops.js  · operaciones paso a paso por tema (p. ej. ops/integrales.js)     → 'engine/ops'
   blocks/               ← tipos de bloque
     registry.js         · registro de tipos visuales
     editor.js           · ciclo de vida de líneas (math/text), página, foco, arrastre
     deriv.js            · desarrollo alineado por el «=»
     table, graph, graph3d, chart, ptree, geo, venn, net .js · un fichero por tipo, se registran solos
+    solid.js            · sólido de revolución (perfil 2D, volumen y dibujo 3D)
+    canvas3d.js         · proyector 2D compartido por graph3d y solid (sin WebGL)
     svg-utils.js        · ayudas SVG comunes
   ui/                   ← interfaz
     state.js            · estado de interfaz compartido (línea activa, celda activa, …)
@@ -102,6 +104,7 @@ Las ventanas del sistema que no se pueden decorar (elegir carpeta, conceder perm
 - **Un tipo de bloque**: crea `js/blocks/mi-tipo.js` con `registry.register({ type: 'mi-tipo', build(b, bd, ro) {…}, exportable: true })`,
   añade su limpieza con `schema.register('mi-tipo', (x, base) => …)` (o en `SANITIZERS` de `model/schema.js`), su CSS en `css/` y
   su `<script>` en `index.html` **antes** de `blocks/editor.js`. Documenta el formato en `docs/FORMATO-JSON.md`.
+  Excepción de orden: `solid.js` (y `canvas3d.js`, que necesita) debe cargarse **antes** de `model/board.js`, porque el saneador de `solid` se registra al crearse el tablero.
 - **Una operación del motor**: añade la función en el `engine/ops/<tema>.js` adecuado, expórtala en `engine/ops.js`, y añádela al menú en `ui/ops-menu.js`.
   Añade un caso a `tests/golden/cases.js` y regenera la referencia.
 - **Un estilo**: usa los tokens de `css/tokens.css` (ver `docs/ESTILOS.md`).
@@ -116,6 +119,9 @@ Requieren Node y Playwright (no hacen falta para usar la pizarra).
 | `node tests/golden/run.js compare index.html` | Motor + render de todos los tipos de bloque idénticos a la referencia. |
 | `node tests/e2e.js legacy/pizarra.html index.html` | Un recorrido de uso da el mismo estado en el prototipo y en la versión modular. |
 | `node tests/storage.js` | Flujos de carpeta (cualquier carpeta, ventanas con estilo, guardar, abrir, borrar, solo lectura). |
+| `node tests/engine-features.js` | Sin navegador: `normalizeFn` (texto plano) e integrales (primitiva, Barrow, casos no soportados). |
+| `node tests/features.js` | Gráfica 2D (funciones, rango Y, sin zoom con la rueda), explicación en la línea, Desarrollo desde cualquier línea, integrales y sólido desde el menú. |
+| `node tests/solid.js` | Bloque «sólido de revolución» (perfil, volumen, vista 3D). |
 
 `tests/golden/expected.json` se generó con el prototipo (`node tests/golden/run.js record legacy/pizarra.html`).
 Si cambias el comportamiento a propósito, regenera la referencia con `record index.html` y revisa el diff.

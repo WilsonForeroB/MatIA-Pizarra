@@ -91,6 +91,22 @@ Exportados: `parseExpr, L, simpAll, D, evalNum, compileFn, P, rationalRoots` (`p
 
 ---
 
+## 5. Normalización de funciones (`normalizeFn`, `js/engine/ops/analisis.js`)
+
+`normalizeFn(src)` convierte texto plano o variantes en LaTeX que entiende `parseExpr`: `sen x`/`sin(x)`, `tg`, `ctg`, `cosec`, `raiz`, `pi`, `sqrt(x)`, `exp(u)`, `abs(x)`, `x^(1/2)`, `x^-2`. No toca el LaTeX ya válido. La usan la gráfica 2D (`blocks/graph.js`), el sólido (`blocks/solid.js`) y la integración. Pruebas: `node tests/engine-features.js`.
+
+## 6. Integrales (`js/engine/ops/integrales.js`)
+
+Expone `integrate(ast, v, rules)`, `integralLine(latex)` e `integralSteps(latex)`.
+
+- **Calcular** (Ctrl+=, `ui/calc.js`): si la línea empieza por `\int`, sustituye la línea por el resultado.
+  - Indefinida `\int f\,dx` → primitiva + C.
+  - Definida `\int_a^b f\,dx` → regla de Barrow, exacta si puede o aproximada (`\approx`) con Simpson.
+- **Operaciones ▾ → Cálculo → «Integral paso a paso»** (`ops-menu.js`, `integralSteps`): reglas aplicadas, primitiva + C y, si es definida, la regla de Barrow.
+- **Qué integra**: polinomios, potencias y raíces, `1/x`, `e^u`, `a^u`, `sin`, `cos`, `tan`, `cot`, `sinh`, `cosh`, `sec²`, `csc²`, `1/(1+u²)`, `1/√(1−u²)`, `sin²`, `cos²`, `ln(ax+b)`, con argumento lineal `u = ax+b`.
+- **Qué no integra**: productos de funciones (`x·sin x`), cocientes racionales generales y sustituciones no lineales. Responde «No sé integrar esta función de forma exacta.».
+- Cada primitiva se comprueba derivándola.
+
 ## Propuesta de módulos (este grupo)
 
 | Fichero | Líneas | Contenido |
