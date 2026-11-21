@@ -33,6 +33,7 @@ MatIA.define('ui/print', ['core/dom', 'model/board', 'ui/state'], (dom, S, st) =
           R('blocks/editor').configureField(mf);
           bd.appendChild(mf);
           mf.value = b.v;
+          if (b.note) bd.appendChild(R('blocks/editor').makeNote(b, true));
         } else {
           const t = document.createElement('div');
           t.className = 'blk-text';

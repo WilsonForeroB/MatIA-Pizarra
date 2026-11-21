@@ -180,19 +180,19 @@ MatIA.define('blocks/deriv', ['core/dom', 'model/board', 'model/schema', 'ui/sta
       return;
     }
     if (b && b.type === 'math') {
+      // cualquier línea de fórmula se convierte en desarrollo: con «=» se reparte en los dos lados;
+      // sin «=» la expresión pasa al lado izquierdo y se sigue escribiendo a la derecha
       const sp = b.v.trim() ? splitTopEq(b.v) : null;
-      if (!b.v.trim() || sp) {
-        b.type = 'deriv';
-        b.rows = [sp ? schema.newRow(sp[0], sp[1]) : schema.newRow()];
-        delete b.v; delete b.result;
-        b.boxed = false;
-        const old = elById(b.id);
-        old.replaceWith(makeBlockEl(b));
-        hidePio();
-        S.save();
-        focusCell(b.id, 0, sp ? 'r' : 'l', 'end');
-        return;
-      }
+      b.type = 'deriv';
+      b.rows = [sp ? schema.newRow(sp[0], sp[1], b.note || '') : schema.newRow(b.v.trim(), '', b.note || '')];
+      delete b.v; delete b.result; delete b.note;
+      b.boxed = false;
+      const old = elById(b.id);
+      old.replaceWith(makeBlockEl(b));
+      hidePio();
+      S.save();
+      focusCell(b.id, 0, sp || b.rows[0].l ? 'r' : 'l', 'end');
+      return;
     }
     const nb = schema.newDeriv();
     addBlockAfter(b ? b.id : null, nb, false);

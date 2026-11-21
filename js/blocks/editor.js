@@ -17,7 +17,8 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
   /* ---------------- Bloques ---------------- */
   const blockById = (id) => S.page().blocks.find((b) => b.id === id);
   const elById = (id) => blocksEl.querySelector('.blk[data-id="' + id + '"]');
-  const fieldOf = (el) => el && (el.querySelector('math-field') || el.querySelector('.blk-text'));
+  // campo principal de la línea; los math-field auxiliares (data-aux: funciones de gráficas, sólidos…) no cuentan
+  const fieldOf = (el) => el && (el.querySelector('math-field:not([data-aux])') || el.querySelector('.blk-text'));
 
   function configureField(mf) {
     mf.smartFence = true;
@@ -30,6 +31,24 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
         RR: '\\mathbb{R}', NN: '\\mathbb{N}', ZZ: '\\mathbb{Z}', QQ: '\\mathbb{Q}', CC: '\\mathbb{C}', lam: '\\lambda', pp: '\\partial',
       });
     } catch (e) { /* opción no disponible */ }
+  }
+
+  /* Explicación de una línea de fórmula (campo b.note), con el estilo de las notas del desarrollo. */
+  function makeNote(b, ro) {
+    const n = document.createElement('div');
+    n.className = 'blk-note';
+    n.textContent = b.note || '';
+    if (ro) return n;
+    n.contentEditable = 'true';
+    n.setAttribute('role', 'textbox');
+    n.setAttribute('aria-label', 'Explicación de la línea');
+    n.dataset.ph = 'Explicación…';
+    n.addEventListener('input', () => { b.note = n.innerText.replace(/\n$/, ''); S.save(); });
+    n.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey || e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); focusBlock(b.id, 'end'); }
+    });
+    n.addEventListener('blur', () => { if (!n.textContent.trim()) { delete b.note; n.remove(); S.save(); } });
+    return n;
   }
 
   function makeBlockEl(b) {
@@ -71,6 +90,18 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
       ex.addEventListener('click', (e) => { e.stopPropagation(); openExport(b, el, ex); });
       el.appendChild(ex);
     }
+    if (b.type === 'math') {
+      // explicación en la misma línea (a la derecha de la fórmula), sin crear una línea nueva
+      const nb = document.createElement('button');
+      nb.type = 'button';
+      nb.className = 'x-del blk-del blk-dup blk-note-btn';
+      nb.textContent = '💬';
+      nb.title = 'Añadir una explicación a la derecha de esta fórmula';
+      nb.setAttribute('aria-label', 'Añadir explicación a la línea');
+      nb.addEventListener('mousedown', (e) => e.preventDefault());
+      nb.addEventListener('click', () => { const n = bd.querySelector('.blk-note') || bd.appendChild(makeNote(b)); n.focus(); });
+      el.appendChild(nb);
+    }
     const du = document.createElement('button');
     du.type = 'button';
     du.className = 'x-del blk-del blk-dup';
@@ -104,6 +135,7 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
       configureField(mf);
       bd.appendChild(mf);
       mf.value = b.v;
+      if (b.note) bd.appendChild(makeNote(b));
       mf.addEventListener('input', () => { b.v = mf.getValue('latex'); b.result = false; el.classList.remove('is-result'); hidePio(); S.save(); });
       mf.addEventListener('move-out', (e) => {
         const d = e.detail.direction;
@@ -288,7 +320,7 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
 
   /* ---------------- Teclado dentro de las líneas ---------------- */
   blocksEl.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'svg' || e.target.closest('.net,.g3d,.graph,.venn,.chart,.ptree,.geo')) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'svg' || e.target.closest('.net,.g3d,.graph,.venn,.chart,.ptree,.geo,.solid,[data-aux],.blk-note')) return;
     const el = e.target.closest && e.target.closest('.blk');
     if (!el) return;
     const id = el.dataset.id, b = blockById(id);
@@ -365,5 +397,5 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
     dragId = null;
     $$('.drop-before,.drop-after', blocksEl).forEach((x) => x.classList.remove('drop-before', 'drop-after'));
   });
-  return { blockById, elById, fieldOf, configureField, makeBlockEl, syncBlock, renderPage, isPageEmpty, maybePio, hidePio, setActive, focusBlock, focusSibling, addBlockAfter, deleteBlock, moveBlock, activeBlock, activeField };
+  return { blockById, elById, fieldOf, configureField, makeNote, makeBlockEl, syncBlock, renderPage, isPageEmpty, maybePio, hidePio, setActive, focusBlock, focusSibling, addBlockAfter, deleteBlock, moveBlock, activeBlock, activeField };
 });
