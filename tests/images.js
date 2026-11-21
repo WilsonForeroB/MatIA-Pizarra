@@ -122,11 +122,12 @@ const MOCK = () => {
   ok((await page.locator('.img-blk .img-miss:visible').count()) === 2, 'sin carpeta muestra «Imagen no encontrada…»');
   ok((await page.locator('.img-miss button', { hasText: 'Historial' }).first().isVisible()), 'el marcador tiene botón para abrir el Historial');
   await page.locator('.img-miss button', { hasText: 'Historial' }).first().click();
-  await page.keyboard.press('Escape');
+  ok(await page.waitForFunction(() => document.getElementById('hist').open, null, { timeout: 3000 }).then(() => true, () => false), 'el botón del marcador abre el Historial');
+  await page.evaluate(() => document.getElementById('hist').close());
   await page.evaluate(async () => { const h = await window.showDirectoryPicker(); await MatIA.require('storage/history').useFolder(MatIA.require('storage/folders').fromHandle(h)); });
   await page.evaluate(() => { const d = document.getElementById('hist'); if (d.open) d.close(); });
-  await page.locator('.img-miss button', { hasText: 'Reintentar' }).first().click();
-  await page.waitForFunction(() => { const i = document.querySelector('.img-blk img'); return i && i.complete && i.naturalWidth === 400; }, null, { timeout: 5000 }).then(() => ok(true, 'con la carpeta restaurada la imagen se muestra'), () => ok(false, 'imagen no se muestra tras restaurar'));
+  // al conectar la carpeta, las imágenes de la página se recargan solas (sin pulsar «Reintentar»)
+  await page.waitForFunction(() => { const i = document.querySelector('.img-blk img'); return i && i.complete && i.naturalWidth === 400; }, null, { timeout: 5000 }).then(() => ok(true, 'con la carpeta restaurada la imagen se muestra sola'), () => ok(false, 'imagen no se muestra tras restaurar'));
   // 5) 3000 px -> 1600
   await mkPng(3000, 2000, '#cc3322');
   const r = await page.evaluate(async () => MatIA.require('storage/assets').store(window.__png['#cc3322']));

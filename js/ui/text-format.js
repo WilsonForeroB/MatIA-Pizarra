@@ -203,14 +203,24 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
     const z = st.zoomF || 1;
     bar.hidden = false;
     const bh = bar.offsetHeight, bw = bar.offsetWidth, sw = sheet.clientWidth;
+    // si no cabe encima (primera línea de la hoja), se hace sitio desplazando la línea hacia abajo
+    // en vez de poner la barra debajo, donde taparía la línea siguiente
+    const blk = host.closest('.blk');
     let top = (hr.top - sr.top) / z - bh - 6;
-    if (top < 0) top = (hr.bottom - sr.top) / z + 6;
+    if (top < 0 && blk) {
+      const push = Math.ceil(-top + 4);
+      if (shifted !== blk) { if (shifted) shifted.style.marginTop = ''; shifted = blk; }
+      blk.style.marginTop = (parseFloat(blk.style.marginTop) || 0) + push + 'px';
+      top = (host.getBoundingClientRect().top - sr.top) / z - bh - 6;
+    }
     let left = (hr.left - sr.left) / z;
     left = Math.max(4, Math.min(left, sw - bw - 4));
     bar.style.top = top + 'px';
     bar.style.left = left + 'px';
   }
+  let shifted = null; // línea desplazada para dejar sitio a la barra
   function hide() {
+    if (shifted) { shifted.style.marginTop = ''; shifted = null; }
     bar.hidden = true;
     host = null;
     bar.querySelectorAll('.tf-pop').forEach((p) => { p.hidden = true; });

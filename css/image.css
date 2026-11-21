@@ -15,3 +15,6 @@
 .img-blk .img-miss[hidden],.img-blk .img-frame[hidden]{display:none}
 @media (max-width:560px){.img-blk{min-width:0}}
 @media print{.img-blk{break-inside:avoid}.img-blk .img-grip,.img-blk .img-alt{display:none}}
+
+/* Hoja mientras se arrastra una imagen encima */
+#sheet.img-drop{outline:3px dashed var(--accent);outline-offset:-6px}

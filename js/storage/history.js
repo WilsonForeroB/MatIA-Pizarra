@@ -48,6 +48,8 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
       folder = f; pending = null;
       setStatus();
       await listHist();
+      // las imágenes de la página que no se podían leer sin carpeta se cargan ahora
+      if (S.page().blocks.some((x) => x.type === 'image')) R('blocks/editor').renderPage();
       return true;
     }
 
