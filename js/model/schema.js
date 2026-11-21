@@ -34,7 +34,11 @@ MatIA.define('model/schema', [], () => {
     },
     graph3d(x, base) {
     const num = (v, d) => (Number.isFinite(+v) ? +v : d);
-    return Object.assign(base, { type: 'graph3d', marks: cleanMarks(x.marks, true), fn: typeof x.fn === 'string' ? x.fn : 'z=x^2-y^2', xmin: num(x.xmin, -3), xmax: num(x.xmax, 3), ymin: num(x.ymin, -3), ymax: num(x.ymax, 3), az: num(x.az, -0.8), el: num(x.el, 0.55), zoom: num(x.zoom, 1) });
+    const fn0 = typeof x.fn === 'string' ? x.fn : 'z=x^2-y^2';
+    // varias superficies en el mismo dibujo (máx. 4); los archivos antiguos solo traen fn
+    const fns = Array.isArray(x.fns) ? x.fns.filter((f) => typeof f === 'string').slice(0, 4) : [];
+    if (!fns.length) fns.push(fn0);
+    return Object.assign(base, { type: 'graph3d', marks: cleanMarks(x.marks, true), fn: fns.find((f) => f.trim()) || fn0, fns, xmin: num(x.xmin, -3), xmax: num(x.xmax, 3), ymin: num(x.ymin, -3), ymax: num(x.ymax, 3), az: num(x.az, -0.8), el: num(x.el, 0.55), zoom: num(x.zoom, 1) });
     },
     chart(x, base) {
     const nums = (a) => (Array.isArray(a) ? a.map(Number).filter(Number.isFinite).slice(0, 400) : []);

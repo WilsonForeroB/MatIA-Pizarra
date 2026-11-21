@@ -25,17 +25,17 @@ MatIA.define('ui/graphics-panel', ['core/dom', 'model/schema', 'ui/toast'], (dom
     if (k === '2d') {
       let fns = ['f(x)=x^2'];
       if (src) { try { R('engine/ops').compileFn(src); fns = [src]; } catch (err) { /* la línea no es una función */ } }
-      insertSpecs(after, [{ type: 'graph', fns, xmin: -5, xmax: 5 }], b);
-      if (fns[0] === 'f(x)=x^2' && src !== 'f(x)=x^2') toast('Escribe o añade tus funciones en la lista de la gráfica.');
+      insertSpecs(after, [{ type: 'graph', fns, xmin: -5, xmax: 5, align: 'center' }], b);
+      if (fns[0] === 'f(x)=x^2' && src !== 'f(x)=x^2') toast('Escribe tu función en la lista de la gráfica; con «+ Añadir función» dibujas varias a la vez.');
     } else if (k === '3d') {
       let fn = 'z=\\sin(x)\\cos(y)';
       if (src) { try { compile3d(src); if (/y/.test(src)) fn = src; } catch (err) { /* no es f(x, y) */ } }
-      insertSpecs(after, [{ type: 'graph3d', fn, xmin: -3, xmax: 3, ymin: -3, ymax: 3, az: -0.8, el: 0.55, zoom: 1 }], b);
-      if (fn !== src) toast('Escribe tu superficie en el campo «z = f(x, y)» de la gráfica.');
+      insertSpecs(after, [{ type: 'graph3d', fn, fns: [fn], xmin: -3, xmax: 3, ymin: -3, ymax: 3, az: -0.8, el: 0.55, zoom: 1, align: 'center' }], b);
+      if (fn !== src) toast('Escribe tu superficie en la lista del dibujo; con «+ Añadir superficie» dibujas varias a la vez.');
     } else if (k === 'solid') {
       let fn = 'f(x)=\\sqrt{x}';
       if (src) { try { R('engine/ops').compileFn(src); fn = src; } catch (err) { /* la línea no es una función de x */ } }
-      insertSpecs(after, [{ type: 'solid', fn, a: 0, b: 4, axis: 'x', k: 0, az: -0.8, el: 0.5, zoom: 1 }], b);
+      insertSpecs(after, [{ type: 'solid', fn, a: 0, b: 4, axis: 'x', k: 0, az: -0.8, el: 0.5, zoom: 1, align: 'center' }], b);
       if (fn !== src) toast('Escribe tu función y elige el eje de giro en los controles del sólido.');
     } else if (k === 'net') {
       const W = 720;

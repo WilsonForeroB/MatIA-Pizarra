@@ -170,8 +170,7 @@ MatIA.define('blocks/solid', ['blocks/registry', 'blocks/canvas3d'], (registry, 
     const prof = document.createElement('div'); prof.className = 'sol-profile';
     const wrap = document.createElement('div'); wrap.className = 'sol-wrap';
     const cv = document.createElement('canvas'); cv.setAttribute('role', 'img');
-    const zoomBox = document.createElement('div'); zoomBox.className = 'sol-zoom';
-    wrap.append(cv, zoomBox);
+    wrap.append(cv);
     const vol = document.createElement('div'); vol.className = 'sol-vol';
     const err = document.createElement('div'); err.className = 'g-err';
     box.append(prof, wrap, vol, err);
@@ -288,12 +287,11 @@ MatIA.define('blocks/solid', ['blocks/registry', 'blocks/canvas3d'], (registry, 
       const fl = lab('f(x) =', fld); fl.classList.add('sol-fl');
       ctrl.append(fl, lab('a', num('a', 'a')), lab('b', num('b', 'b')), lab('Girar alrededor de', sel), kl);
       box.appendChild(ctrl);
-      const zb = (t, f, label) => { const x = document.createElement('button'); x.type = 'button'; x.className = 'mi-btn mi-btn--sm'; x.textContent = t; x.setAttribute('aria-label', label); x.addEventListener('click', () => { b.zoom = Math.max(0.3, Math.min(4, b.zoom * f)); save(); draw(); }); return x; };
-      zoomBox.append(zb('+', 1.2, 'Acercar'), zb('−', 1 / 1.2, 'Alejar'));
-      c3.attachRotate(cv, b, draw, save);
+      wrap.appendChild(c3.viewPad(cv, b, draw, save, { az: -0.8, el: 0.5, zoom: 1 }));
+      c3.attachRotate(cv, b, draw, save, () => R('blocks/editor').setActive(b.id));
       new ResizeObserver(() => draw()).observe(cv);
       R('blocks/graph3d').redrawers.add(draw);
-    } else zoomBox.remove();
+    }
     bd.appendChild(box);
     refresh();
     cv._draw = draw;

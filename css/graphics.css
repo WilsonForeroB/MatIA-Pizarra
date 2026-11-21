@@ -18,8 +18,33 @@
 .nn-prev.err{color:var(--warning)!important}
 /* Gráfica 3D */
 .g3d{display:flex;flex-direction:column;gap:var(--space-2);width:min(100%,760px);outline:none}
-.g3d canvas{width:100%;height:420px;background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);touch-action:none;cursor:grab}
+.g3d-wrap{position:relative}
+.g3d canvas{display:block;width:100%;height:clamp(260px,56vw,420px);background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);touch-action:none;cursor:grab}
 .g3d canvas:active{cursor:grabbing}
+:is(.g3d,.sol) canvas:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
+/* panel para mover la vista 3D (superficie y sólido) */
+.v3-pad{position:absolute;top:var(--space-2);right:var(--space-2);display:grid;grid-template-columns:repeat(2,32px);gap:4px;padding:4px;border-radius:var(--radius-md);background:color-mix(in srgb,var(--surface-raised) 85%,transparent);border:var(--border-width-thin) solid var(--border);box-shadow:var(--shadow-sm,0 1px 3px rgba(0,0,0,.12))}
+.v3-pad .mi-btn{min-width:32px;width:32px;height:32px;padding:0;justify-content:center;font-size:16px;line-height:1}
+.v3-pad .v3-home{grid-column:1 / -1;width:auto}
+.v3-hint{position:absolute;left:50%;bottom:var(--space-3);transform:translateX(-50%);padding:6px 14px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--ink) 78%,transparent);color:var(--surface-raised);font:600 13px/18px var(--font-sans);pointer-events:none;white-space:nowrap;animation:v3-hint 2.4s ease-in-out 3 alternate}
+@keyframes v3-hint{from{opacity:1}to{opacity:.55}}
+.g3d .g-legend{display:flex;flex-wrap:wrap;gap:4px 16px;font:400 14px/20px var(--font-serif);color:var(--ink)}
+.g3d .g-legend:empty{display:none}
+.g3d .g-legend span::before{content:"";display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:-2px;background:var(--sw);border-radius:3px}
+.g3d .g-fnlist{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-2);width:100%}
+.g3d .g-fn{display:flex;align-items:center;gap:var(--space-2);width:100%}
+.g3d .g-fn-field{flex:1 1 auto;min-width:0;font-size:16px;color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:2px 8px}
+.g3d .g-fn-field:focus-within{outline:2px solid var(--focus-ring);outline-offset:1px}
+.g3d .g-fn-rm{flex:none;color:var(--warning)}
+.g3d-sw{flex:none;width:22px;height:22px;border-radius:5px;border:var(--border-width-thin) solid var(--border)}
+.g3d-sw--height{background:linear-gradient(180deg,var(--data-3),var(--data-1),var(--data-2))}
+.g3d .g-range{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-3)}
+/* ayuda de Pío en las gráficas */
+:is(.graph,.g3d) .g-help{display:flex;align-items:flex-start;gap:var(--space-2);width:100%;padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);background:var(--surface-raised);border:var(--border-width-thin) dashed var(--border-strong);color:var(--ink-muted);font:400 13px/19px var(--font-sans)}
+:is(.graph,.g3d) .g-help p{margin:0;align-self:center}
+:is(.graph,.g3d) .g-help b{color:var(--ink);font-weight:600}
+:is(.graph,.g3d) .g-help code{font:400 12px var(--font-mono);color:var(--ink);background:var(--surface-sunken);padding:0 4px;border-radius:4px}
+:is(.graph,.g3d) .g-fn-add{border-style:dashed}
 .g3d .g-cap{font:400 14px/20px var(--font-serif);color:var(--ink)}
 /* Grafos */
 /* Gráficos de estadística y árboles de probabilidad */
@@ -160,4 +185,5 @@
 .graph .g-zoom,.g3d .g-zoom{display:flex;flex-wrap:wrap;gap:var(--space-1)}
 .graph .g-range{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-3)}
 @media (max-width:520px){.graph .g-range label{flex:1 1 40%}.graph .g-range input[type=number]{width:100%;box-sizing:border-box}}
-@media print{.graph .g-ctrl,.g3d .g-ctrl{display:none}}
+@media print{.graph .g-ctrl,.g3d .g-ctrl,.v3-pad,.v3-hint{display:none}}
+@media (max-width:520px){.g3d .g-range label{flex:1 1 40%}.g3d .g-range input[type=number]{width:100%;box-sizing:border-box}.v3-pad{grid-template-columns:repeat(2,28px)}.v3-pad .mi-btn{width:28px;min-width:28px;height:28px}}

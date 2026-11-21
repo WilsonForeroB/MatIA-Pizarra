@@ -32,9 +32,9 @@ js/
     registry.js         · registro de tipos visuales
     editor.js           · ciclo de vida de líneas (math/text), página, foco, arrastre
     deriv.js            · desarrollo alineado por el «=»
-    table, graph, graph3d, chart, ptree, geo, venn, net .js · un fichero por tipo, se registran solos
+    table, graph, graph3d (varias superficies), chart, ptree, geo, venn, net .js · un fichero por tipo, se registran solos
     solid.js            · sólido de revolución (perfil 2D, volumen y dibujo 3D)
-    canvas3d.js         · proyector 2D compartido por graph3d y solid (sin WebGL)
+    canvas3d.js         · proyector 2D, pintor, giro y panel de vista compartidos por graph3d y solid (sin WebGL)
     text.js             · texto enriquecido (línea de texto con formato, saneado de html)
     image.js            · bloque imagen (figura, pie de foto, ancho)
     fit.js              · fórmulas que no caben: reducción hasta el 60 % y «Partir»
@@ -127,6 +127,7 @@ Requieren Node y Playwright (no hacen falta para usar la pizarra).
 | `node tests/engine-features.js` | Sin navegador: `normalizeFn` (texto plano) e integrales (primitiva, Barrow, casos no soportados). |
 | `node tests/features.js` | Gráfica 2D (funciones, rango Y, sin zoom con la rueda), explicación en la línea, Desarrollo desde cualquier línea, integrales y sólido desde el menú. |
 | `node tests/solid.js` | Bloque «sólido de revolución» (perfil, volumen, vista 3D). |
+| `node tests/graph3d.js` | Superficies 3D: girar sin quedar en blanco, varias superficies, panel y teclado de vista, centrar, ayuda en 2D y 3D. |
 | `node tests/fit.js [index.html]` | Fórmulas que no caben: reducción hasta el 60 %, aviso «No cabe en la hoja» con «Partir», y `\text{…}` que pasa a línea de texto. |
 | `node tests/text.js [index.html]` | Texto enriquecido: barra de formato, saneado de `html` y fórmulas en línea. |
 | `node tests/images.js [index.html]` | Bloque imagen y almacén `imagenes/` con una carpeta simulada con subcarpetas. |

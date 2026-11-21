@@ -2366,7 +2366,9 @@
     },
     {
      "cls": "blk",
-     "math": [],
+     "math": [
+      "z=x^2-y^2"
+     ],
      "text": "",
      "svg": 1,
      "canvas": 1,

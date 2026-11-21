@@ -131,7 +131,8 @@ Validación 4620-4623.
 
 | Campo | Tipo | Defecto |
 | --- | --- | --- |
-| `fn` | string | `'z=x^2-y^2'` |
+| `fns` | string[] (1-4) | `[fn]` — superficies del dibujo, en LaTeX o texto plano (`z=sin(x)*cos(y)`). |
+| `fn` | string | `'z=x^2-y^2'` — la primera superficie no vacía; se mantiene por compatibilidad (los archivos antiguos solo traen `fn`). |
 | `xmin`, `xmax`, `ymin`, `ymax` | número | `-3, 3, -3, 3` |
 | `az` | número (rad, azimut) | `-0.8` |
 | `el` | número (rad, elevación) | `0.55` |

@@ -4,6 +4,7 @@ MatIA.define('blocks/graph', ['core/dom', 'model/board', 'blocks/svg-utils', 'bl
   const R = (n) => MatIA.require(n);
   const { body } = dom;
   const { SVGNS, niceStep, fmtNum, markPath, markLegend } = svgu;
+  const pio = () => R('assets/pio');
 
   const DASH = ['', '8 5', '2 5', '10 4 2 4', '4 4', '12 6'];
 
@@ -152,11 +153,19 @@ MatIA.define('blocks/graph', ['core/dom', 'model/board', 'blocks/svg-utils', 'bl
         add.addEventListener('click', () => {
           if (b.fns.length >= 6) return;
           b.fns.push(''); renderFns(); S.save();
-          const fl = fnList.querySelectorAll('.g-fn-field'); const last = fl[fl.length - 1]; if (last) last.focus();
+          const fl = fnList.querySelectorAll('.g-fn-field'); const last = fl[fl.length - 1]; if (last) setTimeout(() => last.focus(), 0);
         });
         fnList.appendChild(add);
       }
       renderFns();
+      // ayuda: que se vea que caben varias funciones y cómo moverse
+      const help = document.createElement('div');
+      help.className = 'g-help';
+      help.append(pio().badge('idea', 'pio-sm', 'Pío da una idea'));
+      const ht = document.createElement('p');
+      ht.innerHTML = 'Puedes dibujar <b>varias funciones en la misma gráfica</b> (hasta 6): pulsa «+ Añadir función» y escribe otra, por ejemplo <code>g(x)=sin(x)</code>. '
+        + '<b>Arrastra</b> la gráfica para moverla y usa <b>+</b> / <b>−</b> para acercar o alejar.';
+      help.appendChild(ht);
       const inputs = {};
       const num = (label, key, aria) => {
         const l = document.createElement('label'); l.textContent = label + ' ';
@@ -200,11 +209,11 @@ MatIA.define('blocks/graph', ['core/dom', 'model/board', 'blocks/svg-utils', 'bl
         zbar.appendChild(bt);
       });
       sync();
-      ctrl.append(fnList, zbar, rangeGrp);
+      ctrl.append(fnList, help, zbar, rangeGrp);
       box.appendChild(ctrl);
       // arrastrar para desplazar (la rueda desplaza la página)
       let drag = null;
-      svg.addEventListener('pointerdown', (e) => { if (body.dataset.mode === 'draw' || e.pointerType === 'pen') return; drag = { x: e.clientX, a: b.xmin, b: b.xmax, w: svg.getBoundingClientRect().width }; svg.setPointerCapture(e.pointerId); e.stopPropagation(); });
+      svg.addEventListener('pointerdown', (e) => { if (body.dataset.mode === 'draw' || e.pointerType === 'pen') return; drag = { x: e.clientX, a: b.xmin, b: b.xmax, w: svg.getBoundingClientRect().width }; svg.setPointerCapture(e.pointerId); e.stopPropagation(); R('blocks/editor').setActive(b.id); });
       svg.addEventListener('pointermove', (e) => { if (!drag) return; const dx = (e.clientX - drag.x) / drag.w * (drag.b - drag.a) * (720 / 664); b.xmin = +(drag.a - dx).toFixed(4); b.xmax = +(drag.b - dx).toFixed(4); draw(); });
       svg.addEventListener('pointerup', () => { if (drag) { drag = null; sync(); S.save(); } });
     }
