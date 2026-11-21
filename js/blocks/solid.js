@@ -1,7 +1,10 @@
 /* Bloque «Sólido de revolución»: perfil 2D (SVG) + sólido 3D (canvas) + volumen. */
-MatIA.define('blocks/solid', ['model/board', 'blocks/registry', 'blocks/canvas3d'], (S, registry, c3) => {
+/* IMPORTANTE: este script debe cargarse ANTES de js/model/board.js (el tablero se sanea al crearse el módulo, y el
+   saneador de 'solid' tiene que estar ya registrado). Por eso no depende de model/board: lo usa con enlace tardío. */
+MatIA.define('blocks/solid', ['blocks/registry', 'blocks/canvas3d'], (registry, c3) => {
   'use strict';
   const R = (n) => MatIA.require(n);
+  const S = { save: () => R('model/board').save() };
   const cssVar = (...a) => R('ui/view').cssVar(...a);
   const NS = 'http://www.w3.org/2000/svg';
   const AXES = [['x', 'Eje X'], ['y', 'Eje Y'], ['y=k', 'Recta y = k'], ['x=k', 'Recta x = k']];
@@ -38,6 +41,32 @@ MatIA.define('blocks/solid', ['model/board', 'blocks/registry', 'blocks/canvas3d
     const sh = (v, s) => (k === 0 ? v : v + (k > 0 ? '-' : '+') + fnum(Math.abs(k)).replace(',', '{,}'));
     if (horizontal(b)) return 'V=\\pi\\int_{' + fnum(b.a) + '}^{' + fnum(b.b) + '}\\left(' + (k === 0 ? F.latex : F.latex + (k > 0 ? '-' : '+') + fnum(Math.abs(k))) + '\\right)^{2}dx';
     return 'V=2\\pi\\int_{' + fnum(b.a) + '}^{' + fnum(b.b) + '}\\left|' + sh('x') + '\\right|\\cdot\\left|' + F.latex + '\\right|dx';
+  }
+
+
+  /* Volumen exacto con el módulo de integrales (si sabe integrar): devuelve LaTeX como «8\\pi» o «\\frac{2\\pi}{3}», o ''. */
+  function exactVolume(F, b) {
+    const ops = R('engine/ops');
+    if (typeof ops.integralLine !== 'function') return '';
+    const k = axisPos(b), lim = '_{' + fnum(b.a).replace(',', '.') + '}^{' + fnum(b.b).replace(',', '.') + '}';
+    const kk = k === 0 ? '' : (k > 0 ? '-' : '+') + String(Math.abs(k));
+    let factor, integrand;
+    if (horizontal(b)) { factor = 1; integrand = '\\left(' + F.latex + kk + '\\right)^{2}'; }
+    else {
+      // capas: |x−k|·|f(x)| solo se integra si no cambian de signo en [a, b]
+      const xs = Array.from({ length: 21 }, (_, i) => b.a + (b.b - b.a) * i / 20), ys = xs.map((x) => F.f(x));
+      const sx = xs.every((x) => x - k >= 0) ? 1 : xs.every((x) => x - k <= 0) ? -1 : 0;
+      const sy = ys.every((y) => y >= 0) ? 1 : ys.every((y) => y <= 0) ? -1 : 0;
+      if (!sx || !sy) return '';
+      factor = 2 * sx * sy; integrand = '\\left(x' + kk + '\\right)\\cdot\\left(' + F.latex + '\\right)';
+    }
+    const r = ops.integralLine('\\int' + lim + integrand + '\\,dx').latex;
+    const val = r.slice(r.lastIndexOf('=') + 1).trim();
+    if (!val || /approx|int|NaN/.test(val)) return '';
+    const m = /^(-?)\\frac\{(\d+)\}\{(\d+)\}$/.exec(val), n = /^-?\d+$/.test(val) ? +val : null;
+    if (m) { const num = factor * (m[1] ? -1 : 1) * +m[2], den = +m[3]; return (num < 0 ? '-' : '') + '\\frac{' + (Math.abs(num) === 1 ? '' : Math.abs(num)) + '\\pi}{' + den + '}'; }
+    if (n !== null) { const t = factor * n; return t === 0 ? '0' : (t === 1 ? '' : t === -1 ? '-' : t) + '\\pi'; }
+    return '';
   }
 
   function el(tag, attrs) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
@@ -165,9 +194,7 @@ MatIA.define('blocks/solid', ['model/board', 'blocks/registry', 'blocks/canvas3d
       else {
         let exact = '';
         try {
-          const ex = R('engine/ops').integralLine && R('engine/ops').integralLine(lx.replace(/^V=/, ''));
-          const s = typeof ex === 'string' ? ex : (ex && typeof ex.r === 'string' ? ex.r : '');
-          if (s && !/\\int|NaN|undefined/.test(s)) exact = s;
+          exact = exactVolume(F, b);
         } catch (e) { /* solo numérico */ }
         const vn = document.createElement('span'); vn.className = 'sol-vn'; vn.dataset.v = String(v);
         vn.textContent = fmt(v);

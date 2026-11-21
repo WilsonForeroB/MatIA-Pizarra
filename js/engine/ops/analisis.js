@@ -68,7 +68,61 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
       default: throw new MErr('No sé derivar esta expresión.');
     }
   }
+  /* Texto plano y variantes → LaTeX que entiende parseExpr: sen x, sin(x), sqrt(x), pi, exp(u), x^(1/2), x^-2… No toca el LaTeX ya válido. */
+  const FN_WORDS = { sin: 'sin', sen: 'sin', cos: 'cos', tan: 'tan', tg: 'tan', cot: 'cot', ctg: 'cot', cotg: 'cot', sec: 'sec', csc: 'csc', cosec: 'csc', arcsin: 'arcsin', arcsen: 'arcsin', arccos: 'arccos', arctan: 'arctan', arctg: 'arctan', sinh: 'sinh', senh: 'sinh', cosh: 'cosh', tanh: 'tanh', tgh: 'tanh', ln: 'ln', log: 'log', exp: 'exp', sqrt: 'sqrt', raiz: 'sqrt', abs: 'abs', pi: 'pi' };
+  const FN_ALIAS = new Set(['sen', 'tg', 'ctg', 'cotg', 'cosec', 'arcsen', 'arctg', 'senh', 'tgh', 'raiz']);
+  function closeParen(s, j) {
+    let d = 0;
+    for (let k = j; k < s.length; k++) { if (s[k] === '(') d++; else if (s[k] === ')' && --d === 0) return k; }
+    return -1;
+  }
+  function normalizeFn(src) {
+    let s = String(src).replace(/\\(?:operatorname|mathrm|mathit|textrm|text)\s*\{\s*([A-Za-z]+)\s*\}/g, (m, w) => (FN_WORDS[w.toLowerCase()] && w.toLowerCase() !== 'pi' ? '\\' + FN_WORDS[w.toLowerCase()] + ' ' : m));
+    s = s.replace(/π/g, '\\pi ').replace(/[·×]/g, '\\cdot ');
+    let out = '', i = 0;
+    const skipSp = (j) => { while (s[j] === ' ') j++; return j; };
+    const word = (canon, bs, len) => {
+      i += len;
+      const sp = /[A-Za-z0-9\\]/.test(s[i] || '') ? ' ' : '';
+      const j = skipSp(i);
+      if (canon === 'sqrt') {
+        if (s[j] === '(') { const c = closeParen(s, j); if (c > 0) { out += '\\sqrt{' + normalizeFn(s.slice(j + 1, c)) + '}'; i = c + 1; return; } }
+        else if (s[j] !== '{' && s[j] !== '[') {
+          const m = /^(\d+(?:\.\d+)?|\\[A-Za-z]+|pi\b|[A-Za-z])/.exec(s.slice(j));
+          if (m) { out += '\\sqrt{' + normalizeFn(m[1]) + '}'; i = j + m[1].length; return; }
+        }
+        out += '\\sqrt'; return;
+      }
+      if (canon === 'exp' && s[j] === '(') { const c = closeParen(s, j); if (c > 0) { out += 'e^{' + normalizeFn(s.slice(j + 1, c)) + '}'; i = c + 1; return; } }
+      if (canon === 'abs' && s[j] === '(') { const c = closeParen(s, j); if (c > 0) { out += '\\left|' + normalizeFn(s.slice(j + 1, c)) + '\\right|'; i = c + 1; return; } }
+      if (canon === 'abs') { out += 'abs'; return; }
+      out += '\\' + canon + (bs ? '' : sp);
+    };
+    while (i < s.length) {
+      const c = s[i];
+      if (c === '\\') {
+        const m = /^\\([A-Za-z]+)/.exec(s.slice(i));
+        if (!m) { out += s.slice(i, i + 2); i += 2; continue; }
+        const w = m[1];
+        if (FN_ALIAS.has(w) || w === 'sqrt' || w === 'exp') word(FN_WORDS[w], true, m[0].length);
+        else { out += m[0]; i += m[0].length; }
+      } else if (/[A-Za-z]/.test(c)) {
+        const m = /^[A-Za-z]+/.exec(s.slice(i)), w = m[0], canon = FN_WORDS[w.toLowerCase()];
+        if (canon && w.length >= 2) word(canon, false, w.length);
+        else { out += w; i += w.length; }
+      } else if (c === '^') {
+        const t = s[i + 1];
+        let m;
+        if (t === '(') { const e = closeParen(s, i + 1); if (e > 0) { out += '^{(' + normalizeFn(s.slice(i + 2, e)) + ')}'; i = e + 1; continue; } }
+        else if (t === '-' && s[i + 2] === '(') { const e = closeParen(s, i + 2); if (e > 0) { out += '^{-(' + normalizeFn(s.slice(i + 3, e)) + ')}'; i = e + 1; continue; } }
+        else if (t === '-' && (m = /^-(\d+(?:\.\d+)?|[A-Za-z])/.exec(s.slice(i + 1)))) { out += '^{-' + m[1] + '}'; i += 1 + m[0].length; continue; }
+        out += c; i++;
+      } else { out += c; i++; }
+    }
+    return out;
+  }
   function funcLine(latex) {
+    latex = normalizeFn(latex);
     // "f(x)=expr", "y=expr" o solo "expr"
     const i = topEqIndex(latex);
     let name = null, varName = null, expr = latex;
@@ -388,5 +442,5 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
     return [derivBlock(rows), g3];
   }
 
-  return { extrema1, extrema2, D, compileFn, derivative, graphOf, valueTable };
+  return { extrema1, extrema2, D, compileFn, derivative, graphOf, valueTable, normalizeFn };
 });

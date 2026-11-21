@@ -320,7 +320,7 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
 
   /* ---------------- Teclado dentro de las líneas ---------------- */
   blocksEl.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'svg' || e.target.closest('.net,.g3d,.graph,.venn,.chart,.ptree,.geo,.solid,[data-aux],.blk-note')) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'svg' || e.target.closest('.net,.g3d,.graph,.venn,.chart,.ptree,.geo,.sol,[data-aux],.blk-note')) return;
     const el = e.target.closest && e.target.closest('.blk');
     if (!el) return;
     const id = el.dataset.id, b = blockById(id);

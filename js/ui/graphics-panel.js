@@ -32,6 +32,11 @@ MatIA.define('ui/graphics-panel', ['core/dom', 'model/schema', 'ui/toast'], (dom
       if (src) { try { compile3d(src); if (/y/.test(src)) fn = src; } catch (err) { /* no es f(x, y) */ } }
       insertSpecs(after, [{ type: 'graph3d', fn, xmin: -3, xmax: 3, ymin: -3, ymax: 3, az: -0.8, el: 0.55, zoom: 1 }], b);
       if (fn !== src) toast('Escribe tu superficie en el campo «z = f(x, y)» de la gráfica.');
+    } else if (k === 'solid') {
+      let fn = 'f(x)=\\sqrt{x}';
+      if (src) { try { R('engine/ops').compileFn(src); fn = src; } catch (err) { /* la línea no es una función de x */ } }
+      insertSpecs(after, [{ type: 'solid', fn, a: 0, b: 4, axis: 'x', k: 0, az: -0.8, el: 0.5, zoom: 1 }], b);
+      if (fn !== src) toast('Escribe tu función y elige el eje de giro en los controles del sólido.');
     } else if (k === 'net') {
       const W = 720;
       const nodes = [['A', 160, 120], ['B', 360, 80], ['C', 560, 140], ['D', 260, 300], ['E', 470, 310]].map(([label, x, y]) => ({ id: schema.uid(), x, y, label, kind: '' }));

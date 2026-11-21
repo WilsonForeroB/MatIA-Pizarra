@@ -31,7 +31,7 @@ async function scenario(file) {
       return {
         pg: document.querySelector('#pgOut').textContent,
         mode: document.body.dataset.mode,
-        blocks: Array.from(document.querySelectorAll('#blocks > .blk')).map((e) => e.className.replace(/\bis-active\b/, '').trim() + ':' + (Array.from(e.querySelectorAll('math-field')).map((m) => m.value).join('|') || e.textContent.trim().slice(0, 60))),
+        blocks: Array.from(document.querySelectorAll('#blocks > .blk')).map((e) => e.className.replace(/\bis-active\b/, '').trim() + ':' + (Array.from(e.querySelectorAll('math-field')).map((m) => m.value).join('|') || (() => { const c = e.cloneNode(true); c.querySelectorAll('button').forEach((x) => x.remove()); return c.textContent.trim().slice(0, 60); })())),
         saved: b && b.pages.map((p) => p.blocks.map((x) => x.type + ':' + (x.v || (x.rows ? x.rows.length : '') || '')).join(',') + '/strokes=' + p.strokes.length),
         theme: document.documentElement.getAttribute('data-theme'),
         openDialogs: Array.from(document.querySelectorAll('dialog[open]')).map((d) => d.id),
