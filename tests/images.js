@@ -118,6 +118,7 @@ const MOCK = () => {
   await page.evaluate(() => window.__fs.snapshot());
   await page.waitForTimeout(700); // autoguardado del tablero
   await boot();
+  await page.waitForSelector('.img-miss:not([hidden])', { timeout: 5000 }).catch(() => {});
   ok((await page.locator('.img-blk .img-miss:visible').count()) === 2, 'sin carpeta muestra «Imagen no encontrada…»');
   ok((await page.locator('.img-miss button', { hasText: 'Historial' }).first().isVisible()), 'el marcador tiene botón para abrir el Historial');
   await page.locator('.img-miss button', { hasText: 'Historial' }).first().click();

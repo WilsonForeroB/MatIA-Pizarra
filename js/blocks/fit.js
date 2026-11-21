@@ -103,7 +103,7 @@ MatIA.define('blocks/fit', ['core/dom', 'model/board', 'ui/toast'], (dom, S, toa
       fn: () => {
         const cur = ed.blockById(b.id);
         if (!cur) return;
-        cur.type = 'math';
+        cur.type = 'math'; delete cur.html;
         cur.v = prev.v;
         if (prev.note) cur.note = prev.note;
         if (prev.result) cur.result = prev.result;

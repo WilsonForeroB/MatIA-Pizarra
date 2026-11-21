@@ -32,7 +32,7 @@ function pageFile(name) {
   });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.fulfill({ body: '', contentType: 'text/css' }));
   const board = { v: 1, cur: 0, pages: [{ strokes: [], minH: 0, blocks: [{ type: 'text', v: 'hola' }, { type: 'text', v: 'segunda' }] }] };
-  await ctx.addInitScript((j) => { if (!sessionStorage.getItem('seeded')) { localStorage.setItem('matia-pizarra-v1', j); sessionStorage.setItem('seeded', '1'); } }, JSON.stringify(board));
+  await ctx.addInitScript((j) => { if (!localStorage.getItem('matia-pizarra-v1')) localStorage.setItem('matia-pizarra-v1', j); }, JSON.stringify(board));
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
@@ -81,8 +81,8 @@ function pageFile(name) {
   ok(saved.v.startsWith('hola'), 'v conserva el texto plano: ' + saved.v);
 
   // --- recarga ---
-  await page.evaluate(() => { sessionStorage.setItem('seeded', '1'); });
   await load();
+  if (process.env.DBG) console.log(await page.evaluate(() => [document.querySelector('#blocks .blk-text').outerHTML, localStorage.getItem('matia-pizarra-v1').slice(0,400)]));
   const t = await page.evaluate(() => {
     const el = document.querySelector('#blocks .blk-text');
     const mi = el.querySelector('.math-inline');
@@ -109,6 +109,7 @@ function pageFile(name) {
   const n1 = await page.locator('#blocks > .blk').count();
   const li0 = await page.locator('#blocks .blk-text').first().locator('li').count();
   const inList = await page.evaluate(() => { const s = getSelection(); const n = s.anchorNode; return !!(n && (n.nodeType === 1 ? n : n.parentNode).closest('li')); });
+  ok(inList, 'el cursor está dentro de la lista');
   if (inList) {
     await page.keyboard.press('Enter');
     await page.waitForTimeout(200);

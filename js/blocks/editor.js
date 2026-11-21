@@ -119,16 +119,6 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
         el.classList.remove('is-boxed');
       }
       def.build(b, bd, false);
-    } else if (b.type === 'text') {
-      const t = document.createElement('div');
-      t.className = 'blk-text';
-      t.contentEditable = 'true';
-      t.setAttribute('role', 'textbox');
-      t.setAttribute('aria-label', 'Línea de texto');
-      t.dataset.ph = 'Escribe un texto…';
-      t.textContent = b.v;
-      t.addEventListener('input', () => { b.v = t.innerText.replace(/\n$/, ''); hidePio(); S.save(); });
-      bd.appendChild(t);
     } else if (st.mlReady) {
       const mf = document.createElement('math-field');
       mf.setAttribute('aria-label', 'Línea de fórmula');
