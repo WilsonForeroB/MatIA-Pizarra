@@ -44,6 +44,7 @@ js/
     toast.js · dialogs.js · popovers.js · toolbar.js · templates.js · calc.js · ops-menu.js
     view.js · mode-pages.js · print.js (PDF e impresión) · drawing.js · shortcuts.js
     text-format.js · barra flotante de formato del texto · image-insert.js · botón Imagen, pegar y arrastrar
+    examples.js         · ventana «Ejemplos» (temas, buscador, abrir copia, añadir páginas)
     export-image.js · bayes-dialog.js · nn-dialog.js · graphics-panel.js
   storage/              ← persistencia
     kv-store.js         · IndexedDB (recordar la carpeta)
@@ -55,6 +56,7 @@ js/
     file.js             · Archivo: descargar/abrir .json, nueva pizarra, acerca de
   app/start.js          ← arranque (espera a MathLive, primer render)
   app/main.js           ← MatIA.start()
+ejemplos/               ← banco de ejemplos: un <script> por ejemplo con MatIA.ejemplo({…}); miniaturas en ejemplos/img/
 vendor/                 ← MathLive y fuentes, con sus licencias
 tests/                  ← pruebas (ver «Pruebas»)
 legacy/pizarra.html     ← prototipo original de un único fichero (referencia de las pruebas)
@@ -75,6 +77,14 @@ MatIA.define('ui/toast', ['core/dom', 'assets/pio'], (dom, pio) => {
 - **Dependencias circulares**: no se permiten en la lista de dependencias (el cargador lo detecta y lo dice).
   Cuando dos módulos se necesitan mutuamente (p. ej. el editor y el desarrollo), uno usa enlace tardío dentro de una función:
   `const R = (n) => MatIA.require(n);  …  R('blocks/deriv').focusCell(…)`.
+
+## Banco de ejemplos
+
+Cada fichero de `ejemplos/` llama a `MatIA.ejemplo({ id, tema, titulo, resumen, board })` (definido en `core/namespace.js`) y se carga con un
+`<script>` en la zona «Banco de ejemplos» de `index.html`. Se eligió así, en lugar de leer la carpeta con permiso, porque `file://` no deja
+hacer `fetch` y la ventana de permiso de carpeta solo existe en Chrome y Edge: así los ejemplos se ven sin preguntar nada y en cualquier navegador.
+`ui/examples` los lista (`MatIA.ejemplos()`), y al abrir uno lo pasa por `schema.sanitize` y le da ids nuevos (siempre es una copia).
+Cómo añadir ejemplos: `ejemplos/LEEME.md`.
 
 ## Principios SOLID aplicados
 
@@ -131,6 +141,7 @@ Requieren Node y Playwright (no hacen falta para usar la pizarra).
 | `node tests/fit.js [index.html]` | Fórmulas que no caben: reducción hasta el 60 %, aviso «No cabe en la hoja» con «Partir», y `\text{…}` que pasa a línea de texto. |
 | `node tests/text.js [index.html]` | Texto enriquecido: barra de formato, saneado de `html` y fórmulas en línea. |
 | `node tests/images.js [index.html]` | Bloque imagen y almacén `imagenes/` con una carpeta simulada con subcarpetas. |
+| `node tests/ejemplos.js [--capturas] [id…]` | Cada ejemplo se sanea sin perder bloques y se dibuja sin errores ni avisos; la ventana «Ejemplos». `--capturas` regenera `ejemplos/img/`. |
 | `node tests/presentation.js` | Presentación de extremo a extremo; genera `docs/img/presentacion.pdf` y las capturas de `docs/img/`. |
 
 `tests/golden/expected.json` se generó con el prototipo (`node tests/golden/run.js record legacy/pizarra.html`).

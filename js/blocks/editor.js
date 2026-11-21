@@ -189,6 +189,14 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
     box.className = 'mi-callout mi-callout--pio empty-pio';
     box.innerHTML = '<div class="mi-pio"><img alt="Pío explicando en la pizarra"></div><div><span class="mi-label">Pío dice</span><p>Escribe aquí tu primera fórmula: prueba <kbd>x^2</kbd> o pulsa <b>Matriz</b>. Con <kbd>Intro</kbd> pasas a la línea siguiente y con <kbd>?</kbd> ves todos los atajos.</p></div>';
     box.querySelector('img').src = pio.src('pizarra');
+    // a quien empieza le ayuda ver qué se puede hacer
+    if (MatIA.ejemplos().length) {
+      const ex = document.createElement('button');
+      ex.type = 'button'; ex.className = 'mi-btn mi-btn--sm empty-pio-ex'; ex.textContent = 'Ver ejemplos';
+      ex.addEventListener('mousedown', (e) => e.preventDefault());
+      ex.addEventListener('click', () => R('ui/examples').show());
+      box.querySelector('p').after(ex);
+    }
     blocksEl.appendChild(box);
   }
   function hidePio() { const p = blocksEl.querySelector('.empty-pio'); if (p) p.remove(); }

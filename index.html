@@ -28,6 +28,7 @@
 <link rel="stylesheet" href="css/solid.css">
 <link rel="stylesheet" href="css/text.css">
 <link rel="stylesheet" href="css/image.css">
+<link rel="stylesheet" href="css/examples.css">
 <link rel="stylesheet" href="css/print.css">
 <link rel="stylesheet" href="css/responsive.css">
 <script defer src="vendor/mathlive/mathlive.min.js"></script>
@@ -55,6 +56,7 @@
   <button type="button" class="mi-btn mi-btn--sm" id="viewBtn" aria-haspopup="true" aria-expanded="false">Vista <span aria-hidden="true">▾</span></button>
   <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="saveBtn" title="Guardar la clase en tu carpeta de clases (Ctrl+S)"><span class="save-dot" aria-hidden="true"></span>Guardar</button>
   <button type="button" class="mi-btn mi-btn--sm" id="histBtn" title="Guardar y abrir clases de la carpeta que elijas">Historial</button>
+  <button type="button" class="mi-btn mi-btn--sm" id="exBtn" title="Ejemplos de lo que puede hacer la pizarra, por temas">Ejemplos</button>
   <button type="button" class="mi-btn mi-btn--sm" id="fileBtn" aria-haspopup="true" aria-expanded="false">Archivo <span aria-hidden="true">▾</span></button>
   <button type="button" class="mi-btn mi-btn--sm icon-btn" id="helpBtn" title="Atajos y ayuda (?)" aria-label="Atajos y ayuda">?</button>
 </header>
@@ -513,11 +515,36 @@
 <script src="js/storage/assets.js"></script>
 <script src="js/storage/dirty.js"></script>
 <script src="js/storage/file.js"></script>
+<script src="js/ui/examples.js"></script>
 <script src="js/ui/print.js"></script>
 <script src="js/ui/drawing.js"></script>
 <script src="js/ui/shortcuts.js"></script>
 <script src="js/ui/text-format.js"></script>
 <script src="js/ui/image-insert.js"></script>
+<!-- Banco de ejemplos (carpeta ejemplos/, ver ejemplos/LEEME.md). Un <script> por ejemplo. -->
+<!-- ejemplos: álgebra, cálculo y gráficas -->
+<script src="ejemplos/algebra-sistema-gauss.js"></script>
+<script src="ejemplos/algebra-inversa-determinante.js"></script>
+<script src="ejemplos/algebra-ruffini.js"></script>
+<script src="ejemplos/calculo-derivada-producto.js"></script>
+<script src="ejemplos/calculo-maximos-minimos.js"></script>
+<script src="ejemplos/calculo-integral-barrow.js"></script>
+<script src="ejemplos/calculo-solido-revolucion.js"></script>
+<script src="ejemplos/graficas-varias-funciones.js"></script>
+<script src="ejemplos/graficas-superficies-cortan.js"></script>
+<script src="ejemplos/graficas-punto-silla.js"></script>
+<!-- /ejemplos: álgebra, cálculo y gráficas -->
+<!-- ejemplos: estadística, geometría, discreta y presentaciones -->
+<script src="ejemplos/estadistica-resumen-datos.js"></script>
+<script src="ejemplos/estadistica-normal-alturas.js"></script>
+<script src="ejemplos/estadistica-bayes-test.js"></script>
+<script src="ejemplos/geometria-resolver-triangulo.js"></script>
+<script src="ejemplos/geometria-rectas-plano.js"></script>
+<script src="ejemplos/discreta-camino-minimo.js"></script>
+<script src="ejemplos/discreta-conjuntos-venn.js"></script>
+<script src="ejemplos/discreta-tabla-verdad.js"></script>
+<script src="ejemplos/presentaciones-teorema-pitagoras.js"></script>
+<!-- /ejemplos: estadística, geometría, discreta y presentaciones -->
 <script src="js/app/start.js"></script>
 <!-- @scripts-end -->
 <script src="js/app/main.js"></script>

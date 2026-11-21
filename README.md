@@ -9,6 +9,7 @@ Pizarra para dar clase de matemáticas: fórmulas con atajos de teclado, matrice
 1. Descarga o clona el repositorio.
 2. Abre **`index.html`** con doble clic. No hace falta servidor, instalar nada ni conexión a internet.
 3. Para guardar las clases, pulsa **Historial → Conectar carpeta** y elige **cualquier carpeta** de tu ordenador (por ejemplo, la carpeta `historial/` del repositorio, que no se sube a Git).
+4. ¿Primera vez? Pulsa **Ejemplos** (al lado de «Historial»): ejemplos por temas —álgebra, cálculo, gráficas, estadística, geometría, discreta y presentaciones— que se abren como copia para cambiarlos sin miedo. No piden permiso de carpeta.
 
 ## Estructura
 
@@ -19,6 +20,7 @@ js/               ← código en módulos: core, model, engine (motor matemátic
 vendor/           ← MathLive y fuentes, incluidos para que funcione sin red
 docs/             ← arquitectura, estilos, formato JSON y una ficha por funcionalidad
 tests/            ← pruebas automáticas (opcionales, con Node y Playwright)
+ejemplos/         ← banco de ejemplos de la ventana «Ejemplos» (ver ejemplos/LEEME.md para añadir más)
 legacy/           ← prototipo original de un único fichero (referencia de las pruebas)
 historial/        ← carpeta sugerida para guardar clases (su contenido no se sube a Git)
 ```
@@ -99,6 +101,8 @@ Tipos de bloque:
 
 Pulsa **?** dentro de la pizarra para ver todos los atajos.
 
+- **Ejemplos**: ventana con pestañas por tema, buscador y miniaturas. **Abrir** carga una copia del ejemplo (si hay cambios sin guardar, pregunta antes) y **Añadir páginas** lo suma a la clase actual. Con la pizarra vacía, Pío ofrece «Ver ejemplos».
+
 - **Escribir**: `x^2`, `1/2`, `sqrt`, `in` (∈), `EE` (∃), `AA` (∀), `RR` (ℝ)… Intro crea una línea nueva.
 - **Líneas numeradas**: cada línea lleva su número (1, 2, 3…) y los pasos de un desarrollo se numeran 3.1, 3.2… Así es fácil decir «vamos a la línea 3». Se pueden ocultar en **Vista ▾ → Líneas**; en presentación e impresión no aparecen.
 - **+ Nueva línea**: en la barra y al final de la página (útil con lápiz o pantalla táctil). Intro sigue funcionando igual.
@@ -166,7 +170,7 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 
 - Código modular sin compilación: scripts clásicos registrados con `MatIA.define` (funciona con `file://`). Ver [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 - Estilos: [`docs/ESTILOS.md`](docs/ESTILOS.md). Formato de las clases: [`docs/FORMATO-JSON.md`](docs/FORMATO-JSON.md). Fichas por funcionalidad: [`docs/funcionalidades/`](docs/funcionalidades/).
-- Pruebas (opcionales, con Node y Playwright): `node tests/golden/run.js compare index.html`, `node tests/e2e.js legacy/pizarra.html index.html`, `node tests/storage.js`, `node tests/engine-features.js` (normalización de funciones e integrales, sin navegador), `node tests/features.js` (gráfica 2D, explicación en la línea, Desarrollo, integrales y sólidos) `node tests/solid.js` (sólido de revolución), `node tests/graph3d.js` (superficies 3D y ayuda de las gráficas), `node tests/fit.js` (fórmulas que no caben), `node tests/text.js` (texto con formato), `node tests/images.js` (imágenes) y `node tests/presentation.js` (presentación de extremo a extremo; genera `docs/img/presentacion.pdf` y las capturas de `docs/img/`).
+- Pruebas (opcionales, con Node y Playwright): `node tests/golden/run.js compare index.html`, `node tests/e2e.js legacy/pizarra.html index.html`, `node tests/storage.js`, `node tests/engine-features.js` (normalización de funciones e integrales, sin navegador), `node tests/features.js` (gráfica 2D, explicación en la línea, Desarrollo, integrales y sólidos) `node tests/solid.js` (sólido de revolución), `node tests/graph3d.js` (superficies 3D y ayuda de las gráficas), `node tests/ejemplos.js` (cada ejemplo se abre y dibuja sin avisos, y la ventana «Ejemplos»; con `--capturas` regenera las miniaturas), `node tests/fit.js` (fórmulas que no caben), `node tests/text.js` (texto con formato), `node tests/images.js` (imágenes) y `node tests/presentation.js` (presentación de extremo a extremo; genera `docs/img/presentacion.pdf` y las capturas de `docs/img/`).
 - No guarda credenciales ni datos personales. El historial vive solo en la carpeta local de quien la usa.
 
 ## Autoría y derechos

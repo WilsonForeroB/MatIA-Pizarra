@@ -34,9 +34,18 @@
     return instances.get(name);
   }
 
+  /* Banco de ejemplos: cada fichero de ejemplos/ llama a MatIA.ejemplo({ id, tema, titulo, resumen, board }).
+     Son <script> normales (no hace falta pedir permiso de carpeta y funcionan en cualquier navegador). */
+  const examples = [];
+  function ejemplo(def) {
+    if (!def || typeof def.id !== 'string' || !def.board) { console.warn('MatIA: ejemplo sin id o sin board', def); return; }
+    if (examples.some((e) => e.id === def.id)) { console.warn('MatIA: ejemplo repetido «' + def.id + '»'); return; }
+    examples.push(def);
+  }
+
   function start() {
     for (const name of defs.keys()) require(name);
   }
 
-  global.MatIA = Object.freeze({ define, require, start, has: (n) => defs.has(n), list: () => Array.from(defs.keys()) });
+  global.MatIA = Object.freeze({ define, require, start, has: (n) => defs.has(n), list: () => Array.from(defs.keys()), ejemplo, ejemplos: () => examples.slice() });
 })(window);
