@@ -33,5 +33,5 @@ MatIA.define('storage/dirty', ['core/dom', 'model/board', 'core/event-bus'], (do
     if (r === 'save') return await R('storage/history').saveToHistory();
     return r === 'skip';
   }
-  return { savedSnap, snap, boardEmpty, isDirty, markSaved, updSaved, quickSave, guardUnsaved };
+  return { snap, boardEmpty, isDirty, markSaved, updSaved, quickSave, guardUnsaved };
 });

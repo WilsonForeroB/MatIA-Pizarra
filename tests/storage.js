@@ -68,6 +68,30 @@ const MOCK = () => {
     check('Guardar sin carpeta explica antes de abrir el selector', (await p.evaluate(() => document.getElementById('ask').open && window.__fs.pickerCalls === 0)), await p.textContent('#askTitle'));
     await ctx.close();
   }
+  // ---- Regresión: «Guardar y continuar» sin carpeta abre la segunda ventana y no se cierra sola ----
+  {
+    const ctx = await browser.newContext(); await ctx.addInitScript(MOCK);
+    const p = await ctx.newPage();
+    await p.goto(URL_); await p.waitForFunction(() => !!customElements.get('math-field')); await p.waitForTimeout(300);
+    await p.click('#blocks .blk math-field'); await p.keyboard.type('x+1', { delay: 40 }); await p.waitForTimeout(600);
+    await p.click('#fileBtn'); await p.click('#newBoard'); await p.waitForTimeout(300);
+    await p.locator('#askActs button', { hasText: 'Guardar y continuar' }).click(); await p.waitForTimeout(300);
+    check('«Guardar y continuar» muestra la ventana de carpeta y sigue abierta', await p.evaluate(() => document.getElementById('ask').open), await p.textContent('#askTitle'));
+    await p.click('#askActs .mi-btn--primary'); await p.waitForTimeout(600);
+    const r = await p.evaluate(() => ({ calls: window.__fs.pickerCalls, files: window.__fs.files.size, blank: MatIA.require('model/board').board.pages[0].blocks[0].v === '' }));
+    check('…guarda en la carpeta y después crea la pizarra nueva', r.calls === 1 && r.files === 2 && r.blank, JSON.stringify(r));
+    await ctx.close();
+  }
+  // ---- Regresión: Ctrl+S con el historial abierto guarda la clase (no abre «Guardar página como») ----
+  {
+    const ctx = await browser.newContext(); await ctx.addInitScript(MOCK);
+    const p = await ctx.newPage();
+    await p.goto(URL_); await p.waitForFunction(() => !!customElements.get('math-field')); await p.waitForTimeout(300);
+    await p.click('#histBtn'); await p.waitForTimeout(300);
+    const prevented = await p.evaluate(() => { const ev = new KeyboardEvent('keydown', { key: 's', ctrlKey: true, bubbles: true, cancelable: true }); document.getElementById('histName').dispatchEvent(ev); return ev.defaultPrevented; });
+    check('Ctrl+S con el historial abierto lo atiende la pizarra', prevented);
+    await ctx.close();
+  }
   // ---- Firefox/Safari: sin showDirectoryPicker ----
   {
     const ctx = await browser.newContext(); await ctx.addInitScript(() => { delete window.showDirectoryPicker; });

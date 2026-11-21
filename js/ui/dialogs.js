@@ -12,7 +12,8 @@ MatIA.define('ui/dialogs', ['core/dom', 'assets/pio'], (dom, pio) => {
   let pending = null;
   const finish = (v) => { const r = pending; pending = null; if (dlg.open) dlg.close(); if (r) r(v); };
   dlg.addEventListener('cancel', () => finish(null));
-  dlg.addEventListener('close', () => finish(null));
+  // el evento close llega después de dlg.close(): si para entonces ya se ha abierto otra pregunta, no se toca
+  dlg.addEventListener('close', () => { if (!dlg.open) finish(null); });
 
   function ask({ title, text, label = 'Pío pregunta', pio: pose = 'idea', warn = false, buttons, input = null }) {
     if (pending) finish(null);

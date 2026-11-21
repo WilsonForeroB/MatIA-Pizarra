@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /* Prueba de interacción: ejecuta el mismo recorrido de usuario en dos páginas y compara el estado final.
-   Uso: node tests/e2e.js [referencia=pizarra.html] [candidata=index.html]
-   (Cuando pizarra.html pase a legacy/, usa: node tests/e2e.js legacy/pizarra.html index.html) */
+   Uso: node tests/e2e.js [referencia=legacy/pizarra.html] [candidata=index.html] */
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
@@ -72,7 +71,7 @@ async function scenario(file) {
 }
 
 (async () => {
-  const [ref, cand] = [process.argv[2] || 'pizarra.html', process.argv[3] || 'index.html'];
+  const [ref, cand] = [process.argv[2] || 'legacy/pizarra.html', process.argv[3] || 'index.html'];
   const a = await scenario(ref), b = await scenario(cand);
   let bad = 0;
   a.steps.forEach(([label, s], i) => {

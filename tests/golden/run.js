@@ -2,7 +2,7 @@
 /* Pruebas de referencia («golden»): abren la pizarra por file:// en Chromium, ejecutan el motor con
    los casos de cases.js, cargan un tablero con todos los tipos de bloque y guardan un resumen del DOM.
    Uso:
-     node tests/golden/run.js record  [pizarra.html]   → escribe tests/golden/expected.json
+     node tests/golden/run.js record  [legacy/pizarra.html]   → escribe tests/golden/expected.json
      node tests/golden/run.js compare [index.html]     → compara con expected.json (sale con código 1 si difiere)
    Las capturas de cada página quedan en tests/golden/out/ para revisarlas a ojo. */
 const path = require('path');
@@ -11,7 +11,7 @@ const { chromium } = require('playwright');
 
 const ROOT = path.resolve(__dirname, '../..');
 const mode = process.argv[2] || 'compare';
-const target = path.resolve(ROOT, process.argv[3] || (mode === 'record' ? 'pizarra.html' : 'index.html'));
+const target = path.resolve(ROOT, process.argv[3] || (mode === 'record' ? 'legacy/pizarra.html' : 'index.html'));
 const OUT = path.join(__dirname, 'out');
 const EXPECTED = path.join(__dirname, 'expected.json');
 const cases = require('./cases.js');

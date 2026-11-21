@@ -82,5 +82,5 @@ MatIA.define('ui/mode-pages', ['core/dom', 'model/board', 'model/schema', 'ui/st
   const help = $('#help');
   $('#helpBtn').addEventListener('click', () => help.showModal());
   $('#helpClose').addEventListener('click', () => help.close());
-  return { setMode, presT, presBar, presIdle, updatePres, startPresent, endPresent, goPage, refreshColors, toggleFull, toggleChrome, help };
+  return { setMode, presBar, presIdle, updatePres, startPresent, endPresent, goPage, refreshColors, toggleFull, toggleChrome, help };
 });

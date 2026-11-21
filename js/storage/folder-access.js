@@ -72,6 +72,7 @@ MatIA.define('storage/folder-access', ['core/dom', 'storage/kv-store', 'storage/
     return new Promise((res) => {
       const done = () => {
         inp.removeEventListener('change', done);
+        inp.removeEventListener('cancel', done);
         const files = Array.from(inp.files || []);
         const first = files[0];
         const name = (first && (first.webkitRelativePath || '').split('/')[0]) || 'carpeta';
@@ -79,6 +80,7 @@ MatIA.define('storage/folder-access', ['core/dom', 'storage/kv-store', 'storage/
         res(files.length ? folders.fromFiles(name, files) : null);
       };
       inp.addEventListener('change', done);
+      inp.addEventListener('cancel', done); // si se cancela el selector no queda un oyente colgado
       inp.click();
     });
   }

@@ -8,7 +8,8 @@ MatIA.define('ui/shortcuts', ['core/dom', 'model/board', 'ui/state'], (dom, S, s
   document.addEventListener('keydown', (e) => {
     const editing = e.target.closest && e.target.closest('math-field,[contenteditable="true"],input,select,textarea');
     const k = e.key;
-    if ($('dialog[open]')) return; // con cualquier ventana abierta no actúan los atajos (antes solo se miraban ask, nnDlg y bayesDlg)
+    if ($('#ask').open || $('#nnDlg').open || $('#bayesDlg').open) return;
+    const modal = !!$('dialog[open]'); // historial, ayuda o acerca de: Ctrl+S sí funciona, las teclas sueltas no
     if (body.classList.contains('presenting')) {
       R('ui/mode-pages').presIdle();
       if (k === 'Escape') { e.preventDefault(); if (editing && document.activeElement.blur) document.activeElement.blur(); else R('ui/mode-pages').endPresent(); return; }
@@ -36,7 +37,7 @@ MatIA.define('ui/shortcuts', ['core/dom', 'model/board', 'ui/state'], (dom, S, s
     if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && (k === 'd' || k === 'D') && body.dataset.mode === 'write') { e.preventDefault(); e.stopPropagation(); R('ui/toolbar').duplicateActive(); return; }
     if ((e.ctrlKey || e.metaKey) && (k === '=' || e.code === 'Equal') && !e.altKey) { e.preventDefault(); R('ui/calc').runCalc(); return; }
     if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === 'z' && body.dataset.mode === 'draw' && !editing) { e.preventDefault(); R('ui/drawing').undo(); return; }
-    if (editing || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (modal || editing || e.ctrlKey || e.metaKey || e.altKey) return;
     if (k === 'Escape') { R('ui/popovers').closePop(); if (body.dataset.mode === 'draw') R('ui/mode-pages').setMode('write'); return; }
     if (k === '?') { e.preventDefault(); R('ui/mode-pages').help.showModal(); return; }
     if (k === 'h' || k === 'H') { R('ui/mode-pages').toggleChrome(); return; }
