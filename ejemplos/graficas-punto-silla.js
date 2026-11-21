@@ -8,7 +8,7 @@ MatIA.ejemplo({
     title: "Punto de silla",
     pages: [
     { blocks: [
-      {"type":"text","v":"Un punto de silla no es ni máximo ni mínimo: subiendo en una dirección y bajando en otra, como una silla de montar. Gira la superficie para verlo y prueba con z = x² + y² (mínimo) o z = x³ − 3x + y² (un mínimo y un punto de silla)."},
+      {"type":"text","v":"Un punto de silla no es ni máximo ni mínimo: la superficie sube en una dirección y baja en otra, como una silla de montar. Gira la superficie para verlo y prueba con z = x² + y² (mínimo) o z = x³ − 3x + y² (un mínimo y un punto de silla)."},
       {"type":"math","v":"z=x^2-y^2"},
       { type: 'deriv', rows: [
         {"l":"f(x,y)","r":"x^{2}-y^{2}","note":"Función de dos variables","boxed":false},
@@ -18,7 +18,6 @@ MatIA.ejemplo({
         {"l":"\\text{Puntos críticos}","r":"P_{1}=\\left(0,\\ 0\\right)","note":"Soluciones del sistema","boxed":false},
         {"l":"H(x,y)","r":"\\begin{pmatrix}2 & 0\\\\ 0 & -2\\end{pmatrix}","note":"Matriz hessiana: f_xx, f_xy / f_yx, f_yy","boxed":false},
         {"l":"|H(P_{1})|","r":"\\begin{vmatrix}2 & 0\\\\ 0 & -2\\end{vmatrix}=-4","note":"|H| < 0: punto de silla. f(P1) = 0","boxed":true},
-        {"l":"\\text{Absolutos}","r":"\\text{en un recinto cerrado}","note":"Los extremos absolutos de f(x, y) se estudian en un recinto cerrado y acotado: además de los puntos críticos interiores hay que mirar la frontera.","boxed":false},
       ] },
       {"fns":["z=x^2-y^2"],"type":"graph3d","fn":"z=x^2-y^2","xmin":-2.5,"xmax":2.5,"ymin":-2.5,"ymax":2.5,"az":-0.8,"el":0.55,"zoom":1,"marks":[{"x":0,"y":0,"z":0,"kind":"saddle","label":"P1 silla"}],"align":"center"},
       {"type":"text","v":"Cortes de la superficie por los planos y = 0 y x = 0: en una dirección vemos un mínimo y en la otra un máximo."},

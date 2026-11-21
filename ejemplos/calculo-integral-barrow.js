@@ -10,8 +10,8 @@ MatIA.ejemplo({
     { blocks: [
       {"type":"text","v":"Regla de Barrow: si F es una primitiva de f, entonces ∫ₐᵇ f(x) dx = F(b) − F(a). La constante C no hace falta porque se cancela al restar. Si f ≥ 0 en [a, b], el resultado es el área entre la gráfica y el eje X. Prueba a cambiar los límites de integración y aplica Operaciones ▸ «Integral paso a paso»."},
       { type: 'deriv', rows: [
-        {"l":"\\int_{0}^{2}\\left(3x^2-2x+1\\right)dx","r":"\\left[x^{3}-x^{2}+x\\right]_{0}^{2}","note":"Primitiva: F(x) = x³ − x² + x (regla de la potencia)","boxed":false},
-        {"l":"","r":"\\left(2^{3}-2^{2}+2\\right)-\\left(0^{3}-0^{2}+0\\right)","note":"Regla de Barrow: F(2) − F(0)","boxed":false},
+        {"l":"\\int_{0}^{2}\\left(3x^2-2x+1\\right)dx","r":"\\left[x^{3}-x^{2}+x\\right]_{0}^{2}","note":"Primitiva F(x)","boxed":false},
+        {"l":"","r":"\\left(2^{3}-2^{2}+2\\right)-\\left(0^{3}-0^{2}+0\\right)","note":"Barrow: F(2) − F(0)","boxed":false},
         {"l":"","r":"6-0","note":"Operamos","boxed":false},
         {"l":"","r":"6","note":"Resultado","boxed":true},
       ] },
