@@ -1,0 +1,9 @@
+/* Lo que no cabe en la hoja (js/blocks/fit.js) */
+math-field:not([data-aux]){font-size:calc(24px * var(--scale) * var(--fit, 1))}
+.blk.is-overflow math-field:not([data-aux]){outline:var(--border-width-thin) dashed var(--data-5);outline-offset:2px;border-radius:var(--radius-md)}
+.blk.is-overflow math-field:not([data-aux]):focus-within{outline:var(--border-width-thin) dashed var(--data-5)}
+.fit-warn{display:flex;align-items:center;gap:var(--space-2);margin-top:var(--space-1);font:500 12px/1.3 var(--font-sans);color:var(--ink-muted)}
+.fit-warn::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--data-5);flex:none}
+@media print{.fit-warn{display:none!important}}
+.blk.is-overflow .blk-body{flex-wrap:wrap}
+.fit-warn{flex:1 0 100%}

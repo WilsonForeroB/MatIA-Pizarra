@@ -137,6 +137,7 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
       mf.value = b.v;
       if (b.note) bd.appendChild(makeNote(b));
       mf.addEventListener('input', () => { b.v = mf.getValue('latex'); b.result = false; el.classList.remove('is-result'); hidePio(); S.save(); });
+      if (MatIA.has('blocks/fit')) R('blocks/fit').watch(el, mf);
       mf.addEventListener('move-out', (e) => {
         const d = e.detail.direction;
         if (d === 'upward' || d === 'backward') { if (focusSibling(b.id, -1, d === 'backward' ? 'end' : 'end')) e.preventDefault(); }
