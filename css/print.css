@@ -11,3 +11,6 @@
   .print-page .blk-handle,.print-page .x-del{display:none}
   .print-page img.print-ink{position:absolute;left:0;top:0;pointer-events:none}
 }
+
+/* Maquetación previa a imprimir: fuera de la pantalla para medir y esperar a imágenes y fórmulas */
+#print-root.measuring{display:block;position:absolute;left:-100000px;top:0;visibility:hidden}
