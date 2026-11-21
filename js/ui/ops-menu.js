@@ -73,9 +73,16 @@ MatIA.define('ui/ops-menu', ['core/dom', 'model/board', 'model/schema', 'ui/stat
       ['deriv', 'Derivar paso a paso', 'f(x) = … o una expresión: indica las reglas aplicadas y simplifica.'],
       ['integral', 'Integral paso a paso', '∫ f(x) dx o ∫ₐᵇ f(x) dx (desde Cálculo ▾ o escrito a mano): reglas aplicadas, primitiva + C y, si es definida, la regla de Barrow.'],
       ['extr1', 'Máximos y mínimos de f(x)', 'f(x) = … (y si quieres un intervalo: f(x)=x^3-3x, x∈[-3,2]). Puntos críticos, clasificación con f″, inflexión, crecimiento, absolutos y gráfica con los puntos marcados.'],
-      ['extr2', 'Extremos de f(x, y) y puntos de silla', 'z = f(x, y): gradiente, puntos críticos, hessiana y clasificación (mínimo, máximo, punto de silla) con la superficie 3D marcada.'],
       ['graph', 'Graficar función', 'f(x) = … Añade más funciones con «+ Añadir función»; acerca, aleja y muévete con los botones de la gráfica o arrastrando.'],
       ['values', 'Tabla de valores', 'f(x) = …: valores para x de −3 a 3.'],
+    ]],
+    ['Cálculo vectorial', [
+      ['partial', 'Derivadas parciales', 'f(x,y) = … o f(x,y,z) = … (y si quieres un punto: , P=(1,2)). Cada parcial tratando las otras variables como constantes, segundas derivadas, Schwarz (f_xy = f_yx) y valores en P.'],
+      ['grad', 'Gradiente y derivada direccional', 'f(x,y) = …, P=(1,2), u=(3,4). ∇f, ∇f(P) y su módulo (máxima pendiente), vector unitario, derivada direccional y plano tangente.'],
+      ['hess', 'Matriz hessiana', 'f(x,y) o f(x,y,z) (y si quieres , P=(1,1)). Segundas derivadas, matriz hessiana y, en P, menores principales y criterio de Sylvester.'],
+      ['jacob', 'Matriz jacobiana', 'F(x,y) = (x^2y,\\ x+\\sin y) o un cambio de variables x=r\\cos\\theta, y=r\\sin\\theta (y si quieres , P=(…)). Jacobiana, su determinante y su significado.'],
+      ['divrot', 'Divergencia, rotacional y laplaciano', 'Un campo F = (P, Q, R) en x, y, z (o F = (P, Q)): divergencia, rotacional y si es conservativo. Con una función f: laplaciano Δf.'],
+      ['extr2', 'Extremos de f(x, y) y puntos de silla', 'z = f(x, y): gradiente, puntos críticos, hessiana y clasificación (mínimo, máximo, punto de silla) con la superficie 3D marcada.'],
     ]],
   ];
   (function buildOpsPop() {
@@ -328,6 +335,11 @@ MatIA.define('ui/ops-menu', ['core/dom', 'model/board', 'model/schema', 'ui/stat
         case 'transv': specs = R('engine/ops').transversal(full); break;
         case 'extr1': specs = R('engine/ops').extrema1(full); break;
         case 'extr2': specs = R('engine/ops').extrema2(full); break;
+        case 'partial': specs = R('engine/ops').partials(full); break;
+        case 'grad': specs = R('engine/ops').gradient(full); break;
+        case 'hess': specs = R('engine/ops').hessian(full); break;
+        case 'jacob': specs = R('engine/ops').jacobian(full); break;
+        case 'divrot': specs = R('engine/ops').divRot(full); break;
         case 'graph': specs = R('engine/ops').graphOf(full); break;
         case 'values': specs = R('engine/ops').valueTable(full); break;
         case 'solve': {

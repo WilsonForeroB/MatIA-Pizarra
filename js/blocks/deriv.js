@@ -88,6 +88,25 @@ MatIA.define('blocks/deriv', ['core/dom', 'model/board', 'model/schema', 'ui/sta
       g.appendChild(rw);
     });
     bd.appendChild(g);
+    watchStack(g);
+  }
+  /* Si las fórmulas ocupan casi todo el ancho, las explicaciones pasan debajo de cada paso
+     (como en el móvil) en vez de quedar en una columna estrecha y cortada. */
+  const NOTE_MIN = 220;
+  let stackRO = null;
+  function fitStack(g) {
+    if (!g.isConnected || !g.clientWidth) return;
+    const w = (sel) => { const c = g.querySelector(sel); return c ? c.getBoundingClientRect().width : 0; };
+    const need = w('.dcell.dl') + w('.dcell.deq') + w('.dcell.dr') + NOTE_MIN + 70;
+    const hasNotes = [...g.querySelectorAll('.dnote')].some((n) => n.textContent.trim());
+    g.classList.toggle('stacked', hasNotes && need > g.clientWidth);
+  }
+  function watchStack(g) {
+    if (typeof ResizeObserver !== 'function') return;
+    if (!stackRO) stackRO = new ResizeObserver((es) => { for (const e of es) fitStack(e.target.closest('.deriv') || e.target); });
+    stackRO.observe(g);
+    g.querySelectorAll('.dcell.dr, .dcell.dl').forEach((c) => stackRO.observe(c));
+    requestAnimationFrame(() => fitStack(g));
   }
   function rebuildDeriv(b) {
     const bd = elById(b.id).querySelector('.blk-body');
@@ -267,5 +286,5 @@ MatIA.define('blocks/deriv', ['core/dom', 'model/board', 'model/schema', 'ui/sta
   }
   // Copia al modelo lo que hay en pantalla (por si algún cambio no ha disparado «input»)
   registry.register({ type: 'deriv', build: (b, bd, ro) => buildDeriv(b, bd, ro) });
-  return { buildDeriv, rebuildDeriv, cellEl, markRow, focusCell, derivMove, removeRow, addRow, splitTopEq, startDeriv, derivKey };
+  return { fitStack, buildDeriv, rebuildDeriv, cellEl, markRow, focusCell, derivMove, removeRow, addRow, splitTopEq, startDeriv, derivKey };
 });

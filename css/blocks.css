@@ -74,6 +74,13 @@ body[data-mode="draw"] .add-line,body.presenting .add-line{display:none}
 @media (hover:none){.x-del{opacity:.7}}
 #toast .mi-callout{display:flex;align-items:center;gap:var(--space-4)}
 #toast .mi-callout p{flex:1 1 auto}
+/* Fórmulas anchas: las explicaciones van debajo de cada paso (lo decide blocks/deriv.fitStack) */
+.deriv.stacked{grid-template-columns:auto max-content max-content minmax(0,1fr)}
+.deriv.stacked .dcell,.deriv.stacked .drow-del{grid-row:var(--gm)}
+.deriv.stacked .dnote{grid-row:var(--gn);grid-column:2/5;min-width:0;margin:0 0 var(--space-2);padding-left:var(--space-3)}
+.deriv.stacked .drow-del{grid-column:1;margin:0}
+.deriv.stacked .drow-dup{grid-row:var(--gn);grid-column:1;margin:0}
+.deriv.stacked .dl{grid-column:2}.deriv.stacked .deq{grid-column:3}.deriv.stacked .dr{grid-column:4}
 @media (max-width:640px){
   .deriv{grid-template-columns:auto max-content max-content max-content}
   .deriv .dcell,.deriv .drow-del{grid-row:var(--gm)}

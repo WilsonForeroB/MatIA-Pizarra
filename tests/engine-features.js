@@ -6,7 +6,7 @@ const vm = require('vm');
 const ROOT = path.resolve(__dirname, '..');
 const FILES = ['js/core/namespace.js', 'js/engine/core/fraction-matrix.js', 'js/engine/core/tokenizer.js', 'js/engine/core/parser.js', 'js/engine/core/latex-definitions.js', 'js/engine/core/gauss-systems.js', 'js/engine/core.js',
   'js/engine/ops/common.js', 'js/engine/ops/poly.js', 'js/engine/ops/expr.js', 'js/engine/ops/ecuaciones.js', 'js/engine/ops/matrices.js', 'js/engine/ops/vectores.js', 'js/engine/ops/aritmetica.js', 'js/engine/ops/polinomios.js',
-  'js/engine/ops/combinatoria-logica.js', 'js/engine/ops/conjuntos-venn.js', 'js/engine/ops/analisis.js', 'js/engine/ops/estadistica-probabilidad.js', 'js/engine/ops/geometria.js', 'js/engine/ops/integrales.js', 'js/engine/ops.js'];
+  'js/engine/ops/combinatoria-logica.js', 'js/engine/ops/conjuntos-venn.js', 'js/engine/ops/analisis.js', 'js/engine/ops/estadistica-probabilidad.js', 'js/engine/ops/geometria.js', 'js/engine/ops/integrales.js', 'js/engine/ops/vec-input.js', 'js/engine/ops/vectorial.js', 'js/engine/ops/campos.js', 'js/engine/ops.js'];
 const ctx = { console, BigInt, Math, JSON, Number, String, Array, Object, Set, Map, Error, TypeError, RangeError, isFinite, parseFloat, parseInt, Symbol, RegExp, Infinity, NaN };
 ctx.window = ctx; ctx.globalThis = ctx;
 vm.createContext(ctx);
