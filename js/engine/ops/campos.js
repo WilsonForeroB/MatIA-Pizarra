@@ -300,7 +300,7 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
   /* =================== 2. Divergencia, rotacional y laplaciano =================== */
   function divRot(latex) {
     const p = parseVecInput(latex);
-    if (p.kind === 'change') throw new MErr('Escribe un campo vectorial F(x,y,z) = (P, Q, R) o una función escalar f(x,y,z) = … (no un cambio de variables).');
+    if (p.kind === 'change') throw new MErr('Escribe un campo vectorial F(x,y,z) = (F₁, F₂, F₃) o una función escalar f(x,y,z) = … (no un cambio de variables).');
     const XYZ = ['x', 'y', 'z'];
     const bad = p.vars.filter((v) => !XYZ.includes(v));
     if (bad.length) throw new MErr('La divergencia, el rotacional y el laplaciano usan las variables x, y, z; sobra «' + bad.join(', ') + '».');
@@ -327,20 +327,22 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
 
     // campo vectorial
     const m = p.exprs.length;
-    if (m !== 2 && m !== 3) throw new MErr('El campo debe tener 2 o 3 componentes, por ejemplo F(x,y) = (P, Q) o F(x,y,z) = (P, Q, R); este tiene ' + m + '.');
+    if (m !== 2 && m !== 3) throw new MErr('El campo debe tener 2 o 3 componentes, por ejemplo F(x,y) = (F₁, F₂) o F(x,y,z) = (F₁, F₂, F₃); este tiene ' + m + '.');
     const vars = XYZ.slice(0, m);
     const extra = p.vars.filter((v) => !vars.includes(v));
     if (extra.length) throw new MErr('Un campo con ' + m + ' componentes solo puede depender de ' + vars.join(', ') + '; sobra «' + extra.join(', ') + '».');
     const nm = p.name, nmB = nm;
-    const names = ['P', 'Q', 'R'].slice(0, m);
+    const names = [1, 2, 3].slice(0, m).map((k) => nmB + '_{' + k + '}');
+    const sub = ['₁', '₂', '₃'];
+    const namesT = names.map((_, k) => nmB + sub[k]);
     const C = p.exprs;
     const dm = names.map((_, i) => vars.map((v) => deriv(C[i], v)));   // dm[i][j] = ∂comp_i/∂var_j
-    rows.push({ l: nmB + paren(vars.join(',')), r: '\\left(' + names.join(',\\ ') + '\\right)=\\left(' + C.map(L).join(',\\ ') + '\\right)', note: 'Componentes del campo: ' + names.join(', ') });
-    rows.push({ l: fracP(names[0], vars[0], 1), r: L(dm[0][0]) + names.slice(1).map((n, i) => ',\\quad ' + fracP(n, vars[i + 1], 1) + '=' + L(dm[i + 1][i + 1])).join(''), note: 'Las que necesita la divergencia: ∂P/∂x, ∂Q/∂y' + (m === 3 ? ', ∂R/∂z' : '') });
+    rows.push({ l: nmB + paren(vars.join(',')), r: '\\left(' + names.join(',\\ ') + '\\right)=\\left(' + C.map(L).join(',\\ ') + '\\right)', note: 'Componentes del campo: ' + namesT.join(', ') + ' (las numeramos para no confundirlas con el punto P)' });
+    rows.push({ l: fracP(names[0], vars[0], 1), r: L(dm[0][0]) + names.slice(1).map((n, i) => ',\\quad ' + fracP(n, vars[i + 1], 1) + '=' + L(dm[i + 1][i + 1])).join(''), note: 'Las que necesita la divergencia: ∂' + namesT[0] + '/∂x, ∂' + namesT[1] + '/∂y' + (m === 3 ? ', ∂' + namesT[2] + '/∂z' : '') });
     const dterms = names.map((n, i) => dm[i][i]);
     const rawD = sumAst(dterms), dv = sumSimp(dterms);
     const dzero = isZeroAst(dv) || numZero(dv, vars);
-    rows.push({ l: '\\nabla\\cdot ' + nmB, r: names.map((n, i) => fracP(n, vars[i], 1)).join('+') + '=' + sumL(dterms) + (sameTerms(sumL(dterms), L(dzero ? N.num(F(0)) : dv)) ? '' : '=' + L(dzero ? N.num(F(0)) : dv)), note: 'Divergencia: suma de las derivadas ∂P/∂x + ∂Q/∂y' + (m === 3 ? ' + ∂R/∂z' : '') + (dzero ? '. Es cero: el campo es solenoidal (incompresible)' : ''), boxed: true });
+    rows.push({ l: '\\nabla\\cdot ' + nmB, r: names.map((n, i) => fracP(n, vars[i], 1)).join('+') + '=' + sumL(dterms) + (sameTerms(sumL(dterms), L(dzero ? N.num(F(0)) : dv)) ? '' : '=' + L(dzero ? N.num(F(0)) : dv)), note: 'Divergencia: suma de las derivadas ∂' + namesT[0] + '/∂x + ∂' + namesT[1] + '/∂y' + (m === 3 ? ' + ∂' + namesT[2] + '/∂z' : '') + (dzero ? '. Es cero: el campo es solenoidal (incompresible)' : ''), boxed: true });
 
     // rotacional
     let rotComps, rotZero;
@@ -348,18 +350,18 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
     if (m === 3) {
       rows.push({
         l: '\\nabla\\times ' + nmB,
-        r: '\\begin{vmatrix}\\mathbf{i}&\\mathbf{j}&\\mathbf{k}\\\\ \\frac{\\partial}{\\partial x}&\\frac{\\partial}{\\partial y}&\\frac{\\partial}{\\partial z}\\\\ P&Q&R\\end{vmatrix}',
+        r: '\\begin{vmatrix}\\mathbf{i}&\\mathbf{j}&\\mathbf{k}\\\\ \\frac{\\partial}{\\partial x}&\\frac{\\partial}{\\partial y}&\\frac{\\partial}{\\partial z}\\\\ ' + names.join('&') + '\\end{vmatrix}',
         note: 'Rotacional como determinante simbólico (primera fila: i, j, k)',
       });
       const defs = [
-        { n: 'x', lbl: '\\frac{\\partial R}{\\partial y}-\\frac{\\partial Q}{\\partial z}', a: dm[2][1], b: dm[1][2], t: 'R_y − Q_z' },
-        { n: 'y', lbl: '\\frac{\\partial P}{\\partial z}-\\frac{\\partial R}{\\partial x}', a: dm[0][2], b: dm[2][0], t: 'P_z − R_x' },
-        { n: 'z', lbl: '\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}', a: dm[1][0], b: dm[0][1], t: 'Q_x − P_y' },
+        { n: 'x', lbl: '\\frac{\\partial ' + names[2] + '}{\\partial y}-\\frac{\\partial ' + names[1] + '}{\\partial z}', a: dm[2][1], b: dm[1][2], t: '∂' + namesT[2] + '/∂y − ∂' + namesT[1] + '/∂z' },
+        { n: 'y', lbl: '\\frac{\\partial ' + names[0] + '}{\\partial z}-\\frac{\\partial ' + names[2] + '}{\\partial x}', a: dm[0][2], b: dm[2][0], t: '∂' + namesT[0] + '/∂z − ∂' + namesT[2] + '/∂x' },
+        { n: 'z', lbl: '\\frac{\\partial ' + names[1] + '}{\\partial x}-\\frac{\\partial ' + names[0] + '}{\\partial y}', a: dm[1][0], b: dm[0][1], t: '∂' + namesT[1] + '/∂x − ∂' + namesT[0] + '/∂y' },
       ];
       rotComps = defs.map((d) => {
         const raw = sd(d.a, d.b), s = canonS(raw), z = isZeroAst(s) || numZero(s, vars);
         const fin = z ? N.num(F(0)) : s;
-        rows.push({ l: '(\\nabla\\times ' + nmB + ')_{' + d.n + '}', r: d.lbl + '=' + L(raw) + (L(raw) === L(fin) ? '' : '=' + L(fin)), note: 'Componente ' + d.n + ': ' + d.t.replace('P_z', '∂P/∂z').replace('R_x', '∂R/∂x').replace('R_y', '∂R/∂y').replace('Q_z', '∂Q/∂z').replace('Q_x', '∂Q/∂x').replace('P_y', '∂P/∂y') });
+        rows.push({ l: '(\\nabla\\times ' + nmB + ')_{' + d.n + '}', r: d.lbl + '=' + L(raw) + (L(raw) === L(fin) ? '' : '=' + L(fin)), note: 'Componente ' + d.n + ': ' + d.t });
         return fin;
       });
       rotZero = rotComps.every(isZeroAst);
@@ -367,7 +369,7 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
     } else {
       const raw = sd(dm[1][0], dm[0][1]), s = canonS(raw), z = isZeroAst(s) || numZero(s, vars);
       const fin = z ? N.num(F(0)) : s;
-      rows.push({ l: '\\nabla\\times ' + nmB, r: '\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}=' + L(raw) + (L(raw) === L(fin) ? '' : '=' + L(fin)), note: 'Rotacional en el plano: solo tiene componente k, ∂Q/∂x − ∂P/∂y', boxed: true });
+      rows.push({ l: '\\nabla\\times ' + nmB, r: '\\frac{\\partial ' + names[1] + '}{\\partial x}-\\frac{\\partial ' + names[0] + '}{\\partial y}=' + L(raw) + (L(raw) === L(fin) ? '' : '=' + L(fin)), note: 'Rotacional en el plano: solo tiene componente k, ∂' + namesT[1] + '/∂x − ∂' + namesT[0] + '/∂y', boxed: true });
       rotComps = [fin];
       rotZero = isZeroAst(fin);
     }
@@ -384,7 +386,7 @@ MatIA.define('engine/ops/campos', ['engine/core', 'engine/ops/expr', 'engine/ops
           : '. Rotacional nulo: el campo es irrotacional; si su dominio no tiene agujeros, es conservativo (existe un potencial φ con ∇φ = F)';
       if (phi) {
         const lead = '\\varphi=' + L(phi);
-        rows.push({ l: '\\varphi', r: '=' + L(phi) + '+C', note: 'Potencial: integramos P respecto de x, Q respecto de y' + (m === 3 ? ', R respecto de z' : '') + ' sin repetir términos', boxed: true });
+        rows.push({ l: '\\varphi', r: '=' + L(phi) + '+C', note: 'Potencial: integramos ' + namesT[0] + ' respecto de x, ' + namesT[1] + ' respecto de y' + (m === 3 ? ', ' + namesT[2] + ' respecto de z' : '') + ' sin repetir términos', boxed: true });
         void lead;
       }
     } else if (rotComps.some((c) => !isZeroAst(c))) {

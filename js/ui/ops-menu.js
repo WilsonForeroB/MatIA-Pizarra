@@ -81,7 +81,7 @@ MatIA.define('ui/ops-menu', ['core/dom', 'model/board', 'model/schema', 'ui/stat
       ['grad', 'Gradiente y derivada direccional', 'f(x,y) = …, P=(1,2), u=(3,4). ∇f, ∇f(P) y su módulo (máxima pendiente), vector unitario, derivada direccional y plano tangente.'],
       ['hess', 'Matriz hessiana', 'f(x,y) o f(x,y,z) (y si quieres , P=(1,1)). Segundas derivadas, matriz hessiana y, en P, menores principales y criterio de Sylvester.'],
       ['jacob', 'Matriz jacobiana', 'F(x,y) = (x^2y,\\ x+\\sin y) o un cambio de variables x=r\\cos\\theta, y=r\\sin\\theta (y si quieres , P=(…)). Jacobiana, su determinante y su significado.'],
-      ['divrot', 'Divergencia, rotacional y laplaciano', 'Un campo F = (P, Q, R) en x, y, z (o F = (P, Q)): divergencia, rotacional y si es conservativo. Con una función f: laplaciano Δf.'],
+      ['divrot', 'Divergencia, rotacional y laplaciano', 'Un campo F = (F₁, F₂, F₃) en x, y, z (o F = (F₁, F₂)), por ejemplo F=(xy, yz, zx): divergencia, rotacional y si es conservativo. Con una función f: laplaciano Δf.'],
       ['extr2', 'Extremos de f(x, y) y puntos de silla', 'z = f(x, y): gradiente, puntos críticos, hessiana y clasificación (mínimo, máximo, punto de silla) con la superficie 3D marcada.'],
     ]],
   ];
