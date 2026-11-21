@@ -186,7 +186,7 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
 
     const clearSession = () => { sessionFile = null; lastAutoJSON = ''; };
     return {
-      saveToHistory, listHist, clearSession, stampName, slug,
+      saveToHistory, listHist, clearSession, stampName, slug, useFolder: (f) => use(f),
       get histDir() { return writable() ? folder : null; },
       get folder() { return folder; },
     };
