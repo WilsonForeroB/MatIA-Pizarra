@@ -1,0 +1,7 @@
+/* Pantallas estrechas. Debe cargarse la última. Origen: pizarra.html:547-552. */
+@media (max-width:640px){
+  .wrap{padding:var(--space-2)}
+  .sheet{padding:var(--space-4) var(--space-2) var(--space-8)}
+  .top .mi-field{width:120px}
+  .empty-pio{margin-left:0}
+}

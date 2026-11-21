@@ -1,0 +1,13 @@
+/* Impresión. Origen: pizarra.html:535-546. */
+#print-root{display:none}
+@media print{
+  .print-page.paper{padding:var(--space-5)}
+  body{display:block;overflow:visible;background:#fff}
+  body>*:not(#print-root){display:none!important}
+  #print-root{display:block}
+  .print-page{position:relative;break-after:page;padding:0}
+  .print-page:last-child{break-after:auto}
+  .print-page .blk{border:0;padding:2px 0}
+  .print-page .blk-handle,.print-page .x-del{display:none}
+  .print-page img.print-ink{position:absolute;left:0;top:0;pointer-events:none}
+}
