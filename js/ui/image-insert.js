@@ -13,12 +13,13 @@ MatIA.define('ui/image-insert', ['core/dom'], (dom) => {
     if (f) await assets().insertFromFile(f);
   });
   // pegar: solo si el portapapeles trae una imagen (el texto se pega como siempre)
+  // en fase de captura: MathLive detiene el evento en su campo interno y la imagen no llegaría
   document.addEventListener('paste', async (e) => {
     const dt = e.clipboardData;
     if (!dt || !Array.from(dt.items || []).some((it) => it.kind === 'file' && /^image\//.test(it.type))) return;
-    e.preventDefault();
+    e.preventDefault(); e.stopPropagation();
     await assets().insertFromClipboardOrDrop(dt);
-  });
+  }, true);
   // arrastrar archivos de imagen sobre la hoja
   const sheet = $('#sheet');
   const hasImage = (dt) => dt && Array.from(dt.items || []).some((it) => it.kind === 'file' && /^image\//.test(it.type));

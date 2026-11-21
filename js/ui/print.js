@@ -80,8 +80,12 @@ MatIA.define('ui/print', ['core/dom', 'model/board', 'ui/state'], (dom, S, st) =
     });
     // se maqueta fuera de la pantalla para poder medir y esperar a imágenes y fórmulas
     pr.classList.add('measuring');
-    if (MatIA.has('blocks/fit')) pr.querySelectorAll('.blk').forEach((el) => { const mf = el.querySelector('math-field:not([data-aux])'); if (mf) { try { R('blocks/fit').apply(el, mf); } catch (e) { /* sin ajuste */ } } });
     await ready(pr);
+    // el ajuste de fórmulas largas se mide cuando MathLive ya ha pintado
+    if (MatIA.has('blocks/fit')) {
+      pr.querySelectorAll('.blk').forEach((el) => { const mf = el.querySelector('math-field:not([data-aux])'); if (mf) { try { R('blocks/fit').apply(el, mf); } catch (e) { /* sin ajuste */ } } });
+      await new Promise((res) => requestAnimationFrame(() => requestAnimationFrame(res)));
+    }
     const over = overflowing(pr);
     pr.classList.remove('measuring');
     if (over.length) R('ui/toast')('Ojo: ' + (over.length === 1 ? 'la página ' + over[0] + ' no cabe' : 'las páginas ' + over.join(', ') + ' no caben') + ' en el tamaño de hoja elegido y se recortará' + (over.length === 1 ? '' : 'n') + '. Reparte el contenido o cambia el tamaño en Vista ▾.', 'aviso');

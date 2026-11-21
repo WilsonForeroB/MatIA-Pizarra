@@ -95,6 +95,7 @@ MatIA.define('blocks/fit', ['core/dom', 'model/board', 'ui/toast'], (dom, S, toa
     delete b.result;
     b.type = 'text';
     b.v = txt;
+    delete b.html; // el texto nuevo manda; un html antiguo lo taparía
     delete b.note;
     el.replaceWith(ed.makeBlockEl(b));
     S.save();

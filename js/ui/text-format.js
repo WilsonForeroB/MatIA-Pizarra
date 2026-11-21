@@ -250,6 +250,8 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
   document.addEventListener('mousedown', (e) => { if (host && !bar.contains(e.target) && !host.contains(e.target)) hide(); }, true);
   sheet.addEventListener('input', () => { if (host) place(); });
   window.addEventListener('resize', () => { if (host) place(); });
+  // al cambiar de página (Alt+AvPág…) se redibuja #blocks sin focusin: si la línea ya no está, fuera la barra
+  new MutationObserver(() => { if (host && !host.isConnected) hide(); }).observe(document.getElementById('blocks'), { childList: true });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && bar.querySelector('.tf-pop:not([hidden])')) { bar.querySelectorAll('.tf-pop').forEach((p) => { p.hidden = true; }); return; }
     const h = textHost(e.target);

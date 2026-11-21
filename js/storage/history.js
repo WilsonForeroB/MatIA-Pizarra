@@ -48,8 +48,8 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
       folder = f; pending = null;
       setStatus();
       await listHist();
-      // las imágenes de la página que no se podían leer sin carpeta se cargan ahora
-      if (S.page().blocks.some((x) => x.type === 'image')) R('blocks/editor').renderPage();
+      // las imágenes que no se podían leer sin carpeta vuelven a intentarlo (blocks/image escucha este evento)
+      bus.emit('folder:connected', f);
       return true;
     }
 
@@ -173,7 +173,7 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
     $('#histBtn').addEventListener('click', async () => {
       $('#histName').value = S.board.title || '';
       $('#histAuto').checked = !!S.board.histAuto;
-      if (!folder) { const r = await access.restore(); if (r) { folder = r.folder; pending = r.pending; } }
+      if (!folder) { const r = await access.restore(); if (r && !folder) { folder = r.folder; pending = r.pending; } } // si mientras tanto se conectó una carpeta, no se pisa
       setStatus();
       hist.showModal();
       listHist();
@@ -183,7 +183,7 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
     // al arrancar, si la carpeta recordada ya tiene permiso, el guardado automático sigue funcionando (sin ventanas)
     (async () => {
       const r = await access.restore();
-      if (r) { folder = r.folder; pending = r.pending; }
+      if (r && !folder) { folder = r.folder; pending = r.pending; }
     })();
 
     const clearSession = () => { sessionFile = null; lastAutoJSON = ''; };

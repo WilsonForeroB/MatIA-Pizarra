@@ -14,3 +14,7 @@
 
 /* Maquetación previa a imprimir: fuera de la pantalla para medir y esperar a imágenes y fórmulas */
 #print-root.measuring{display:block;position:absolute;left:-100000px;top:0;visibility:hidden}
+/* al medir se usan las mismas medidas que al imprimir (las reglas de @media print no se aplican fuera de impresión) */
+#print-root.measuring .print-page.paper{padding:var(--space-5)}
+#print-root.measuring .print-page .blk{border:0;padding:2px 0}
+#print-root.measuring .print-page .blk-handle,#print-root.measuring .print-page .x-del{display:none}

@@ -29,11 +29,28 @@ MatIA.define('storage/assets', [], () => {
     return ((h1 >>> 0).toString(16).padStart(8, '0') + (h2 >>> 0).toString(16).padStart(8, '0'));
   }
 
+  async function svgToPng(blob) {
+    const u = URL.createObjectURL(blob);
+    try {
+      const im = new Image();
+      im.src = u;
+      await im.decode();
+      let w = im.naturalWidth || 1200, h = im.naturalHeight || 900;
+      const k = Math.min(1, MAX / Math.max(w, h)); w = Math.max(1, Math.round(w * k)); h = Math.max(1, Math.round(h * k));
+      const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      cv.getContext('2d').drawImage(im, 0, 0, w, h);
+      return await new Promise((res, rej) => cv.toBlob((b) => (b ? res(b) : rej(new Error('No se pudo convertir el SVG.'))), 'image/png'));
+    } finally { URL.revokeObjectURL(u); }
+  }
+  // un .svg ya existente en la carpeta se sirve como data: (no se puede abrir como página del mismo origen)
+  const svgDataUrl = (b) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(new Blob([b], { type: 'image/svg+xml' })); });
+
   async function prepare(file) { // → { blob, ext }
     const mime = mimeOf(file);
     if (!mime) throw new Error('Formato de imagen no admitido.');
     let blob = file.type === mime ? file : new Blob([file], { type: mime });
-    if (mime === 'image/svg+xml' || mime === 'image/gif') return { blob, ext: EXT[mime] };
+    if (mime === 'image/svg+xml') return { blob: await svgToPng(blob), ext: 'png' }; // un SVG puede llevar scripts: se guarda como PNG
+    if (mime === 'image/gif') return { blob, ext: EXT[mime] };
     try {
       const bmp = await createImageBitmap(blob);
       const big = Math.max(bmp.width, bmp.height);
@@ -94,11 +111,11 @@ MatIA.define('storage/assets', [], () => {
   let cacheFolder = null;
   async function url(ruta) {
     let f = history().folder;
-    if (!f) { const r = await access().restore(); f = r && r.folder; if (f) await history().useFolder(f); }
+    if (!f) { const r = await access().restore(); f = history().folder || (r && r.folder); if (f && f !== history().folder) await history().useFolder(f); } // mientras se esperaba pudo conectarse otra
     if (!f) throw new Error('No hay carpeta conectada.');
     if (f !== cacheFolder) { cacheFolder = f; for (const p of cache.values()) p.then((u) => URL.revokeObjectURL(u), () => {}); cache.clear(); }
     if (!cache.has(ruta)) {
-      const p = f.readFile(ruta).then((b) => URL.createObjectURL(b));
+      const p = f.readFile(ruta).then((b) => (/\.svg$/i.test(ruta) ? svgDataUrl(b) : URL.createObjectURL(b)));
       cache.set(ruta, p);
       p.catch(() => { if (cache.get(ruta) === p) cache.delete(ruta); });
     }
@@ -107,11 +124,13 @@ MatIA.define('storage/assets', [], () => {
 
   async function insertFromFile(file) {
     if (!isImageFile(file)) { R('ui/toast')('Ese archivo no es una imagen (PNG, JPG, WebP, GIF o SVG).', 'aviso'); return null; }
+    const ed = R('blocks/editor'), S = R('model/board');
+    // la línea activa se recuerda ANTES de guardar: pedir o reconectar la carpeta puede redibujar la página
+    const a0 = ed.activeBlock(), afterId = a0 ? a0.id : null;
     let ruta;
     try { ruta = await store(file); } catch (e) { R('ui/toast')('No se ha podido guardar la imagen: ' + ((e && e.message) || e), 'aviso'); return null; }
     if (!ruta) return null;
-    const ed = R('blocks/editor'), S = R('model/board');
-    const b = ed.activeBlock();
+    const b = afterId ? ed.blockById(afterId) : null;
     const pb = S.page().blocks;
     R('ui/ops-menu').insertSpecs(b ? b.id : pb.length ? pb[pb.length - 1].id : null, [{ type: 'image', src: ruta, w: 60, caption: '', alt: '' }], b);
     return ruta;

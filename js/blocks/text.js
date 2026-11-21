@@ -69,6 +69,18 @@ MatIA.define('blocks/text', ['blocks/registry'], (registry) => {
     });
     if (!ro) { const last = t.lastChild; if (last && last.nodeType === 1 && last.classList.contains('math-inline')) t.appendChild(document.createTextNode('​')); }
   }
+  /* Texto plano de la línea con las fórmulas en línea como $latex$ (innerText no las incluye y la línea
+     parecería vacía: se borraría con Retroceso y la clase se daría por vacía). */
+  function textOf(t) {
+    if (!t.querySelector('.math-inline')) return t.innerText.replace(/\u200b/g, '').replace(/\n$/, '');
+    const c = t.cloneNode(true);
+    c.querySelectorAll('.math-inline').forEach((sp) => sp.replaceWith(document.createTextNode('$' + (sp.getAttribute('data-latex') || '') + '$')));
+    c.style.cssText = 'position:absolute;left:-100000px;top:0;white-space:pre-wrap'; // fuera de la pantalla (con visibility:hidden innerText sale vacío)
+    document.body.appendChild(c);
+    const out = c.innerText;
+    c.remove();
+    return out.replace(/\u200b/g, '').replace(/\n$/, '');
+  }
   function makeMath(sp, latex, ro) {
     const mf = document.createElement('math-field');
     mf.setAttribute('data-aux', '1');
@@ -112,7 +124,7 @@ MatIA.define('blocks/text', ['blocks/registry'], (registry) => {
         if (!t.textContent.replace(/​/g, '') && !t.querySelector('.math-inline,li')) { if (t.firstChild) t.innerHTML = ''; }
         const h = sanitize(t.innerHTML);
         if (h && /<|&/.test(h)) b.html = h; else delete b.html; // texto sin formato: solo v
-        b.v = t.innerText.replace(/​/g, '').replace(/\n$/, '');
+        b.v = textOf(t);
         const ed = R('blocks/editor');
         if (ed.hidePio) ed.hidePio();
         S.save();
@@ -124,8 +136,12 @@ MatIA.define('blocks/text', ['blocks/registry'], (registry) => {
         e.preventDefault();
         const html = cd.getData('text/html');
         if (html) {
-          const h = sanitize(html).replace(/<span class="math-inline"[^>]*><\/span>/g, '');
-          document.execCommand('insertHTML', false, h);
+          document.execCommand('insertHTML', false, sanitize(html));
+          // Chrome vuelve a poner estilos en línea al insertar: fuera (no se guardarían y el aspecto cambiaría al recargar)
+          t.querySelectorAll('[style]').forEach((n) => n.removeAttribute('style'));
+          // las fórmulas en línea pegadas se vuelven a montar como campos de fórmula
+          t.querySelectorAll('span.math-inline').forEach((sp) => { if (!sp.querySelector('math-field')) { const l = sp.getAttribute('data-latex') || ''; sp.textContent = ''; sp.contentEditable = 'false'; if (R('ui/state').mlReady) makeMath(sp, l, false); else sp.textContent = l; } });
+          sync();
         } else document.execCommand('insertText', false, cd.getData('text/plain'));
       });
     }
@@ -137,6 +153,13 @@ MatIA.define('blocks/text', ['blocks/registry'], (registry) => {
     const o = Object.assign(base, { type: 'text', v: typeof x.v === 'string' ? x.v : '', result: !!x.result });
     const h = sanitize(x.html);
     if (h) o.html = h;
+    // archivos antiguos: si v no recoge las fórmulas en línea, se reconstruye desde el html ($latex$)
+    if (h && /math-inline/.test(h) && !/\$/.test(o.v)) {
+      const d = document.implementation.createHTMLDocument('');
+      d.body.innerHTML = h;
+      d.body.querySelectorAll('.math-inline').forEach((sp) => sp.replaceWith(d.createTextNode('$' + (sp.getAttribute('data-latex') || '') + '$')));
+      o.v = (d.body.textContent || '').replace(/\u200b/g, '');
+    }
     return o;
   });
   return { sanitize, plainOf, hydrateMath, makeMath, CLASS_RE };

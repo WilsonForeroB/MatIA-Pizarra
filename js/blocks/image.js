@@ -59,21 +59,33 @@ MatIA.define('blocks/image', ['blocks/registry'], (registry) => {
     bd.appendChild(fig);
 
     function done() { delete bd.dataset.loading; bd.dispatchEvent(new CustomEvent('img-ready', { bubbles: true })); }
+    let gen = 0; // cada carga lleva su número: una carga anterior que acaba tarde no pisa a la nueva
     function load() {
+      const my = ++gen;
       bd.dataset.loading = '1'; miss.hidden = true; frame.hidden = false;
       const p = (async () => {
         try {
           if (!b.src) throw new Error('sin ruta');
-          img.src = await R('storage/assets').url(b.src);
+          const u = await R('storage/assets').url(b.src);
+          if (my !== gen) return;
+          img.src = u;
           await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error('no se puede mostrar')); });
+          if (my !== gen) return;
           frame.hidden = false;
-        } catch (e) { frame.hidden = true; miss.hidden = false; }
+        } catch (e) { if (my !== gen) return; frame.hidden = true; miss.hidden = false; }
         done();
       })();
       bd._imgReady = p; // la impresión espera a esta promesa (o al evento 'img-ready')
       return p;
     }
     load();
+    if (!ro) {
+      // al conectar la carpeta de clases, una imagen que no se pudo leer lo vuelve a intentar sola
+      const off = R('core/event-bus').on('folder:connected', () => {
+        if (!bd.isConnected) { off(); return; }
+        if (!miss.hidden || bd.dataset.loading) load();
+      });
+    }
     return bd._imgReady;
   }
 

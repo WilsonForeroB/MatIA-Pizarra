@@ -266,6 +266,7 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
     if (bl.length === 1) {
       bl[0].v = '';
       bl[0].type = 'math'; bl[0].boxed = false; bl[0].result = false;
+      delete bl[0].html; // si era texto con formato, que no reaparezca el texto antiguo
       delete bl[0].rows;
       renderPage();
       S.save();
@@ -331,13 +332,25 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
       return;
     }
     if (e.key === 'Backspace' && !e.altKey) {
-      const empty = mf ? !mf.getValue('latex') : isText ? !e.target.textContent : false;
+      const empty = mf ? !mf.getValue('latex') : isText ? !e.target.textContent.replace(/\u200b/g, '') && !e.target.querySelector('.math-inline') : false; // una fórmula en línea no tiene textContent
       if (empty) { e.preventDefault(); e.stopPropagation(); deleteBlock(id); }
       return;
     }
     if (isText && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
-      const s = getSelection();
-      const atStart = s.anchorOffset === 0, atEnd = s.anchorOffset >= (s.anchorNode.textContent || '').length;
+      // solo se cambia de línea desde la primera fila visual (Arriba) o la última (Abajo) del texto:
+      // dentro de listas o párrafos largos las flechas se mueven por el propio texto
+      const host = e.target, s = getSelection();
+      const caret = (() => {
+        if (!s.rangeCount) return null;
+        const r = s.getRangeAt(0).cloneRange(); r.collapse(true);
+        let rc = r.getClientRects()[0];
+        if (!rc) { const m = document.createElement('span'); m.textContent = '\u200b'; r.insertNode(m); rc = m.getBoundingClientRect(); m.remove(); host.normalize(); }
+        return rc;
+      })();
+      const hr = host.getBoundingClientRect();
+      const lh = parseFloat(getComputedStyle(host).lineHeight) || 24;
+      const atStart = !caret || caret.top - hr.top < lh * 0.75;
+      const atEnd = !caret || hr.bottom - caret.bottom < lh * 0.75;
       if (e.key === 'ArrowUp' && atStart && focusSibling(id, -1, 'end')) e.preventDefault();
       if (e.key === 'ArrowDown' && atEnd && focusSibling(id, 1, 'start')) e.preventDefault();
     }

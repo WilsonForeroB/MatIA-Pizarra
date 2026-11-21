@@ -25,13 +25,14 @@ function pageFile(name) {
 const MOCK = () => {
   const mk = (name) => ({ kind: 'directory', name, kids: new Map() });
   const root = mk('Clases');
-  const snap = sessionStorage.getItem('fsSnap');
-  if (snap) for (const [p, d] of JSON.parse(snap)) { // restaura ficheros tras recargar
+  const restore = (list) => { for (const [p, d] of list) { // restaura ficheros tras recargar
     const parts = p.split('/'); let n = root;
     for (const x of parts.slice(0, -1)) { if (!n.kids.has(x)) n.kids.set(x, mk(x)); n = n.kids.get(x); }
     const bin = Uint8Array.from(atob(d.b64), (c) => c.charCodeAt(0));
     n.kids.set(parts[parts.length - 1], { kind: 'file', name: parts[parts.length - 1], blob: new Blob([bin], { type: d.type }) });
-  }
+  } };
+  const snap = sessionStorage.getItem('fsSnap');
+  if (snap) restore(JSON.parse(snap));
   const NF = () => Object.assign(new Error('no encontrado'), { name: 'NotFoundError' });
   const wrap = (n) => n.kind === 'file' ? {
     kind: 'file', name: n.name,
@@ -49,6 +50,7 @@ const MOCK = () => {
   window.__fs = {
     pickerCalls: 0, askOpenAtPicker: [],
     paths: () => walk(root, '', []).map(([p]) => p),
+    load: (list) => restore(list), // la prueba la vuelve a cargar si sessionStorage no sobrevivió a la recarga
     async snapshot() {
       const out = [];
       for (const [p, v] of walk(root, '', [])) {
@@ -56,6 +58,7 @@ const MOCK = () => {
         out.push([p, { b64: btoa(s), type: v.blob.type }]);
       }
       sessionStorage.setItem('fsSnap', JSON.stringify(out));
+      return out;
     },
     size: async (p) => { const f = walk(root, '', []).find(([q]) => q === p); const bmp = await createImageBitmap(f[1].blob); return [bmp.width, bmp.height]; },
   };
@@ -115,7 +118,7 @@ const MOCK = () => {
   ok(b0.caption === 'Figura 1', 'pie de foto editable guarda b.caption');
   ok(b0.w > 60 && b0.w <= 100, 'arrastrar el asa cambia el ancho: ' + b0.w);
   // 4) recargar: sin carpeta -> marcador; con carpeta -> imagen
-  await page.evaluate(() => window.__fs.snapshot());
+  const fsSnap = await page.evaluate(() => window.__fs.snapshot());
   await page.waitForTimeout(700); // autoguardado del tablero
   await boot();
   await page.waitForSelector('.img-miss:not([hidden])', { timeout: 5000 }).catch(() => {});
@@ -124,10 +127,11 @@ const MOCK = () => {
   await page.locator('.img-miss button', { hasText: 'Historial' }).first().click();
   ok(await page.waitForFunction(() => document.getElementById('hist').open, null, { timeout: 3000 }).then(() => true, () => false), 'el botón del marcador abre el Historial');
   await page.evaluate(() => document.getElementById('hist').close());
+  if (!(await page.evaluate(() => window.__fs.paths().length))) await page.evaluate((l) => window.__fs.load(l), fsSnap);
   await page.evaluate(async () => { const h = await window.showDirectoryPicker(); await MatIA.require('storage/history').useFolder(MatIA.require('storage/folders').fromHandle(h)); });
   await page.evaluate(() => { const d = document.getElementById('hist'); if (d.open) d.close(); });
   // al conectar la carpeta, las imágenes de la página se recargan solas (sin pulsar «Reintentar»)
-  await page.waitForFunction(() => { const i = document.querySelector('.img-blk img'); return i && i.complete && i.naturalWidth === 400; }, null, { timeout: 5000 }).then(() => ok(true, 'con la carpeta restaurada la imagen se muestra sola'), () => ok(false, 'imagen no se muestra tras restaurar'));
+  await page.waitForFunction(() => { const i = document.querySelector('.img-blk img'); return i && i.complete && i.naturalWidth === 400; }, null, { timeout: 5000 }).then(() => ok(true, 'con la carpeta restaurada la imagen se muestra sola'), async () => { if (process.env.DBG) console.log(JSON.stringify(await page.evaluate(() => ({ paths: window.__fs.paths(), srcs: MatIA.require('model/board').page().blocks.filter((x) => x.type === 'image').map((x) => x.src), folder: !!MatIA.require('storage/history').folder, imgs: [...document.querySelectorAll('.img-blk')].map((f) => ({ src: (f.querySelector('img') || {}).src, nw: (f.querySelector('img') || {}).naturalWidth, miss: f.querySelector('.img-miss').hidden, loading: f.closest('.blk-body') && f.closest('.blk-body').dataset.loading })) })))); ok(false, 'imagen no se muestra tras restaurar'); });
   // 5) 3000 px -> 1600
   await mkPng(3000, 2000, '#cc3322');
   const r = await page.evaluate(async () => MatIA.require('storage/assets').store(window.__png['#cc3322']));
