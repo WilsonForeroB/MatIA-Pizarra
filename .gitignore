@@ -1,0 +1,4 @@
+tests/golden/out/
+historial/*
+!historial/.gitkeep
+node_modules/
