@@ -28,6 +28,7 @@ MatIA.define('storage/file', ['core/dom', 'model/board', 'model/schema', 'ui/toa
         const b = sanitize(JSON.parse(String(rd.result)));
         if (!b) throw new Error('vacío');
         S.replace(b);
+        R('storage/history').clearSession(); // el autoguardado no debe sobrescribir el archivo de la clase anterior
         R('ui/view').applySettings();
         R('blocks/editor').renderPage();
         S.save();

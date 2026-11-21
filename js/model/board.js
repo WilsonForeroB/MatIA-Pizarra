@@ -15,6 +15,15 @@ MatIA.define('model/board', ['model/schema', 'core/event-bus'], (schema, bus) =>
   let board = load() || schema.defaults();
   let saveT = null;
 
+  function flush() {
+    if (saveT === null) return;
+    clearTimeout(saveT); saveT = null;
+    try { localStorage.setItem(KEY, JSON.stringify(board)); } catch (e) { /* sin almacenamiento */ }
+    bus.emit('board:persisted', board);
+  }
+  // al cerrar o recargar la pestaña no se pierde el último cambio (el guardado normal espera 350 ms)
+  window.addEventListener('pagehide', flush);
+
   const api = {
     KEY,
     get board() { return board; },
@@ -25,10 +34,12 @@ MatIA.define('model/board', ['model/schema', 'core/event-bus'], (schema, bus) =>
     save() {
       clearTimeout(saveT);
       saveT = setTimeout(() => {
+        saveT = null;
         try { localStorage.setItem(KEY, JSON.stringify(board)); } catch (e) { /* sin almacenamiento: la pizarra funciona igual */ }
         bus.emit('board:persisted', board);
       }, 350);
     },
+    flush,
     /** JSON del tablero tal como se escribe en un archivo de historial. */
     toJSON() { return JSON.stringify(Object.assign({ app: 'MatIA Pizarra', formato: 1, guardado: new Date().toISOString() }, board), null, 1); },
   };

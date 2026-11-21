@@ -8,7 +8,7 @@ MatIA.define('ui/shortcuts', ['core/dom', 'model/board', 'ui/state'], (dom, S, s
   document.addEventListener('keydown', (e) => {
     const editing = e.target.closest && e.target.closest('math-field,[contenteditable="true"],input,select,textarea');
     const k = e.key;
-    if ($('#ask').open || $('#nnDlg').open || $('#bayesDlg').open) return;
+    if ($('dialog[open]')) return; // con cualquier ventana abierta no actúan los atajos (antes solo se miraban ask, nnDlg y bayesDlg)
     if (body.classList.contains('presenting')) {
       R('ui/mode-pages').presIdle();
       if (k === 'Escape') { e.preventDefault(); if (editing && document.activeElement.blur) document.activeElement.blur(); else R('ui/mode-pages').endPresent(); return; }

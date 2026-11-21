@@ -48,8 +48,8 @@
   <button type="button" class="mi-btn mi-btn--sm" id="presBtn" title="Modo presentación: cada página como una diapositiva a pantalla completa"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1L11 6L2 11Z" fill="currentColor"/></svg>Presentar</button>
   <button type="button" class="mi-btn mi-btn--sm icon-btn" id="fsBtn" title="Pantalla completa (F)" aria-label="Pantalla completa"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg></button>
   <button type="button" class="mi-btn mi-btn--sm" id="viewBtn" aria-haspopup="true" aria-expanded="false">Vista <span aria-hidden="true">▾</span></button>
-  <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="saveBtn" title="Guardar la clase en el historial (Ctrl+S)"><span class="save-dot" aria-hidden="true"></span>Guardar</button>
-  <button type="button" class="mi-btn mi-btn--sm" id="histBtn" title="Guardar y abrir clases de la carpeta historial">Historial</button>
+  <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="saveBtn" title="Guardar la clase en tu carpeta de clases (Ctrl+S)"><span class="save-dot" aria-hidden="true"></span>Guardar</button>
+  <button type="button" class="mi-btn mi-btn--sm" id="histBtn" title="Guardar y abrir clases de la carpeta que elijas">Historial</button>
   <button type="button" class="mi-btn mi-btn--sm" id="fileBtn" aria-haspopup="true" aria-expanded="false">Archivo <span aria-hidden="true">▾</span></button>
   <button type="button" class="mi-btn mi-btn--sm icon-btn" id="helpBtn" title="Atajos y ayuda (?)" aria-label="Atajos y ayuda">?</button>
 </header>
@@ -311,10 +311,10 @@
       <button type="button" class="mi-btn mi-btn--sm" id="histPickRO" hidden>Elegir carpeta (solo lectura)</button>
       <input type="file" id="histDirIn" webkitdirectory multiple hidden>
     </div>
-    <p class="hist-help" id="histHelp">Elige la carpeta <b>historial</b> que está junto a <code>pizarra.html</code> (o la carpeta <b>pizarramatia</b>: se usará su subcarpeta historial). El navegador te pedirá permiso para leer y guardar en ella.</p>
+    <p class="hist-help" id="histHelp">Elige <b>cualquier carpeta</b> de tu ordenador para guardar las clases. La pizarra la recordará la próxima vez.</p>
     <div class="hist-row">
       <label class="hist-title">Título de la clase <input type="text" id="histName" maxlength="80" placeholder="por ejemplo: Sistemas por Gauss"></label>
-      <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="histSave">Guardar en el historial</button>
+      <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="histSave">Guardar en la carpeta</button>
       <label class="mi-check"><input type="checkbox" id="histAuto"> Guardado automático</label>
     </div>
     <div class="hist-list" id="histList" role="list"></div>
@@ -427,7 +427,7 @@
         <tr><td>Presentar</td><td>Cada página como una diapositiva: → ← espacio para pasar, D para dibujar, Esc para salir</td></tr>
         <tr><td>Vista ▾</td><td>Tamaño de página (libre, A4, A3, diapositiva 16:9), tamaño de letra y tema</td></tr>
       </tbody></table>
-      <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">La pizarra se guarda sola en este navegador. Con <b>Historial</b> guardas cada clase como JSON en la carpeta <code>pizarramatia/historial</code> y vuelves a abrirla cuando quieras.</p>
+      <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">La pizarra se guarda sola en este navegador. Con <b>Historial</b> guardas cada clase como JSON en la carpeta que elijas y vuelves a abrirla cuando quieras.</p>
     </section>
   </div>
   <p class="help-foot">Pizarra MatIA · creada por <a href="https://github.com/WilsonForeroB" target="_blank" rel="noopener noreferrer">Wilson Forero</a> con asistencia de IA (Claude, de Anthropic) · © 2026 Wilson Forero. Todos los derechos reservados. Uso educativo no comercial. <button type="button" class="mi-btn mi-btn--ghost mi-btn--sm" id="helpAbout">Más información</button></p>
@@ -490,6 +490,9 @@
 <script src="js/ui/calc.js"></script>
 <script src="js/ui/ops-menu.js"></script>
 <script src="js/ui/mode-pages.js"></script>
+<script src="js/storage/kv-store.js"></script>
+<script src="js/storage/folders.js"></script>
+<script src="js/storage/folder-access.js"></script>
 <script src="js/storage/history.js"></script>
 <script src="js/storage/dirty.js"></script>
 <script src="js/storage/file.js"></script>

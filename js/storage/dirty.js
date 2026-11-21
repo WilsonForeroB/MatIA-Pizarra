@@ -12,7 +12,7 @@ MatIA.define('storage/dirty', ['core/dom', 'model/board', 'core/event-bus'], (do
   function updSaved() {
     const d = isDirty(), bt = $('#saveBtn');
     bt.classList.toggle('dirty', d);
-    bt.title = (d ? 'Hay cambios sin guardar. ' : 'Todo guardado. ') + 'Guardar la clase en el historial (Ctrl+S)';
+    bt.title = (d ? 'Hay cambios sin guardar. ' : 'Todo guardado. ') + 'Guardar la clase en tu carpeta de clases (Ctrl+S)';
     bt.setAttribute('aria-label', d ? 'Guardar: hay cambios sin guardar' : 'Guardar: todo guardado');
   }
   bus.on('board:persisted', updSaved);
@@ -26,7 +26,7 @@ MatIA.define('storage/dirty', ['core/dom', 'model/board', 'core/event-bus'], (do
     if (!isDirty()) return true;
     const r = await R('ui/dialogs').ask({
       title: 'Hay cambios sin guardar',
-      text: 'Antes de ' + what + ', ¿guardamos la clase actual' + (R('storage/history').histDir ? ' en el historial' : '') + '? Si no la guardas, sus cambios se perderán.',
+      text: 'Antes de ' + what + ', ¿guardamos la clase actual' + (R('storage/history').histDir ? ' en la carpeta «' + R('storage/history').histDir.name + '»' : '') + '? Si no la guardas, sus cambios se perderán.',
       pio: 'escribiendo', warn: true, label: 'Aviso',
       buttons: [{ label: 'Cancelar', value: null, kind: 'ghost' }, { label: 'Continuar sin guardar', value: 'skip', kind: 'danger' }, { label: 'Guardar y continuar', value: 'save', kind: 'primary', focus: true }],
     });
