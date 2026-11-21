@@ -3,7 +3,7 @@
    Uso: node tests/review3.js */
 const path = require('path');
 const { chromium } = require('playwright');
-const URL_ = 'file://' + path.resolve(__dirname, '..', 'index.html');
+const URL_ = 'file://' + path.resolve(__dirname, '..', 'pizarra.html');
 
 // carpeta de clases en memoria con subcarpetas (como tests/presentation.js)
 const MOCK = () => {

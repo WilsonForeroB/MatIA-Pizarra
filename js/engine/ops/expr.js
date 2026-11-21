@@ -70,6 +70,24 @@ MatIA.define('engine/ops/expr', ['engine/core', 'engine/ops/common', 'engine/ops
       }
       return a;
     }
+    /* Argumento sin paréntesis: \sin 2x, \sin xy, \cos 2\theta → todo el monomio pegado es el argumento,
+       como en los libros (sen(2x), sen(xy)). Solo se juntan números y letras sueltas; se para ante otra función,
+       un paréntesis o una letra con exponente (\sin x\cos y, \sin x e^{y} y \sin 2x^2 no cambian). */
+    function fnArg() {
+      const t0 = peek();
+      const simple = (t) => t && (t.k === 'id' || (t.k === 'cmd' && (GREEK.has(t.v) || t.v === 'pi')));
+      if (!(t0 && (t0.k === 'num' || simple(t0)))) return power();
+      const after = (k) => toks[pos + k];
+      const stops = (t) => t && (isOp(t, '^') || isOp(t, '(') || isOp(t, '!') || t.k === '_' || isOp(t, '_'));
+      // ¿cuántos factores sueltos siguen? número/letra inicial + letras sin exponente ni paréntesis detrás
+      let n = 1;
+      while (simple(after(n)) && !(after(n).k === 'id' && after(n).v === 'e' && isOp(after(n + 1), '^'))) n++;
+      const lastPow = isOp(after(n), '^'); // \sin 2x^2 → sen(2x²)
+      if (n < 2 || (stops(after(n)) && !lastPow) || (n > 1 && stops(after(1)) && !(n === 2 && lastPow && !isOp(after(1), '^')))) return power();
+      let a = primary();
+      for (let k = 1; k < n; k++) a = N.mul(a, k === n - 1 && lastPow ? power() : primary());
+      return a;
+    }
     function postfix() {
       let a = primary();
       while (isOp(peek(), '!')) { next(); a = N.fn('fact', a); }
@@ -101,7 +119,7 @@ MatIA.define('engine/ops/expr', ['engine/core', 'engine/ops/common', 'engine/ops
           if (isOp(peek(), '^')) { next(); pw = isOp(peek(), '-') ? (next(), N.neg(supArg())) : supArg(); }
           let arg;
           if (isOp(peek(), '(')) { next(); arg = expr(); if (!isOp(next(), ')')) throw new MErr('Falta cerrar un paréntesis.'); }
-          else arg = power();
+          else arg = fnArg();
           if (FN[t.v] === 'log' && opts.logBase10 === false) { /* ln */ }
           let a = N.fn(FN[t.v], arg);
           if (pw) a = N.pow(a, pw);

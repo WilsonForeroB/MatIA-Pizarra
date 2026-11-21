@@ -72,7 +72,7 @@ has('laplaciano = 6', 'divRot', 'f(x,y,z)=x^2+y^2+z^2', ['=6']);
 // ---- Parte 2: en el navegador ----
 (async () => {
   const { chromium } = require('playwright');
-  const URL_ = 'file://' + path.resolve(ROOT, 'index.html');
+  const URL_ = 'file://' + path.resolve(ROOT, 'pizarra.html');
   const CAPS = process.argv.includes('--capturas');
   const br = await chromium.launch();
   const c = await br.newContext({ viewport: { width: 1200, height: 1000 } });

@@ -1,5 +1,5 @@
 /* Arranque (pizarra.html 8073-8100): decora las insignias de Pío, aplica los ajustes y espera a que MathLive esté definido.
-   Debe ser el ÚLTIMO módulo de index.html. */
+   Debe ser el ÚLTIMO módulo de pizarra.html. */
 MatIA.define('app/start', ['model/board', 'ui/state', 'ui/toast', 'assets/pio'], (S, st, toast, pio) => {
   'use strict';
   const R = (n) => MatIA.require(n);

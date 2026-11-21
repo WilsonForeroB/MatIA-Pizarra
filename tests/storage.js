@@ -6,7 +6,7 @@
 const path = require('path');
 const { chromium } = require('playwright');
 const ROOT = path.resolve(__dirname, '..');
-const URL_ = 'file://' + path.join(ROOT, 'index.html');
+const URL_ = 'file://' + path.join(ROOT, 'pizarra.html');
 
 const MOCK = () => {
   const files = new Map([['2026-01-01_10-00_clase-previa.json', JSON.stringify({ app: 'MatIA Pizarra', formato: 1, title: 'Clase previa', pages: [{ blocks: [{ type: 'math', v: 'a^2+b^2=c^2' }], strokes: [] }] })]]);

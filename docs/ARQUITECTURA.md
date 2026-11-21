@@ -1,6 +1,6 @@
 # Arquitectura de la pizarra MatIA
 
-La pizarra se usa **abriendo `index.html` con doble clic**, en cualquier navegador, sin servidor, sin instalar nada y sin conexión.
+La pizarra se usa **abriendo `pizarra.html` con doble clic**, en cualquier navegador, sin servidor, sin instalar nada y sin conexión.
 Esa condición manda sobre todo lo demás:
 
 - **No hay módulos ES** (`import`/`export`): con `file://`, Chrome los bloquea por CORS. Cada fichero `.js` es un `<script>` clásico.
@@ -11,7 +11,7 @@ Esa condición manda sobre todo lo demás:
 ## Estructura
 
 ```
-index.html              ← único punto de ensamblado: HTML + <link> de estilos + <script> en orden
+pizarra.html            ← único punto de ensamblado: HTML + <link> de estilos + <script> en orden
 css/                    ← estilos (orden de carga = orden de la cascada original)
   tokens.css            · colores, tipografía, espacios (claro/oscuro)
   components/matia.css  · componentes mi-* del sistema de diseño
@@ -75,7 +75,7 @@ MatIA.define('ui/toast', ['core/dom', 'assets/pio'], (dom, pio) => {
 
 - `define(nombre, dependencias, fábrica)` registra el módulo; no lo ejecuta.
 - `require(nombre)` ejecuta la fábrica la primera vez (y antes las de sus dependencias) y devuelve su API.
-- `start()` (en `app/main.js`) ejecuta todos los módulos **en el orden de `index.html`**.
+- `start()` (en `app/main.js`) ejecuta todos los módulos **en el orden de `pizarra.html`**.
 - **Dependencias circulares**: no se permiten en la lista de dependencias (el cargador lo detecta y lo dice).
   Cuando dos módulos se necesitan mutuamente (p. ej. el editor y el desarrollo), uno usa enlace tardío dentro de una función:
   `const R = (n) => MatIA.require(n);  …  R('blocks/deriv').focusCell(…)`.
@@ -83,7 +83,7 @@ MatIA.define('ui/toast', ['core/dom', 'assets/pio'], (dom, pio) => {
 ## Banco de ejemplos
 
 Cada fichero de `ejemplos/` llama a `MatIA.ejemplo({ id, tema, titulo, resumen, board })` (definido en `core/namespace.js`) y se carga con un
-`<script>` en la zona «Banco de ejemplos» de `index.html`. Se eligió así, en lugar de leer la carpeta con permiso, porque `file://` no deja
+`<script>` en la zona «Banco de ejemplos» de `pizarra.html`. Se eligió así, en lugar de leer la carpeta con permiso, porque `file://` no deja
 hacer `fetch` y la ventana de permiso de carpeta solo existe en Chrome y Edge: así los ejemplos se ven sin preguntar nada y en cualquier navegador.
 `ui/examples` los lista (`MatIA.ejemplos()`), y al abrir uno lo pasa por `schema.sanitize` y le da ids nuevos (siempre es una copia).
 Cómo añadir ejemplos: `ejemplos/LEEME.md`.
@@ -120,7 +120,7 @@ Las ventanas del sistema que no se pueden decorar (elegir carpeta, conceder perm
 
 - **Un tipo de bloque**: crea `js/blocks/mi-tipo.js` con `registry.register({ type: 'mi-tipo', build(b, bd, ro) {…}, exportable: true })`,
   añade su limpieza con `schema.register('mi-tipo', (x, base) => …)` (o en `SANITIZERS` de `model/schema.js`), su CSS en `css/` y
-  su `<script>` en `index.html` **antes** de `blocks/editor.js`. Documenta el formato en `docs/FORMATO-JSON.md`.
+  su `<script>` en `pizarra.html` **antes** de `blocks/editor.js`. Documenta el formato en `docs/FORMATO-JSON.md`.
   Excepción de orden: `solid.js` (y `canvas3d.js`, que necesita), `text.js` e `image.js` deben cargarse **antes** de `model/board.js`, porque sus saneadores se registran al crearse el tablero.
 - **Una operación del motor**: añade la función en el `engine/ops/<tema>.js` adecuado, expórtala en `engine/ops.js`, y añádela al menú en `ui/ops-menu.js`.
   Añade un caso a `tests/golden/cases.js` y regenera la referencia.
@@ -133,22 +133,22 @@ Requieren Node y Playwright (no hacen falta para usar la pizarra).
 | Comando | Qué comprueba |
 | --- | --- |
 | `node tests/golden/engine-node.js <ficheros del motor>` | El motor da los mismos 53 resultados que el prototipo (sin navegador). |
-| `node tests/golden/run.js compare index.html` | Motor + render de todos los tipos de bloque idénticos a la referencia. |
-| `node tests/e2e.js legacy/pizarra.html index.html` | Un recorrido de uso da el mismo estado en el prototipo y en la versión modular. |
+| `node tests/golden/run.js compare pizarra.html` | Motor + render de todos los tipos de bloque idénticos a la referencia. |
+| `node tests/e2e.js legacy/pizarra.html pizarra.html` | Un recorrido de uso da el mismo estado en el prototipo y en la versión modular. |
 | `node tests/storage.js` | Flujos de carpeta (cualquier carpeta, ventanas con estilo, guardar, abrir, borrar, solo lectura). |
 | `node tests/engine-features.js` | Sin navegador: `normalizeFn` (texto plano) e integrales (primitiva, Barrow, casos no soportados). |
 | `node tests/features.js` | Gráfica 2D (funciones, rango Y, sin zoom con la rueda), explicación en la línea, Desarrollo desde cualquier línea, integrales y sólido desde el menú. |
 | `node tests/solid.js` | Bloque «sólido de revolución» (perfil, volumen, vista 3D). |
 | `node tests/graph3d.js` | Superficies 3D: girar sin quedar en blanco, varias superficies, panel y teclado de vista, centrar, ayuda en 2D y 3D. |
 | `node tests/vectorial.js [--capturas]` | Cálculo vectorial: 35 comprobaciones del motor (parciales, gradiente, hessiana, jacobiana, divergencia/rotacional) y del menú Operaciones; `--capturas` guarda imágenes. |
-| `node tests/fit.js [index.html]` | Fórmulas que no caben: reducción hasta el 60 %, aviso «No cabe en la hoja» con «Partir», y `\text{…}` que pasa a línea de texto. |
-| `node tests/text.js [index.html]` | Texto enriquecido: barra de formato, saneado de `html` y fórmulas en línea. |
-| `node tests/images.js [index.html]` | Bloque imagen y almacén `imagenes/` con una carpeta simulada con subcarpetas. |
+| `node tests/fit.js [pizarra.html]` | Fórmulas que no caben: reducción hasta el 60 %, aviso «No cabe en la hoja» con «Partir», y `\text{…}` que pasa a línea de texto. |
+| `node tests/text.js [pizarra.html]` | Texto enriquecido: barra de formato, saneado de `html` y fórmulas en línea. |
+| `node tests/images.js [pizarra.html]` | Bloque imagen y almacén `imagenes/` con una carpeta simulada con subcarpetas. |
 | `node tests/ejemplos.js [--capturas] [id…]` | Cada ejemplo se sanea sin perder bloques y se dibuja sin errores ni avisos; la ventana «Ejemplos». `--capturas` regenera `ejemplos/img/`. |
 | `node tests/presentation.js` | Presentación de extremo a extremo; genera `docs/img/presentacion.pdf` y las capturas de `docs/img/`. |
 
 `tests/golden/expected.json` se generó con el prototipo (`node tests/golden/run.js record legacy/pizarra.html`).
-Si cambias el comportamiento a propósito, regenera la referencia con `record index.html` y revisa el diff.
+Si cambias el comportamiento a propósito, regenera la referencia con `record pizarra.html` y revisa el diff.
 
 ## Documentación por funcionalidad
 

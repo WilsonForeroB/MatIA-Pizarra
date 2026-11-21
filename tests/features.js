@@ -6,7 +6,7 @@
    Uso: node tests/features.js */
 const path = require('path');
 const { chromium } = require('playwright');
-const URL_ = 'file://' + path.resolve(__dirname, '..', 'index.html');
+const URL_ = 'file://' + path.resolve(__dirname, '..', 'pizarra.html');
 
 (async () => {
   const br = await chromium.launch();

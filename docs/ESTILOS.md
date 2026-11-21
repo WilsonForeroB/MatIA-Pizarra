@@ -258,7 +258,7 @@ Cobertura: 23-61, 62-101, 102-109, 110-126, 127-142, 143-151, 152-164, 165-170, 
 
 ## 6. Hojas añadidas después de la modularización
 
-Se cargan en `index.html` en este orden (ver la tabla de la §5 para las demás):
+Se cargan en `pizarra.html` en este orden (ver la tabla de la §5 para las demás):
 
 | Fichero | Contenido |
 | --- | --- |

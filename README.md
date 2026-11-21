@@ -7,14 +7,14 @@ Pizarra para dar clase de matemáticas: fórmulas con atajos de teclado, matrice
 ## Cómo usarla
 
 1. Descarga o clona el repositorio.
-2. Abre **`index.html`** con doble clic. No hace falta servidor, instalar nada ni conexión a internet.
+2. Abre **`pizarra.html`** con doble clic. No hace falta servidor, instalar nada ni conexión a internet.
 3. Para guardar las clases, pulsa **Historial → Conectar carpeta** y elige **cualquier carpeta** de tu ordenador (por ejemplo, la carpeta `historial/` del repositorio, que no se sube a Git).
 4. ¿Primera vez? Pulsa **Ejemplos** (al lado de «Historial»): ejemplos por temas —álgebra, cálculo, gráficas, estadística, geometría, discreta y presentaciones— que se abren como copia para cambiarlos sin miedo. No piden permiso de carpeta.
 
 ## Estructura
 
 ```
-index.html        ← la pizarra: ábrelo con doble clic (junta todos los módulos)
+pizarra.html      ← la pizarra: ábrelo con doble clic (junta todos los módulos)
 css/              ← estilos (tokens del sistema de diseño MatIA y componentes)
 js/               ← código en módulos: core, model, engine (motor matemático), blocks, ui, storage, app
 vendor/           ← MathLive y fuentes, incluidos para que funcione sin red
@@ -170,7 +170,7 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 
 - Código modular sin compilación: scripts clásicos registrados con `MatIA.define` (funciona con `file://`). Ver [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 - Estilos: [`docs/ESTILOS.md`](docs/ESTILOS.md). Formato de las clases: [`docs/FORMATO-JSON.md`](docs/FORMATO-JSON.md). Fichas por funcionalidad: [`docs/funcionalidades/`](docs/funcionalidades/).
-- Pruebas (opcionales, con Node y Playwright): `node tests/golden/run.js compare index.html`, `node tests/e2e.js legacy/pizarra.html index.html`, `node tests/storage.js`, `node tests/engine-features.js` (normalización de funciones e integrales, sin navegador), `node tests/features.js` (gráfica 2D, explicación en la línea, Desarrollo, integrales y sólidos) `node tests/solid.js` (sólido de revolución), `node tests/graph3d.js` (superficies 3D y ayuda de las gráficas), `node tests/ejemplos.js` (cada ejemplo se abre y dibuja sin avisos, y la ventana «Ejemplos»; con `--capturas` regenera las miniaturas), `node tests/vectorial.js` (cálculo vectorial: motor y menú; con `--capturas` regenera las imágenes), `node tests/fit.js` (fórmulas que no caben), `node tests/text.js` (texto con formato), `node tests/images.js` (imágenes) y `node tests/presentation.js` (presentación de extremo a extremo; genera `docs/img/presentacion.pdf` y las capturas de `docs/img/`).
+- Pruebas (opcionales, con Node y Playwright): `node tests/golden/run.js compare pizarra.html`, `node tests/e2e.js legacy/pizarra.html pizarra.html`, `node tests/storage.js`, `node tests/engine-features.js` (normalización de funciones e integrales, sin navegador), `node tests/features.js` (gráfica 2D, explicación en la línea, Desarrollo, integrales y sólidos) `node tests/solid.js` (sólido de revolución), `node tests/graph3d.js` (superficies 3D y ayuda de las gráficas), `node tests/ejemplos.js` (cada ejemplo se abre y dibuja sin avisos, y la ventana «Ejemplos»; con `--capturas` regenera las miniaturas), `node tests/vectorial.js` (cálculo vectorial: motor y menú; con `--capturas` regenera las imágenes), `node tests/fit.js` (fórmulas que no caben), `node tests/text.js` (texto con formato), `node tests/images.js` (imágenes) y `node tests/presentation.js` (presentación de extremo a extremo; genera `docs/img/presentacion.pdf` y las capturas de `docs/img/`).
 - No guarda credenciales ni datos personales. El historial vive solo en la carpeta local de quien la usa.
 
 ## Autoría y derechos

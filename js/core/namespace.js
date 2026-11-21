@@ -6,7 +6,7 @@
 
    - define(nombre, dependencias, fábrica): registra el módulo; no lo ejecuta todavía.
    - require(nombre): devuelve la API del módulo; si aún no existe, ejecuta su fábrica (y antes la de sus dependencias).
-   - start(): ejecuta todos los módulos registrados, en el orden en que index.html los carga.
+   - start(): ejecuta todos los módulos registrados, en el orden en que pizarra.html los carga.
    Las dependencias circulares no se permiten en la lista de dependencias. Si dos módulos se necesitan
    mutuamente, uno de ellos llama a MatIA.require('otro') dentro de una función (enlace tardío). */
 (function (global) {
@@ -24,7 +24,7 @@
   function require(name) {
     if (instances.has(name)) return instances.get(name);
     const def = defs.get(name);
-    if (!def) throw new Error('MatIA: no existe el módulo «' + name + '». ¿Falta su <script> en index.html o está después del que lo usa?');
+    if (!def) throw new Error('MatIA: no existe el módulo «' + name + '». ¿Falta su <script> en pizarra.html o está después del que lo usa?');
     if (building.includes(name)) throw new Error('MatIA: dependencia circular: ' + building.concat(name).join(' → ') + '. Usa MatIA.require dentro de una función.');
     building.push(name);
     try {

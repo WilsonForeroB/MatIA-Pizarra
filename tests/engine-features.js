@@ -63,5 +63,16 @@ for (const s of ['\\int\\frac{3}{x}dx', '\\int\\frac{1}{x^2}dx', '\\int\\frac{5}
 has('∫₁² 3/x²', '\\int_1^2\\frac{3}{x^2}dx', '=\\frac{3}{2}');
 check('normalizeFn operatorname abs', OPS.normalizeFn('\\operatorname{abs}(x)') === '\\left|x\\right|', OPS.normalizeFn('\\operatorname{abs}(x)'));
 check('normalizeFn e^-x^2', OPS.normalizeFn('e^-x^2') === 'e^{-x^{2}}', OPS.normalizeFn('e^-x^2'));
+// \sin 2x, \sin xy… : el monomio pegado es el argumento (como en los libros)
+{
+  const pl = (s) => { try { return OPS.L(OPS.parseExpr(s, { var: 'x' })); } catch (e) { return 'ERROR ' + e.message; } };
+  const same = [['\\sin 2x', '\\sin\\left(2x\\right)'], ['\\sin xy', '\\sin\\left(xy\\right)'], ['\\cos 2\\theta', '\\cos\\left(2\\theta\\right)'], ['\\sin 2x^2', '\\sin\\left(2x^{2}\\right)'],
+    ['\\sin\\pi x', '\\sin\\left(\\pi x\\right)'], ['\\ln 2x', '\\ln\\left(2x\\right)'], ['\\sin x\\cos y', '\\sin x\\cdot \\cos y'], ['\\sin^2x', '\\sin^{2} x'], ['2\\sin x+1', '2\\sin x+1'], ['\\sin 2', '\\sin 2']];
+  for (const [s0, want] of same) check('argumento de ' + s0, pl(s0) === want, pl(s0));
+  const c = OPS.compileFn('f(x)=\\sin 2x');
+  check('gráfica de \\sin 2x = sen(2x)', close(c.f(0.3), Math.sin(0.6)), c.f(0.3));
+  const d = OPS.derivative('f(x)=\\sin 2x');
+  check('derivada de \\sin 2x usa la cadena', JSON.stringify(d).includes('2\\\\cos'), JSON.stringify(d).slice(0, 300));
+}
 console.log(bad ? bad + ' fallos de ' + n : 'OK: ' + n + ' comprobaciones.');
 process.exit(bad ? 1 : 0);

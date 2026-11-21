@@ -40,7 +40,7 @@ const MOCK = () => {
   const results = [];
   const ok = (n, c, x) => { results.push(!!c); console.log((c ? 'OK    ' : 'FALLA ') + n + (x ? ' → ' + x : '')); };
 
-  await pg.goto('file://' + path.join(ROOT, 'index.html'));
+  await pg.goto('file://' + path.join(ROOT, 'pizarra.html'));
   await pg.waitForFunction(() => !!customElements.get('math-field'));
   await pg.evaluate(() => localStorage.setItem('matia-pizarra-v1', JSON.stringify({ paper: 'slide', title: 'Derivadas', pages: [
     { blocks: [

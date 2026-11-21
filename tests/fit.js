@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* Prueba de «lo que no cabe en la hoja» (js/blocks/fit.js).
-   Uso: node tests/fit.js [index.html]
-   Si index.html aún no carga js/blocks/fit.js, se crea una copia temporal con <base> y los scripts/estilos añadidos. */
+   Uso: node tests/fit.js [pizarra.html]
+   Si pizarra.html aún no carga js/blocks/fit.js, se crea una copia temporal con <base> y los scripts/estilos añadidos. */
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
@@ -9,7 +9,7 @@ const ROOT = path.resolve(__dirname, '..');
 const SCRATCH = '/tmp/claude-0/-home-user-MatIA-Pizarra/01dbf8ae-b7ca-56a2-a637-356d3606271a/scratchpad';
 
 function pageFile(name) {
-  const src = path.resolve(ROOT, name || 'index.html');
+  const src = path.resolve(ROOT, name || 'pizarra.html');
   let html = fs.readFileSync(src, 'utf8');
   if (html.includes('js/blocks/fit.js')) return src;
   html = html.replace('<head>', '<head>\n<base href="file://' + ROOT + '/">')

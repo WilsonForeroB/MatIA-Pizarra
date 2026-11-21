@@ -1,5 +1,5 @@
 /* Banco de ejemplos: ventana «Ejemplos» junto a «Historial».
-   Los ejemplos viven en la carpeta ejemplos/ (al lado de index.html) y se cargan como <script> normales
+   Los ejemplos viven en la carpeta ejemplos/ (al lado de pizarra.html) y se cargan como <script> normales
    con MatIA.ejemplo({…}), así que no hace falta pedir permiso de carpeta y funcionan en cualquier navegador.
    Abrir un ejemplo carga una COPIA: el original no se toca nunca. */
 MatIA.define('ui/examples', ['core/dom', 'model/board', 'model/schema', 'ui/toast', 'assets/pio'], (dom, S, schema, toast, pio) => {
@@ -102,7 +102,7 @@ MatIA.define('ui/examples', ['core/dom', 'model/board', 'model/schema', 'ui/toas
       const d = document.createElement('div'); d.className = 'hist-empty ex-empty';
       d.appendChild(pio.badge('lectura', 'pio-lg', 'Pío leyendo'));
       const sp = document.createElement('span');
-      sp.textContent = MatIA.ejemplos().length ? 'No hay ejemplos que coincidan con «' + search.value.trim() + '».' : 'No se han encontrado ejemplos. Comprueba que la carpeta «ejemplos» está junto a index.html.';
+      sp.textContent = MatIA.ejemplos().length ? 'No hay ejemplos que coincidan con «' + search.value.trim() + '».' : 'No se han encontrado ejemplos. Comprueba que la carpeta «ejemplos» está junto a pizarra.html.';
       d.appendChild(sp); grid.appendChild(d);
       return;
     }

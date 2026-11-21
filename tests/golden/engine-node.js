@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* Compara el motor modular con la referencia sin abrir el navegador (el motor no usa el DOM).
-   Uso: node tests/golden/engine-node.js js/engine/a.js js/engine/b.js …   (en el orden de index.html)
+   Uso: node tests/golden/engine-node.js js/engine/a.js js/engine/b.js …   (en el orden de pizarra.html)
    Carga js/core/namespace.js + los ficheros dados y ejecuta tests/golden/cases.js contra expected.json. */
 const path = require('path');
 const fs = require('fs');

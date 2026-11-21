@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* Prueba del bloque «Imagen» y del almacén de imágenes (storage/assets) con una carpeta simulada con subcarpetas.
-   Uso: node tests/images.js [index.html]
-   Si index.html aún no carga image.js/assets.js se crea una copia temporal con <base> y los scripts/estilos añadidos. */
+   Uso: node tests/images.js [pizarra.html]
+   Si pizarra.html aún no carga image.js/assets.js se crea una copia temporal con <base> y los scripts/estilos añadidos. */
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
@@ -9,7 +9,7 @@ const ROOT = path.resolve(__dirname, '..');
 const SCRATCH = '/tmp/claude-0/-home-user-MatIA-Pizarra/01dbf8ae-b7ca-56a2-a637-356d3606271a/scratchpad';
 
 function pageFile(name) {
-  const src = path.resolve(ROOT, name || 'index.html');
+  const src = path.resolve(ROOT, name || 'pizarra.html');
   let html = fs.readFileSync(src, 'utf8');
   if (html.includes('js/blocks/image.js') && html.includes('js/storage/assets.js')) return src;
   html = html.replace('<head>', '<head>\n<base href="file://' + ROOT + '/">');

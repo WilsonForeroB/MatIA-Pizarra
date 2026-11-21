@@ -5,7 +5,7 @@
    --capturas genera las miniaturas ejemplos/img/<id>.jpg que muestra la ventana. */
 const path = require('path');
 const { chromium } = require('playwright');
-const URL_ = 'file://' + path.resolve(__dirname, '..', 'index.html');
+const URL_ = 'file://' + path.resolve(__dirname, '..', 'pizarra.html');
 const TEMAS = ['algebra', 'calculo', 'graficas', 'estadistica', 'geometria', 'discreta', 'presentaciones'];
 const fs = require('fs');
 const CAPT = process.argv.includes('--capturas');

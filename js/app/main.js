@@ -1,4 +1,4 @@
-/* Arranque: ejecuta todos los módulos registrados, en el orden de index.html. */
+/* Arranque: ejecuta todos los módulos registrados, en el orden de pizarra.html. */
 (function () {
   'use strict';
   try { MatIA.start(); } catch (e) {
