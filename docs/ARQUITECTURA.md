@@ -15,7 +15,7 @@ index.html              ← único punto de ensamblado: HTML + <link> de estilos
 css/                    ← estilos (orden de carga = orden de la cascada original)
   tokens.css            · colores, tipografía, espacios (claro/oscuro)
   components/matia.css  · componentes mi-* del sistema de diseño
-  layout.css · blocks.css · components/{popovers,dialogs,tools}.css · graphics.css · solid.css · print.css · responsive.css
+  layout.css · blocks.css · fit.css · components/{popovers,dialogs,tools}.css · graphics.css · solid.css · text.css · image.css · print.css · responsive.css
 js/
   core/                 ← infraestructura, sin lógica de la pizarra
     namespace.js        · cargador MatIA.define / MatIA.require / MatIA.start
@@ -35,17 +35,22 @@ js/
     table, graph, graph3d, chart, ptree, geo, venn, net .js · un fichero por tipo, se registran solos
     solid.js            · sólido de revolución (perfil 2D, volumen y dibujo 3D)
     canvas3d.js         · proyector 2D compartido por graph3d y solid (sin WebGL)
+    text.js             · texto enriquecido (línea de texto con formato, saneado de html)
+    image.js            · bloque imagen (figura, pie de foto, ancho)
+    fit.js              · fórmulas que no caben: reducción hasta el 60 % y «Partir»
     svg-utils.js        · ayudas SVG comunes
   ui/                   ← interfaz
     state.js            · estado de interfaz compartido (línea activa, celda activa, …)
     toast.js · dialogs.js · popovers.js · toolbar.js · templates.js · calc.js · ops-menu.js
-    view.js · mode-pages.js · print.js · drawing.js · shortcuts.js
+    view.js · mode-pages.js · print.js (PDF e impresión) · drawing.js · shortcuts.js
+    text-format.js · barra flotante de formato del texto · image-insert.js · botón Imagen, pegar y arrastrar
     export-image.js · bayes-dialog.js · nn-dialog.js · graphics-panel.js
   storage/              ← persistencia
     kv-store.js         · IndexedDB (recordar la carpeta)
     folders.js          · interfaz Folder + implementaciones (lectura/escritura y solo lectura)
     folder-access.js    · ÚNICO módulo que usa las APIs nativas de carpetas; ventanas con estilo antes
     history.js          · panel Historial: listar, abrir, añadir páginas, guardar, borrar, autoguardado
+    assets.js           · imágenes de la clase en «imagenes/» (huella, sin duplicados, máx. 1600 px)
     dirty.js            · cambios sin guardar, botón Guardar, «¿guardar antes de…?»
     file.js             · Archivo: descargar/abrir .json, nueva pizarra, acerca de
   app/start.js          ← arranque (espera a MathLive, primer render)
@@ -104,7 +109,7 @@ Las ventanas del sistema que no se pueden decorar (elegir carpeta, conceder perm
 - **Un tipo de bloque**: crea `js/blocks/mi-tipo.js` con `registry.register({ type: 'mi-tipo', build(b, bd, ro) {…}, exportable: true })`,
   añade su limpieza con `schema.register('mi-tipo', (x, base) => …)` (o en `SANITIZERS` de `model/schema.js`), su CSS en `css/` y
   su `<script>` en `index.html` **antes** de `blocks/editor.js`. Documenta el formato en `docs/FORMATO-JSON.md`.
-  Excepción de orden: `solid.js` (y `canvas3d.js`, que necesita) debe cargarse **antes** de `model/board.js`, porque el saneador de `solid` se registra al crearse el tablero.
+  Excepción de orden: `solid.js` (y `canvas3d.js`, que necesita), `text.js` e `image.js` deben cargarse **antes** de `model/board.js`, porque sus saneadores se registran al crearse el tablero.
 - **Una operación del motor**: añade la función en el `engine/ops/<tema>.js` adecuado, expórtala en `engine/ops.js`, y añádela al menú en `ui/ops-menu.js`.
   Añade un caso a `tests/golden/cases.js` y regenera la referencia.
 - **Un estilo**: usa los tokens de `css/tokens.css` (ver `docs/ESTILOS.md`).
@@ -122,6 +127,10 @@ Requieren Node y Playwright (no hacen falta para usar la pizarra).
 | `node tests/engine-features.js` | Sin navegador: `normalizeFn` (texto plano) e integrales (primitiva, Barrow, casos no soportados). |
 | `node tests/features.js` | Gráfica 2D (funciones, rango Y, sin zoom con la rueda), explicación en la línea, Desarrollo desde cualquier línea, integrales y sólido desde el menú. |
 | `node tests/solid.js` | Bloque «sólido de revolución» (perfil, volumen, vista 3D). |
+| `node tests/fit.js [index.html]` | Fórmulas que no caben: reducción hasta el 60 %, aviso «No cabe en la hoja» con «Partir», y `\text{…}` que pasa a línea de texto. |
+| `node tests/text.js [index.html]` | Texto enriquecido: barra de formato, saneado de `html` y fórmulas en línea. |
+| `node tests/images.js [index.html]` | Bloque imagen y almacén `imagenes/` con una carpeta simulada con subcarpetas. |
+| `node tests/presentation.js` | Presentación de extremo a extremo; genera `docs/img/presentacion.pdf` y las capturas de `docs/img/`. |
 
 `tests/golden/expected.json` se generó con el prototipo (`node tests/golden/run.js record legacy/pizarra.html`).
 Si cambias el comportamiento a propósito, regenera la referencia con `record index.html` y revisa el diff.

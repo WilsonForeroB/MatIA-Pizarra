@@ -255,4 +255,16 @@ Cobertura: 23-61, 62-101, 102-109, 110-126, 127-142, 143-151, 152-164, 165-170, 
    - `@media print` (536) sobrescribe `body`, `.print-page` y `.blk`. Debe ir después de `base.css` y `block.css`.
 2. **`.hist-empty` aparece dos veces** (289 y 334). Ambas reglas se combinan. Si se cambia el orden, el resultado cambia. Lo recomendable es fusionarlas en una sola regla (ver siguiente paso).
 3. **Toast dentro del bloque de derivación.** Las líneas 244-245 (`#toast .mi-callout`) están dentro de `deriv-mobile.css` para no alterar el orden. Mover esas dos líneas a `toast.css` es seguro, porque no tienen conflicto con las reglas de bloques.
+
+## 6. Hojas añadidas después de la modularización
+
+Se cargan en `index.html` en este orden (ver la tabla de la §5 para las demás):
+
+| Fichero | Contenido |
+| --- | --- |
+| `css/fit.css` | Fórmulas que no caben: aviso «No cabe en la hoja» y botón «Partir». Va después de `blocks.css`. |
+| `css/text.css` | Texto enriquecido: barra flotante de formato y clases `tf-*`. |
+| `css/image.css` | Bloque imagen: figura, pie de foto y ancho. |
+
+Clases `tf-*` (las pone la barra de formato y se validan al cargar, ver `FORMATO-JSON.md` §4.2): color `tf-c0`…`tf-c6`, resaltado `tf-hl0`…`tf-hl3`, tamaño `tf-sz-n|lg|sub|title`, tipo de letra `tf-f-def|sans|serif|mono|hand`, alineación `tf-al-left|center|right|justify` y sangría `tf-indent-1`…`tf-indent-6`. La letra manuscrita es Caveat (`vendor/fonts/fonts.css`, SIL OFL 1.1).
 4. **`!important` en 400, 694 y 364.** No cambian el orden, pero conviene revisarlos al convertir los estilos en línea.

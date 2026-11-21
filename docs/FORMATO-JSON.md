@@ -74,7 +74,9 @@ Orden de despacho en `sanitize`: `deriv`, `table`, `graph3d`, `chart`, `ptree`, 
 
 ### 4.2 `text` (línea de texto)
 
-Igual que `math` con `type:'text'`. `v` es texto plano (se lee con `innerText`, sin saltos finales). `result` se conserva si existe (la rama final es común, 4662) pero no se usa en la práctica.
+Igual que `math` con `type:'text'`. `v` es texto plano (se lee con `innerText`, sin saltos finales) y es lo que usan la búsqueda y el respaldo. `result` se conserva si existe (la rama final es común, 4662) pero no se usa en la práctica.
+
+`html` (opcional, `js/blocks/text.js`) guarda el texto con formato, saneado con una lista blanca: solo las etiquetas `b i u s br p div ul ol li span`, las clases `tf-*` (`tf-c0`…`tf-c6` color, `tf-hl0`…`tf-hl3` resaltado, `tf-sz-n|lg|sub|title` tamaño, `tf-f-def|sans|serif|mono|hand` tipo de letra, `tf-al-left|center|right|justify` alineación, `tf-indent-1`…`tf-indent-6` sangría) y `span.math-inline` con `data-latex` (fórmula dentro del texto). Cualquier otra etiqueta, atributo o clase se descarta al cargar. Si `html` falta o queda vacío, se muestra `v`.
 
 ### 4.3 `deriv` (desarrollo alineado por el «=»)
 
@@ -233,6 +235,20 @@ Saneado en `js/blocks/solid.js` (`model/schema.register('solid', …)`). Si `a �
 Ejemplo: `{ "type": "solid", "fn": "f(x)=x^2", "a": 0, "b": 2, "axis": "x", "az": -0.8, "el": 0.5, "zoom": 1 }`.
 
 El volumen no se guarda: se recalcula al dibujar (discos o arandelas si el giro es horizontal, capas cilíndricas si es vertical).
+
+### 4.14 `image` (imagen)
+
+Figura con pie de foto (`js/blocks/image.js`). El archivo no va en el JSON: vive en la carpeta de clases, en `imagenes/<huella>.<ext>` (`js/storage/assets.js`).
+
+| Campo | Tipo | Defecto | Notas |
+| --- | --- | --- | --- |
+| `src` | string | `''` | Ruta relativa dentro de la carpeta de clases que empieza por `imagenes/`. Sin `..`, sin barras invertidas ni caracteres de control; si no cumple, la imagen queda vacía. |
+| `w` | number | `60` | Ancho en % de la hoja, entre 10 y 100. |
+| `align` | `'left'`\|`'center'`\|`'right'` | `'left'` | Alineación de la figura (campo común, §4). |
+| `caption` | string | `''` | Pie de foto, máx. 200 caracteres. |
+| `alt` | string | `''` | Texto alternativo, máx. 200 caracteres. |
+
+El bloque no es exportable como imagen de gráfico (`exportable: false`).
 
 ### 4.13 Tipos que `sanitize` NO trata como bloque propio
 

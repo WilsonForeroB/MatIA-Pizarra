@@ -29,7 +29,7 @@ La organización del código y cómo ampliarlo está en [`docs/ARQUITECTURA.md`]
 
 - **Cualquier navegador moderno** de escritorio. No necesita conexión: MathLive (MIT) y las fuentes están en `vendor/`.
 - **Chrome o Edge**: la pizarra guarda directamente en la carpeta que elijas.
-- **Firefox y Safari**: también sirven para dar clase. En el historial solo pueden *leer* la carpeta; para guardar descargan el JSON y hay que moverlo a esa carpeta a mano.
+- **Firefox y Safari**: también sirven para dar clase. En el historial solo pueden *leer* la carpeta; para guardar descargan el JSON y hay que moverlo a esa carpeta a mano. Las imágenes de la clase se ven, pero no se pueden insertar nuevas.
 
 ## Cómo funciona el historial
 
@@ -45,7 +45,11 @@ La pizarra recuerda la carpeta. Por seguridad, el navegador olvida el permiso al
 
 > Las ventanas del propio navegador (buscar la carpeta, conceder el permiso) no se pueden decorar: es una protección del navegador. Por eso la pizarra siempre muestra antes su propia ventana, y la del navegador solo aparece al pulsar su botón.
 
-Además, la pizarra se guarda sola en el propio navegador (`localStorage`) y, desde **Archivo**, se puede descargar o abrir un `.json` suelto, o imprimir y guardar como PDF.
+Además, la pizarra se guarda sola en el propio navegador (`localStorage`) y, desde **Archivo**, se puede descargar o abrir un `.json` suelto, imprimir o **Guardar como PDF**.
+
+### Imágenes
+
+Las imágenes (botón **Imagen**, Ctrl+V o arrastrarlas a la hoja) se guardan como archivos en la subcarpeta `imagenes/` de la carpeta de clases, con un nombre según su contenido (así no se duplican) y reducidas a 1600 px. Necesitan carpeta conectada: si no lo está, una ventana de MatIA te pide elegirla. Al pasar las clases a otro ordenador, copia también la carpeta `imagenes/`. Al conectar la carpeta, las imágenes se cargan solas.
 
 ### Formato del JSON
 
@@ -76,7 +80,8 @@ Tipos de bloque:
 | Tipo | Qué es |
 | --- | --- |
 | `math` | Línea de fórmula en LaTeX. |
-| `text` | Línea de texto. |
+| `text` | Línea de texto, con formato opcional (`html`; `v` es el texto plano). |
+| `image` | Imagen guardada en `imagenes/`, con `w` (% del ancho), `align`, `caption` y `alt`. |
 | `deriv` | Desarrollo alineado por el «=»: filas con lado izquierdo `l`, lado derecho `r` y explicación `note`. |
 | `table` | Tabla de Ruffini, de verdad o de valores. |
 | `graph` | Gráfica 2D de una o varias funciones (`fns`), con `xmin`/`xmax` y `ymin`/`ymax` opcionales (vacíos = automático) y `marks` opcionales (máximos, mínimos, inflexión, absolutos). |
@@ -136,10 +141,14 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
   - **Diagrama de Venn**: 2 o 3 conjuntos (A, B, C) dentro del universal U. Escribe la expresión (A ∩ B, A ∪ B, A ∖ B, Aᶜ, (A ∪ B)ᶜ, A Δ B…) con el teclado o con sus botones y se sombrea su zona, con color y rayado. Si en la página has definido `A = {…}`, `B = {…}`, `C = {…}` o `U = {…}`, cada elemento aparece en su zona y debajo sale el conjunto resultado. Con un clic en una zona la sombreas o la quitas a mano.
   - **Asistente de red neuronal**: escribe las neuronas por capa (por ejemplo `3, 4, 4, 2`) y monta el grafo por capas: entradas x₁…, ocultas h¹₁… y salidas ŷ₁…, con sesgo (+1) y pesos w opcionales. También está en el grafo, con el botón «Red neuronal…».
 - **Dibujar** (Alt+D): lápiz, rotulador, flecha y goma. Un lápiz digital dibuja siempre, aunque estés en modo Escribir.
+- **Texto con formato**: la línea de texto tiene una barra flotante con negrita, cursiva, subrayado, tachado (Ctrl+B/I/U), color, resaltado, tamaño, tipo de letra (también una manuscrita), alineación, listas, sangría y **∑ Fórmula** (una fórmula editable dentro del texto).
+- **Fórmulas que no caben**: su letra se reduce hasta el 60 %. Si aun así no cabe, aparece el aviso «No cabe en la hoja» con el botón **Partir** (si tiene «=», la convierte en desarrollo). Una línea de fórmula que es solo `\text{…}` pasa sola a línea de texto al salir de ella; un aviso con **Deshacer** permite volver atrás.
+- **Imágenes**: botón **Imagen**, Ctrl+V o arrastrar a la hoja. Se puede ajustar el ancho (10–100 %), la alineación y añadir pie de foto.
 - **Tamaño de página** (Vista ▾): **Libre** (continua, como siempre), **A4 vertical**, **A4 horizontal**, **A3 horizontal** o **Diapositiva 16:9**. En los tamaños fijos se ve el borde de la hoja, la hoja se ajusta al ancho de la pantalla, se marca con una línea discontinua dónde termina la página si el contenido no cabe, y al imprimir o guardar en PDF cada página sale con ese tamaño.
 - **Presentar** (botón de la cabecera): pantalla completa con solo la página actual, escalada para que quepa entera, como una diapositiva. **→ / ← / espacio / RePág / AvPág** para pasar, **Inicio / Fin** para ir a la primera o la última, **D** para dibujar encima y **Esc** para salir. Abajo hay una barra que se oculta sola. Recomendado con «Diapositiva 16:9».
 - **Exportar gráficos**: cada gráfico (2D, 3D, grafo, red neuronal, Venn, barras, caja, normal, árbol, circunferencia, triángulo, rectas) tiene un botón ⤓ junto a la ×. Permite **descargar PNG** a doble resolución, **descargar SVG** (vectorial; no disponible en la 3D) o **copiar la imagen** para pegarla con Ctrl+V. La imagen incluye el título, la leyenda y el resultado. Con «Fondo claro» sale en colores claros aunque uses el tema oscuro.
 - **Modo proyector**: pantalla completa (icono de la cabecera o tecla F), tamaño de letra, tema claro u oscuro y ocultar barras (H).
+- **Guardar como PDF** (botón **PDF** de la cabecera o **Archivo → Guardar como PDF**): una página o diapositiva por hoja. Una ventana de MatIA explica que, en el diálogo del navegador, hay que elegir «Guardar como PDF» como destino. Espera a que carguen las imágenes y las fórmulas, y avisa de las páginas que no caben. Para presentaciones, usa antes **Vista ▾ → Diapositiva 16:9**.
 - **Guardar** (botón verde de la cabecera o **Ctrl+S**): guarda la clase en tu carpeta de clases. Un punto blanco en el botón indica que hay cambios sin guardar. La primera vez pide la carpeta (cualquiera); después reescribe siempre el archivo de esa clase. En navegadores sin acceso a carpetas, descarga el JSON.
 - **Páginas**: «+ Página» añade una página detrás de la actual y «− Página» elimina la actual; si es la única, la vacía.
 - **Avisos con Pío**: las confirmaciones (borrar página o clase, pizarra nueva) usan un diálogo propio con los colores de la pizarra, no los avisos del navegador. Si vas a abrir otra clase, empezar una nueva o abrir un archivo con cambios sin guardar, la pizarra ofrece **Guardar y continuar**, **Continuar sin guardar** o **Cancelar**. Al cerrar la pestaña no pregunta nada: la pizarra ya está guardada en el navegador y, con el guardado automático, también en tu carpeta.
@@ -157,7 +166,7 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 
 - Código modular sin compilación: scripts clásicos registrados con `MatIA.define` (funciona con `file://`). Ver [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 - Estilos: [`docs/ESTILOS.md`](docs/ESTILOS.md). Formato de las clases: [`docs/FORMATO-JSON.md`](docs/FORMATO-JSON.md). Fichas por funcionalidad: [`docs/funcionalidades/`](docs/funcionalidades/).
-- Pruebas (opcionales, con Node y Playwright): `node tests/golden/run.js compare index.html`, `node tests/e2e.js legacy/pizarra.html index.html`, `node tests/storage.js`, `node tests/engine-features.js` (normalización de funciones e integrales, sin navegador), `node tests/features.js` (gráfica 2D, explicación en la línea, Desarrollo, integrales y sólidos) y `node tests/solid.js` (sólido de revolución).
+- Pruebas (opcionales, con Node y Playwright): `node tests/golden/run.js compare index.html`, `node tests/e2e.js legacy/pizarra.html index.html`, `node tests/storage.js`, `node tests/engine-features.js` (normalización de funciones e integrales, sin navegador), `node tests/features.js` (gráfica 2D, explicación en la línea, Desarrollo, integrales y sólidos) `node tests/solid.js` (sólido de revolución), `node tests/fit.js` (fórmulas que no caben), `node tests/text.js` (texto con formato), `node tests/images.js` (imágenes) y `node tests/presentation.js` (presentación de extremo a extremo; genera `docs/img/presentacion.pdf` y las capturas de `docs/img/`).
 - No guarda credenciales ni datos personales. El historial vive solo en la carpeta local de quien la usa.
 
 ## Autoría y derechos
@@ -166,6 +175,6 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 
 © 2026 Wilson Forero. **Todos los derechos reservados.** Uso exclusivamente educativo y no comercial. Queda prohibida cualquier reproducción, distribución, comunicación pública, transformación o explotación, total o parcial, con fines comerciales sin autorización expresa y por escrito del autor; su incumplimiento podrá ser objeto de acciones legales conforme a la legislación de propiedad intelectual aplicable. Ver también el `LICENSE` de la raíz del repositorio.
 
-Componentes de terceros, con sus propias licencias: MathLive (© Arno Gourdol, licencia MIT) y las fuentes IBM Plex Sans, JetBrains Mono y Source Serif 4 (SIL Open Font License 1.1).
+Componentes de terceros, con sus propias licencias: MathLive (© Arno Gourdol, licencia MIT) y las fuentes IBM Plex Sans, JetBrains Mono, Source Serif 4 y Caveat (SIL Open Font License 1.1).
 
 El aviso aparece también dentro de la pizarra: al pie de la ayuda (**?**), en **Archivo → Acerca de y derechos** y en los metadatos del HTML.

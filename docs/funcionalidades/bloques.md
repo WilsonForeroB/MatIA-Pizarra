@@ -155,6 +155,16 @@ Interacciones con el resto (acoplamientos): `activeField()` (5268), `setActive` 
 5. `deleteBlock` clasifica por tipo (mensajes, «vacío») con un `if` propio.
 6. `toast` usa `pioBadge` por `typeof pioBadge === 'function'` (4695): dependencia implícita de otro bloque.
 
+## 11. Bloques añadidos después del prototipo
+
+Estos tipos no existen en `legacy/pizarra.html`: cada uno vive en su fichero y se registra con `registry.register` (no entra en el `if` de §3).
+
+- **`text`** (`js/blocks/text.js`, `js/ui/text-format.js`, `css/text.css`): línea de texto con formato. Negrita, cursiva, subrayado, tachado (Ctrl+B/I/U), color, resaltado, tamaño, tipo de letra (incluida la manuscrita Caveat, en `vendor/fonts/`), alineación (también justificar), listas, sangría y «∑ Fórmula» (fórmula editable dentro del texto). Se guarda en `html` (saneado) y en `v` (texto plano); ver `FORMATO-JSON.md` §4.2.
+- **`image`** (`js/blocks/image.js`, `js/storage/assets.js`, `js/ui/image-insert.js`, `css/image.css`): botón «Imagen», Ctrl+V o arrastre a la hoja. El archivo va a `imagenes/` de la carpeta de clases y el bloque solo guarda la ruta (`src`); ver `FORMATO-JSON.md` §4.14. No es exportable como imagen de gráfico.
+- **Ajuste de fórmulas** (`js/blocks/fit.js`, `css/fit.css`): una fórmula más ancha que la hoja reduce su letra hasta el 60 %. Si aun así no cabe, aparece «No cabe en la hoja» con **Partir** (convierte en desarrollo si hay «=»). Una línea que es solo `\text{…}` pasa a línea de texto al salir de ella, con un aviso «Deshacer».
+
+Orden de carga: `text.js` e `image.js` van antes de `model/board.js` porque registran saneadores (ver `ARQUITECTURA.md`).
+
 ## Propuesta de módulos
 
 Patrón registro: cada tipo se registra con `registry.register({ type, label, delLabel, delMsg, exportable, isEmpty(b), sanitize(raw, h), create(spec), render(b, bd, ctx), renderPrint(b, bd, ctx), keydown?(e,b,ctx), onFocus?(…) })`. `makeBlockEl` y `printAll` pasan a llamar `registry.get(b.type).render(...)`/`renderPrint(...)`, y `xl`, avisos de borrado, `EXPORTABLE`, el selector CSS de teclado y `isEmpty` salen de la definición del tipo.

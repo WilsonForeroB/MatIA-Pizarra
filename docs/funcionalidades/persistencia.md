@@ -65,6 +65,12 @@ Variables (7428): `histDir` (handle de escritura), `histRO` (solo lectura, `{nam
 - Se puede listar y Abrir/Añadir, pero no Borrar (`it.handle` ausente), ni autoguardado, ni escribir: guardar = descarga manual y mover el archivo (7572-7578). Texto en `#histHelp` (7454).
 - `histRO` no se persiste: hay que volver a elegir la carpeta en cada sesión.
 
+### 3.8 Carpeta `imagenes/` (versión actual)
+- Las imágenes se guardan en la subcarpeta `imagenes/` de la carpeta de clases, con nombre `<huella>.<ext>` (sin duplicados; máx. 1600 px). El `.json` solo guarda la ruta en el bloque `image` (`FORMATO-JSON.md` §4.14).
+- Necesitan carpeta conectada; si no lo está, una ventana de MatIA pide elegirla. En Firefox y Safari se ven, pero no se pueden insertar.
+- Al mover las clases a otro ordenador hay que copiar también `imagenes/`. Al conectar la carpeta, las imágenes se recargan solas.
+- La interfaz `Folder` (`js/storage/folders.js`) tiene `readFile(ruta)` y `writeFile(ruta, blob)`, que aceptan rutas con subcarpetas; `js/storage/assets.js` las usa para las imágenes.
+
 ## 4. Archivo (7696-7770)
 
 | Acción | Línea | Detalle |

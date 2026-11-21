@@ -10,6 +10,7 @@ Estado documentado: `pizarra.html` (rama dev, 8103 líneas). Todo el código viv
 | Modo Escribir / Dibujar | `button[data-mode]` | 560-561 | `setMode(m)` (7348); pone `body.dataset.mode` |
 | Páginas | `#pgPrev` `#pgOut` `#pgNext` `#pgAdd` `#pgDel` | 564-568 | `goPage` (7391), añadir (7399), eliminar (7739, pasa por `#delPage`) |
 | Presentar | `#presBtn` | 571 | `startPresent` (7364) |
+| PDF | `#pdfBtn` | (versión actual) | Guardar como PDF: ventana MatIA y luego impresión (`js/ui/print.js`) |
 | Pantalla completa | `#fsBtn` | 572 | `toggleFull` (7411) |
 | Vista | `#viewBtn` -> `#viewPop` | 573 | `showPop` (7403) |
 | Guardar | `#saveBtn` | 574 | `quickSave` (7678); clase `dirty` según `isDirty` (7669) |
@@ -27,7 +28,7 @@ Los grupos llevan `only-write` / `only-draw`; el CSS los muestra según `body[da
 | Símbolos (escribir) | `data-pop=symPop`, `data-pop=calcPop`, `data-pop=grafPop` | 589-593 |
 | Dibujo | `#toolSeg [data-tool]` pen/hl/arrow/eraser, `#penWidth` (1-12) / `#widthOut` | 595-605 |
 | Color | `#swatches .sw[data-color]` ink, data-1..data-5 | 607-614 |
-| Línea (escribir) | `#alignSeg [data-align]`, `#boxBtn`, `#textBtn`, `#kbdBtn`, `#dupBtn`, `#delBtn`, `#delDerivBtn` (oculto salvo desarrollo) | 616-628 |
+| Línea (escribir) | `#alignSeg [data-align]`, `#boxBtn`, `#textBtn`, `#imgBtn` (Imagen; `#imgIn` oculto), `#kbdBtn`, `#dupBtn`, `#delBtn`, `#delDerivBtn` (oculto salvo desarrollo) | 616-628 |
 | Deshacer (dibujo) | `#undoBtn`, `#clearInkBtn` | 630-633 |
 | Calcular (escribir) | `data-pop=opsPop` Operaciones, `#calcBtn` (Ctrl+=) | 635-638 |
 
@@ -104,6 +105,8 @@ Notas: `role="menu"` sin navegación con flechas (no hay manejador de roving foc
 ## 11. Impresión (7770-7847)
 
 `printAll` (7772) rellena `#print-root` (958) con una `.print-page` por página (reconstruye bloques con `buildDeriv`, `buildTable`, `buildGraph`, ..., fórmulas read-only), pinta los trazos en un canvas x2 con paleta clara fija (7831) y llama a `window.print()` tras 600 ms (7845). `afterprint` vacía `#print-root` (7847). El tamaño de papel viene de `@page` (4726).
+
+**Versión actual**: el botón «PDF» (cabecera) y «Guardar como PDF» (Archivo, `#pdfFile`) abren primero una ventana de MatIA que explica elegir «Guardar como PDF» como destino en el diálogo del navegador. Antes de imprimir se espera a las imágenes y a las fórmulas, se pone una página (o diapositiva) por hoja y se avisa de las páginas que no caben. «Imprimir…» (`#printBtn`) sigue igual. Para presentaciones, Vista ▾ → Diapositiva 16:9.
 
 ## 12. Arranque (8073-8100)
 
