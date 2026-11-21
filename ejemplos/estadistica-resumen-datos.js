@@ -28,7 +28,7 @@ MatIA.ejemplo({
               },
               {
                 "l": "\\bar{x}",
-                "r": "\\frac{\\sum x_{i}}{n}=\\frac{79}{12}=\\frac{79}{12}\\approx 6.5833",
+                "r": "\\frac{\\sum x_{i}}{n}=\\frac{79}{12}\\approx 6.5833",
                 "note": "Media: suma de los datos entre el número de datos",
                 "boxed": true
               },

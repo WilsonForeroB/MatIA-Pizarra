@@ -14,7 +14,7 @@ MatIA.ejemplo({
       {"type":"math","v":"\\xrightarrow[F_{3}-F_{1}]{F_{2}-2F_{1}}\\left(\\begin{matrix}1 & 1 & 1\\\\ 0 & -3 & -1\\\\ 0 & 1 & -2\\end{matrix}\\,\\middle|\\,\\begin{matrix}6\\\\ -9\\\\ -4\\end{matrix}\\right)","result":true},
       {"type":"math","v":"\\xrightarrow{F_{2}\\leftrightarrow F_{3}}\\left(\\begin{matrix}1 & 1 & 1\\\\ 0 & 1 & -2\\\\ 0 & -3 & -1\\end{matrix}\\,\\middle|\\,\\begin{matrix}6\\\\ -4\\\\ -9\\end{matrix}\\right)","result":true},
       {"type":"math","v":"\\xrightarrow{F_{3}+3F_{2}}\\left(\\begin{matrix}1 & 1 & 1\\\\ 0 & 1 & -2\\\\ 0 & 0 & -7\\end{matrix}\\,\\middle|\\,\\begin{matrix}6\\\\ -4\\\\ -21\\end{matrix}\\right)","result":true},
-      {"type":"math","v":"\\operatorname{rg}(A)=\\operatorname{rg}(A|b)=3=3=\\text{ n.º de incógnitas}\\Rightarrow\\text{Compatible determinado}","result":true},
+      {"type":"math","v":"\\operatorname{rg}(A)=\\operatorname{rg}(A|b)=3=\\text{ n.º de incógnitas}\\Rightarrow\\text{Compatible determinado}","result":true},
       {"type":"math","v":"x=1,\\quad y=2,\\quad z=3","result":true},
       {"type":"text","v":"Comprobación en la primera ecuación: 1 + 2 + 3 = 6 ✔. Reto: cambia la tercera ecuación por la suma de las dos primeras, 3x + 2z = 9, y vuelve a aplicar Gauss. ¿Qué fila se anula? ¿Cuántas soluciones tiene ahora el sistema?"},
     ], strokes: [] },

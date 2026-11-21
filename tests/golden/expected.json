@@ -65,7 +65,7 @@
     "\\left(\\begin{matrix}2 & 1\\\\ 1 & -1\\end{matrix}\\,\\middle|\\,\\begin{matrix}3\\\\ 0\\end{matrix}\\right)",
     "\\xrightarrow{F_{1}\\leftrightarrow F_{2}}\\left(\\begin{matrix}1 & -1\\\\ 2 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}0\\\\ 3\\end{matrix}\\right)",
     "\\xrightarrow{F_{2}-2F_{1}}\\left(\\begin{matrix}1 & -1\\\\ 0 & 3\\end{matrix}\\,\\middle|\\,\\begin{matrix}0\\\\ 3\\end{matrix}\\right)",
-    "\\operatorname{rg}(A)=\\operatorname{rg}(A|b)=2=2=\\text{ n.º de incógnitas}\\Rightarrow\\text{Compatible determinado}",
+    "\\operatorname{rg}(A)=\\operatorname{rg}(A|b)=2=\\text{ n.º de incógnitas}\\Rightarrow\\text{Compatible determinado}",
     "x=1,\\quad y=1"
    ]
   },
@@ -76,7 +76,7 @@
     "\\xrightarrow{F_{2}-2F_{1}}\\left(\\begin{matrix}1 & -1\\\\ 0 & 3\\end{matrix}\\,\\middle|\\,\\begin{matrix}0\\\\ 3\\end{matrix}\\right)",
     "\\xrightarrow{F_{2}\\to \\frac{1}{3}F_{2}}\\left(\\begin{matrix}1 & -1\\\\ 0 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}0\\\\ 1\\end{matrix}\\right)",
     "\\xrightarrow{F_{1}+F_{2}}\\left(\\begin{matrix}1 & 0\\\\ 0 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}1\\\\ 1\\end{matrix}\\right)",
-    "\\operatorname{rg}(A)=\\operatorname{rg}(A|b)=2=2=\\text{ n.º de incógnitas}\\Rightarrow\\text{Compatible determinado}",
+    "\\operatorname{rg}(A)=\\operatorname{rg}(A|b)=2=\\text{ n.º de incógnitas}\\Rightarrow\\text{Compatible determinado}",
     "x=1,\\quad y=1"
    ]
   },
@@ -1269,7 +1269,7 @@
       },
       {
        "l": "\\bar{x}",
-       "r": "\\frac{\\sum x_{i}}{n}=\\frac{22}{5}=\\frac{22}{5}\\approx 4.4",
+       "r": "\\frac{\\sum x_{i}}{n}=\\frac{22}{5}\\approx 4.4",
        "note": "Media: suma de los datos entre el número de datos",
        "boxed": true
       },
@@ -2385,7 +2385,7 @@
       "\\text{Datos ordenados}",
       "2,\\ 3,\\ 5,\\ 5,\\ 7",
       "\\bar{x}",
-      "\\frac{\\sum x_{i}}{n}=\\frac{22}{5}=\\frac{22}{5}\\approx 4.4",
+      "\\frac{\\sum x_{i}}{n}=\\frac{22}{5}\\approx 4.4",
       "Me",
       "5",
       "Mo",

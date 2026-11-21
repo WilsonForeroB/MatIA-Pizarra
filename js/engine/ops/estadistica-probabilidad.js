@@ -39,7 +39,7 @@ MatIA.define('engine/ops/estadistica-probabilidad', ['engine/core', 'engine/ops/
     const lst = (arr) => arr.map(L0).join(',\\ ');
     const rows = [
       { l: '\\text{Datos ordenados}', r: lst(xs), note: 'n = ' + n + ' datos' },
-      { l: '\\bar{x}', r: '\\frac{\\sum x_{i}}{n}=\\frac{' + L0(sum) + '}{' + n + '}=' + L0(mean) + (useDec || isInt(mean) ? '' : '\\approx ' + dec(fNum(mean))), note: 'Media: suma de los datos entre el número de datos', boxed: true },
+      { l: '\\bar{x}', r: '\\frac{\\sum x_{i}}{n}=\\frac{' + L0(sum) + '}{' + n + '}' + (L0(mean) === '\\frac{' + L0(sum) + '}{' + n + '}' ? '' : '=' + L0(mean)) + (useDec || isInt(mean) ? '' : '\\approx ' + dec(fNum(mean))), note: 'Media: suma de los datos entre el número de datos', boxed: true },
     ];
     const med = medianOf(xs);
     rows.push({ l: 'Me', r: L0(med), note: n % 2 ? 'Mediana: el dato central (posición ' + (n + 1) / 2 + ')' : 'Mediana: media de los dos centrales (posiciones ' + n / 2 + ' y ' + (n / 2 + 1) + ')', boxed: true });

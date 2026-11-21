@@ -101,8 +101,18 @@ async function ui(br, ok, list) {
       await pg.waitForTimeout(700);
       await pg.evaluate(() => { if (document.activeElement) document.activeElement.blur(); document.querySelectorAll('.v3-hint').forEach((h) => h.remove()); });
       await pg.waitForTimeout(150);
+      // la miniatura empieza tras el texto de introducción, para que se vea el contenido (fórmulas, gráficas…)
+      const top = await pg.evaluate(() => {
+        const bl = [...document.querySelectorAll('#blocks > .blk')];
+        const k = bl.findIndex((el, i) => i > 0 && !el.querySelector('.blk-text'));
+        const el = bl[k > 0 ? k : 0];
+        el.scrollIntoView({ block: 'start' });
+        return el.getBoundingClientRect().top - 8;
+      });
+      await pg.waitForTimeout(250);
       const r0 = await pg.locator('#sheet').boundingBox();
-      await pg.screenshot({ path: path.join(IMG, e.id + '.jpg'), type: 'jpeg', quality: 72, clip: { x: r0.x, y: r0.y, width: r0.width, height: Math.min(r0.height, Math.round(r0.width * 9 / 16)) } });
+      const y = Math.max(r0.y, top);
+      await pg.screenshot({ path: path.join(IMG, e.id + '.jpg'), type: 'jpeg', quality: 72, clip: { x: r0.x, y, width: r0.width, height: Math.round(r0.width * 9 / 16) } });
     }
     ok(e.id + ' (' + e.tema + ')', meta && !lost && !(r.issues || []).length && !errs.length, [meta ? '' : 'falta tema/título/resumen', lost, ...(r.issues || []), ...errs].filter(Boolean).join(' | '));
   }

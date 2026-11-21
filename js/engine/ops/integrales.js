@@ -341,7 +341,7 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
     out.A = A; out.B = B;
     if (Fp) {
       try {
-        if (A.ex && B.ex) { const q = fr.sub(evalExact(Fp, { [v]: B.ex }), evalExact(Fp, { [v]: A.ex })); out.value = fLatex(q); return out; }
+        if (A.ex && B.ex) { const Fb = evalExact(Fp, { [v]: B.ex }), Fa = evalExact(Fp, { [v]: A.ex }); out.Fb = fLatex(Fb); out.Fa = fLatex(Fa); out.value = fLatex(fr.sub(Fb, Fa)); return out; }
       } catch (e) { /* no exacto */ }
       const val = evalNum(Fp, { [v]: B.x }) - evalNum(Fp, { [v]: A.x });
       if (Number.isFinite(val)) {
@@ -363,6 +363,8 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
     if (!r.definite) return { latex: left + '=' + pretty(r.Fp) + '+C' };
     return { latex: left + (/^\\approx/.test(r.value) ? r.value : joinEq(r.value)) };
   }
+  const paren = (x) => (/^-/.test(x) ? '\\left(' + x + '\\right)' : x);
+  const plain = (x) => String(x).replace(/\^\{([^{}]+)\}/g, '^$1').replace(/\\left|\\right|\\cdot|\\,/g, '').replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2').replace(/\\pi/g, 'π').replace(/\\(sin|cos|tan|ln|log|arctan)/g, '$1').replace(/[{}\\]/g, '').replace(/\^2/g, '²').replace(/\^3/g, '³');
   function integralSteps(latex) {
     const r = analyse(latex);
     const rules = r.rules.filter((x) => x !== 'constante' || r.rules.length === 1).join(', ');
@@ -373,8 +375,9 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
       rows.push({ l: r.head, r: r.value, note: 'No tiene primitiva elemental: la aproximamos con la regla de Simpson (n = 1000)', boxed: true });
     } else {
       const Ft = pretty(r.Fp), a = L(r.it.lo).trim(), b = L(r.it.hi).trim();
-      rows.push({ l: r.head, r: pretty(r.Fp) + '+C', note: 'Reglas: ' + rules });
-      rows.push({ l: '', r: '\\left[' + Ft + '\\right]_{' + a + '}^{' + b + '}', note: 'Regla de Barrow: F(b) − F(a)' });
+      // la integral definida es un número: no se escribe «= F(x) + C»; la primitiva va en la nota
+      rows.push({ l: r.head, r: '\\left[' + Ft + '\\right]_{' + a + '}^{' + b + '}', note: 'Primitiva F(x) = ' + plain(Ft) + ' (reglas: ' + rules + '). Regla de Barrow: F(b) − F(a)' });
+      if (r.Fb !== undefined) rows.push({ l: '', r: paren(r.Fb) + '-' + paren(r.Fa), note: 'F(' + plain(b) + ') − F(' + plain(a) + ')' });
       rows.push({ l: '', r: r.value.replace(/^\\approx /, '\\approx '), note: 'Resultado', boxed: true });
     }
     return [derivBlock(rows)];

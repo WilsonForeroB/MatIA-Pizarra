@@ -173,7 +173,7 @@ MatIA.define('engine/core/gauss-systems', ['engine/core/fraction-matrix', 'engin
       const r = piv.indexOf(j);
       parts.push(v + '=' + linLatex(R[r][n], free.map((f) => [neg(R[r][f]), params[f]])));
     });
-    const head = '\\operatorname{rg}(A)=\\operatorname{rg}(A|b)=' + rA + (free.length ? '<' : '=') + n + '=\\text{ n.º de incógnitas}';
+    const head = '\\operatorname{rg}(A)=\\operatorname{rg}(A|b)=' + rA + (free.length ? '<' + n : '') + '=\\text{ n.º de incógnitas}';
     const kind = free.length ? 'SCI' : 'SCD';
     const label = free.length ? '\\text{Compatible indeterminado}' : '\\text{Compatible determinado}';
     return { kind, rA, rAb, latex: head + '\\Rightarrow' + label, sol: parts.join(',\\quad ') + (free.length ? ',\\quad ' + free.map((f) => params[f]).join(',') + '\\in\\mathbb{R}' : '') };
