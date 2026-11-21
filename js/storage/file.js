@@ -79,6 +79,6 @@ MatIA.define('storage/file', ['core/dom', 'model/board', 'model/schema', 'ui/toa
     S.save();
   });
   $('#printBtn').addEventListener('click', () => { R('ui/popovers').closePop(); R('ui/print').printAll(); });
-  $('#fileBtn').addEventListener('click', (e) => { if (st.openPop && st.openPop.p.id === 'filePop') R('ui/popovers').closePop(); else R('ui/popovers').showPop('filePop', e.currentTarget); });
+  $('#fileBtn').addEventListener('click', (e) => { if (R('ui/state').openPop && R('ui/state').openPop.p.id === 'filePop') R('ui/popovers').closePop(); else R('ui/popovers').showPop('filePop', e.currentTarget); });
   return { aboutDlg };
 });

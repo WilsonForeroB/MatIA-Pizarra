@@ -213,5 +213,5 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
     try { if (d && (await d.queryPermission({ mode: 'readwrite' })) === 'granted') { histDir = d.name === 'historial' ? d : d; $('#histAuto').checked = true; } } catch (e) { /* */ }
   })();
   const clearSession = () => { sessionFile = null; };
-  return { hist, FS_OK, IDB, pad2, slug, stampName, boardJSON, setStatus, useDir, readEntries, fmtDate, listHist, openHist, writeHist, saveToHistory, autoSave, clearSession };
+  return { hist, FS_OK, IDB, pad2, slug, stampName, boardJSON, setStatus, useDir, readEntries, fmtDate, listHist, openHist, writeHist, saveToHistory, autoSave, clearSession, get histDir() { return histDir; } };
 });
