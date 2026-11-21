@@ -32,7 +32,7 @@ MatIA.define('ui/calc', ['core/dom', 'model/board', 'model/schema', 'ui/state', 
     }
     if (!b || b.type !== 'math' || !b.v.trim()) { toast('Escribe una operación en una línea, por ejemplo A·B = o 3/4 + 1/6 =, y pulsa Calcular.'); return; }
     // integrales: ∫ f dx = F(x) + C, o ∫ₐᵇ f dx = valor (exacto o aproximado)
-    if (/^\s*\\int(?![a-zA-Z])/.test(b.v)) {
+    if (/\\int(?![a-zA-Z])/.test(b.v)) { // también con nombre delante: I=\int_0^1 x\,dx=
       try {
         const r = R('engine/ops').integralLine(b.v);
         const mf = R('blocks/editor').fieldOf(R('blocks/editor').elById(b.id));

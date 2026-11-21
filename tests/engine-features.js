@@ -50,5 +50,18 @@ const st = OPS.integralSteps('\\int_0^1 x^2\\,dx');
 check('integralSteps devuelve bloque deriv', Array.isArray(st) && st[0].type === 'deriv' && st[0].rows.length >= 2 && st[0].rows.some((r) => r.boxed), JSON.stringify(st));
 const st2 = OPS.integralSteps('\\int x^2dx');
 check('integralSteps indefinida', st2[0].type === 'deriv' && /\+C/.test(st2[0].rows[0].r), JSON.stringify(st2));
+
+// regresiones de revisión
+for (const s of ['\\int_{-1}^{2}\\frac{1}{x}dx', '\\int_0^{2}\\tan x dx', '\\int_0^3\\frac{1}{x-1}dx', '\\int_0^3\\frac{1}{(x-1)^2}dx'])
+  check('impropia ' + s, /ERROR.*impropia/.test(line(s)), line(s));
+check('∫₀²⁵ e^x no es impropia', /^[^E]/.test(line('\\int_0^{25}e^xdx')), line('\\int_0^{25}e^xdx'));
+check('∫₀² x^50', /^[^E]/.test(line('\\int_0^{2}x^{50}dx')), line('\\int_0^{2}x^{50}dx'));
+check('∫₀¹ 10^10 x', /^[^E]/.test(line('\\int_0^1 10^{10}x\\,dx')), line('\\int_0^1 10^{10}x\\,dx'));
+for (const s of ['\\int\\sqrt{x-4}dx', '\\int\\ln(x-5)dx', '\\int(x-10)^{1/2}dx']) check('primitiva fuera de puntos fijos ' + s, !/ERROR/.test(line(s)), line(s));
+has('∫₄⁵ √(x-4)', '\\int_4^5\\sqrt{x-4}dx', '=\\frac{2}{3}');
+for (const s of ['\\int\\frac{3}{x}dx', '\\int\\frac{1}{x^2}dx', '\\int\\frac{5}{2x+1}dx', '\\int\\frac{a}{x}dx', '\\int\\frac{2}{1+x^2}dx']) check('cociente con numerador constante ' + s, /\+C/.test(line(s)), line(s));
+has('∫₁² 3/x²', '\\int_1^2\\frac{3}{x^2}dx', '=\\frac{3}{2}');
+check('normalizeFn operatorname abs', OPS.normalizeFn('\\operatorname{abs}(x)') === '\\left|x\\right|', OPS.normalizeFn('\\operatorname{abs}(x)'));
+check('normalizeFn e^-x^2', OPS.normalizeFn('e^-x^2') === 'e^{-x^{2}}', OPS.normalizeFn('e^-x^2'));
 console.log(bad ? bad + ' fallos de ' + n : 'OK: ' + n + ' comprobaciones.');
 process.exit(bad ? 1 : 0);

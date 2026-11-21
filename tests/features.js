@@ -105,6 +105,39 @@ const URL_ = 'file://' + path.resolve(__dirname, '..', 'index.html');
     await ctx.close();
   }
 
+  // ---- Correcciones de la revisión (sólidos, exportar, tema, símbolos en campos auxiliares, I=∫) ----
+  {
+    const { ctx, pg, errs } = await fresh();
+    await pg.evaluate(() => { localStorage.setItem('matia-pizarra-v1', JSON.stringify({ pages: [{ blocks: [
+      { type: 'solid', fn: 'f(x)=1', a: -1, b: 1, axis: 'y' },
+      { type: 'solid', fn: 'f(x)=x', a: 0, b: 1, axis: 'y=k', k: 1.5 },
+      { type: 'graph', fns: ['f(x)=x'], xmin: -5, xmax: 5 },
+      { type: 'math', v: 'I=\\int_{0}^{1}x\\,dx=' } ], strokes: [] }] })); });
+    await pg.reload(); await pg.waitForFunction(() => !!customElements.get('math-field')); await pg.waitForTimeout(1200);
+    const vols = await pg.$$eval('.sol-num', (e) => e.map((x) => x.textContent));
+    ok('Sólido: eje dentro de [a, b] no cuenta dos veces (cilindro r=1, h=1 → π)', /3,1416/.test(vols[0]), vols[0]);
+    ok('Sólido: eje y = k usa «discos»', /discos/.test(vols[1]) && !/arandelas/.test(vols[1]), vols[1]);
+    const lx = await pg.$$eval('.sol-int', (e) => e.map((x) => x.value || x.textContent));
+    ok('Sólido: coma decimal escapada en la integral', /1\{,\}5/.test(lx[1]), lx[1]);
+    ok('Sólido: se repinta al cambiar el tema', await pg.evaluate(() => MatIA.require('blocks/graph3d').redrawers.size >= 2));
+    const [dl] = await Promise.all([
+      pg.waitForEvent('download', { timeout: 8000 }).catch(() => null),
+      (async () => { await pg.locator('#blocks > .blk').nth(0).locator('.blk-exp').click(); await pg.click('#expPop [data-exp="png"]'); })(),
+    ]);
+    ok('Sólido: exportar PNG descarga la imagen', dl && /solido-revolucion.*\.png$/.test(dl.suggestedFilename()), dl ? dl.suggestedFilename() : await pg.textContent('#toast'));
+    await pg.locator('.graph .g-fn-field').first().focus();
+    await pg.evaluate(() => MatIA.require('ui/templates').insertLatex('\\pi'));
+    await pg.waitForTimeout(600); // el autoguardado espera 350 ms
+    const bl = await saved(pg);
+    ok('Símbolos: se insertan en el campo de la gráfica, sin crear línea', bl.length === 4 && /\\pi/.test(bl[2].fns[0]), JSON.stringify(bl[2].fns));
+    await pg.locator('#blocks > .blk').nth(3).locator('math-field').click(); await pg.waitForTimeout(250); // MathLive toma el foco con un pequeño retardo
+    await pg.click('#calcBtn'); await pg.waitForTimeout(500);
+    const v = (await saved(pg))[3].v;
+    ok('Calcular: integral con nombre delante (I=∫…)', /=\\frac\{1\}\{2\}$/.test(v), v);
+    ok('Correcciones: sin errores', !errs.length, errs.join(' | '));
+    await ctx.close();
+  }
+
   await br.close();
   const bad = results.filter((r) => !r).length;
   console.log(bad ? 'FALLA: ' + bad + ' de ' + results.length + ' comprobaciones.' : 'OK: ' + results.length + ' comprobaciones.');

@@ -24,8 +24,23 @@ MatIA.define('ui/templates', ['core/dom', 'ui/toast'], (dom, toast) => {
     arrow: '\\xrightarrow{#?}', implies: '\\Rightarrow ', iff: '\\Leftrightarrow ', R: '\\mathbb{R}', lambda: '\\lambda ',
     dydx: '\\frac{d#?}{d#?}', prime: "#@'(#?)", in: '\\in ', exists: '\\exists ', forall: '\\forall ',
   };
+  // último campo auxiliar con foco (función de una gráfica o de un sólido): los símbolos se insertan ahí
+  let lastAux = null;
+  document.addEventListener('focusin', (e) => {
+    const t = e.target;
+    if (t && t.matches && t.matches('math-field[data-aux]')) lastAux = t;
+    else if (t && t.closest && t.closest('#blocks') && !(t.closest('.sol, .graph, .g3d'))) lastAux = null;
+  });
   function insertLatex(latex) {
     if (body.dataset.mode !== 'write') R('ui/mode-pages').setMode('write');
+    const ae = document.activeElement;
+    const aux = ae && ae.matches && ae.matches('math-field[data-aux]') ? ae : lastAux && lastAux.isConnected && !lastAux.readOnly ? lastAux : null;
+    if (aux) {
+      aux.focus();
+      aux.insert(latex, { format: 'latex', selectionMode: 'placeholder', focus: true });
+      aux.dispatchEvent(new Event('input', { bubbles: true }));
+      return;
+    }
     const mf = R('blocks/editor').activeField();
     if (!mf || mf.tagName !== 'MATH-FIELD') { toast('El editor de fórmulas aún no está listo.', 'aviso'); return; }
     if (!mf.hasFocus || !mf.hasFocus()) mf.focus();

@@ -31,16 +31,23 @@ MatIA.define('blocks/solid', ['blocks/registry', 'blocks/canvas3d'], (registry, 
   /** Volumen numérico (unidades³), NaN si el integrando no es finito. */
   function volume(F, b) {
     const k = b.k;
-    const g = horizontal(b)
-      ? (x) => Math.PI * (F.f(x) - axisPos(b)) ** 2
-      : (x) => 2 * Math.PI * Math.abs(x - axisPos(b)) * Math.abs(F.f(x));
-    return simpson(g, b.a, b.b, 1000);
+    const kp = axisPos(b);
+    if (horizontal(b)) return simpson((x) => Math.PI * (F.f(x) - kp) ** 2, b.a, b.b, 1000);
+    if (b.a < kp && kp < b.b) {
+      // el eje vertical corta la región: las dos partes giran sobre el mismo sitio; cuenta la mayor altura a cada radio
+      const Rmax = Math.max(kp - b.a, b.b - kp);
+      const h = (r) => Math.max(kp + r <= b.b ? Math.abs(F.f(kp + r)) : 0, kp - r >= b.a ? Math.abs(F.f(kp - r)) : 0);
+      return simpson((r) => 2 * Math.PI * r * h(r), 0, Rmax, 1000);
+    }
+    return simpson((x) => 2 * Math.PI * Math.abs(x - kp) * Math.abs(F.f(x)), b.a, b.b, 1000);
   }
   function integralLatex(F, b) {
     const k = axisPos(b), fx = '\\left(' + F.latex + '\\right)';
     const sh = (v, s) => (k === 0 ? v : v + (k > 0 ? '-' : '+') + fnum(Math.abs(k)).replace(',', '{,}'));
-    if (horizontal(b)) return 'V=\\pi\\int_{' + fnum(b.a) + '}^{' + fnum(b.b) + '}\\left(' + (k === 0 ? F.latex : F.latex + (k > 0 ? '-' : '+') + fnum(Math.abs(k))) + '\\right)^{2}dx';
-    return 'V=2\\pi\\int_{' + fnum(b.a) + '}^{' + fnum(b.b) + '}\\left|' + sh('x') + '\\right|\\cdot\\left|' + F.latex + '\\right|dx';
+    const n = (v) => fnum(v).replace(',', '{,}'); // coma decimal escapada en LaTeX
+    if (horizontal(b)) return 'V=\\pi\\int_{' + n(b.a) + '}^{' + n(b.b) + '}\\left(' + (k === 0 ? F.latex : F.latex + (k > 0 ? '-' : '+') + n(Math.abs(k))) + '\\right)^{2}dx';
+    if (b.a < k && k < b.b) return 'V=2\\pi\\int_{0}^{' + n(Math.max(k - b.a, b.b - k)) + '}r\\cdot h(r)\\,dr';
+    return 'V=2\\pi\\int_{' + n(b.a) + '}^{' + n(b.b) + '}\\left|' + sh('x') + '\\right|\\cdot\\left|' + F.latex + '\\right|dx';
   }
 
 
@@ -189,7 +196,8 @@ MatIA.define('blocks/solid', ['blocks/registry', 'blocks/canvas3d'], (registry, 
         line.appendChild(mf); mf.value = lx;
       } else { const t = document.createElement('span'); t.className = 'sol-int'; t.textContent = lx.replace(/\\left|\\right|\\cdot/g, '').replace(/\\(pi)/g, 'π').replace(/[{}\\]/g, ''); line.appendChild(t); }
       const num = document.createElement('div'); num.className = 'sol-num';
-      const method = horizontal(b) ? (b.k === 0 || b.axis === 'x' ? 'discos' : 'arandelas') : 'capas cilíndricas';
+      const kp = axisPos(b);
+      const method = horizontal(b) ? 'discos' : b.a < kp && kp < b.b ? 'capas cilíndricas; el eje corta la región, h(r) es la mayor altura a distancia r' : 'capas cilíndricas';
       if (!Number.isFinite(v)) { num.textContent = 'No se puede calcular el volumen (la función no es finita en el intervalo).'; }
       else {
         let exact = '';
@@ -206,7 +214,9 @@ MatIA.define('blocks/solid', ['blocks/registry', 'blocks/canvas3d'], (registry, 
     }
 
     function draw(expScale) {
-      if (!box.isConnected && !ro) { R('blocks/graph3d').redrawers.delete(draw); return; }
+      // antes de entrar en la página aún no está conectado: solo se olvida si ya estuvo (se borró el bloque)
+      if (!box.isConnected && !ro) { if (box.dataset.wasConnected) R('blocks/graph3d').redrawers.delete(draw); return; }
+      box.dataset.wasConnected = '1';
       const W = Math.max(280, Math.round(cv.clientWidth || 720)), H = 320;
       const dpr = (window.devicePixelRatio || 1) * (typeof expScale === 'number' ? expScale : 1);
       cv.width = W * dpr; cv.height = H * dpr;

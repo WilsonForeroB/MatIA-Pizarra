@@ -77,7 +77,7 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
     return -1;
   }
   function normalizeFn(src) {
-    let s = String(src).replace(/\\(?:operatorname|mathrm|mathit|textrm|text)\s*\{\s*([A-Za-z]+)\s*\}/g, (m, w) => (FN_WORDS[w.toLowerCase()] && w.toLowerCase() !== 'pi' ? '\\' + FN_WORDS[w.toLowerCase()] + ' ' : m));
+    let s = String(src).replace(/\\(?:operatorname|mathrm|mathit|textrm|text)\s*\{\s*([A-Za-z]+)\s*\}/g, (m, w) => (FN_WORDS[w.toLowerCase()] && w.toLowerCase() !== 'pi' ? (w.toLowerCase() === 'abs' ? 'abs' : '\\' + FN_WORDS[w.toLowerCase()] + ' ') : m));
     s = s.replace(/π/g, '\\pi ').replace(/[·×]/g, '\\cdot ');
     let out = '', i = 0;
     const skipSp = (j) => { while (s[j] === ' ') j++; return j; };
@@ -115,7 +115,12 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
         let m;
         if (t === '(') { const e = closeParen(s, i + 1); if (e > 0) { out += '^{(' + normalizeFn(s.slice(i + 2, e)) + ')}'; i = e + 1; continue; } }
         else if (t === '-' && s[i + 2] === '(') { const e = closeParen(s, i + 2); if (e > 0) { out += '^{-(' + normalizeFn(s.slice(i + 3, e)) + ')}'; i = e + 1; continue; } }
-        else if (t === '-' && (m = /^-(\d+(?:\.\d+)?|[A-Za-z])/.exec(s.slice(i + 1)))) { out += '^{-' + m[1] + '}'; i += 1 + m[0].length; continue; }
+        else if (t === '-' && (m = /^-(\d+(?:\.\d+)?|[A-Za-z])/.exec(s.slice(i + 1)))) {
+          let j = i + 1 + m[0].length, ex = '-' + m[1];
+          const t2 = /^\^(?:(\d+(?:\.\d+)?|[A-Za-z])|\{([^{}]*)\})/.exec(s.slice(j));
+          if (t2) { ex += '^{' + (t2[1] !== undefined ? t2[1] : t2[2]) + '}'; j += t2[0].length; }
+          out += '^{' + ex + '}'; i = j; continue;
+        }
         out += c; i++;
       } else { out += c; i++; }
     }

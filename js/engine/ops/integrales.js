@@ -149,6 +149,10 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
             R.add('constante por función'); const r = I(a.a);
             return a.b.t === 'num' ? { k: fr.div(r.k, a.b.v), X: r.X } : { k: r.k, X: N.div(r.X, a.b) };
           }
+          if (!dep(a.a)) {
+            R.add('constante por función'); const r = I(a.b.t === 'pow' && a.b.b.t === 'num' && !dep(a.b.b) ? N.pow(a.b.a, N.num(fr.neg(a.b.b.v))) : N.pow(a.b, N.num(F(-1))));
+            return a.a.t === 'num' ? { k: fr.mul(r.k, a.a.v), X: r.X } : { k: r.k, X: N.mul(a.a, r.X) };
+          }
           if (a.a.t === 'add' || a.a.t === 'sub') { R.add('suma'); return { k: ONE, X: N[a.a.t](fin(I(N.div(a.a.a, a.b))), fin(I(N.div(a.a.b, a.b)))) }; }
           const m = simpAll(N.mul(a.a, N.pow(a.b, N.num(F(-1)))));
           if (m.t === 'div' || same(m, a)) throw new MErr(NO_SE);
@@ -178,7 +182,7 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
   }
 
   // primitiva por tabla + comprobación numérica por derivación
-  function integrate(ast, v, rules) {
+  function integrate(ast, v, rules, iv) {
     const R = new Set();
     const Fp = integrateRaw(ast, v, R);
     const env0 = {};
@@ -186,12 +190,22 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
     let ok = 0;
     try {
       const dF = D(Fp, v, new Set());
-      for (const x of [0.05, 0.37, 0.55, 0.8, 1.3, 2.1, 3.4, -0.6, -1.7]) {
-        const env = Object.assign({ [v]: x }, env0);
-        const y = evalNum(ast, env), d = evalNum(dF, env);
-        if (!Number.isFinite(y)) continue;
-        if (!Number.isFinite(d) || Math.abs(y - d) > 1e-6 * Math.max(1, Math.abs(y))) throw new MErr(NO_SE);
-        ok++;
+      const pass = (pts) => {
+        for (const x of pts) {
+          const env = Object.assign({ [v]: x }, env0);
+          const y = evalNum(ast, env), d = evalNum(dF, env);
+          if (!Number.isFinite(y)) continue;
+          if (!Number.isFinite(d) || Math.abs(y - d) > 1e-6 * Math.max(1, Math.abs(y))) throw new MErr(NO_SE);
+          ok++;
+        }
+      };
+      pass([0.05, 0.37, 0.55, 0.8, 1.3, 2.1, 3.4, -0.6, -1.7]);
+      if (ok < 2) {
+        const pts = [];
+        if (iv && Number.isFinite(iv[0]) && Number.isFinite(iv[1]) && iv[0] !== iv[1]) for (let i = 1; i < 12; i++) pts.push(iv[0] + (iv[1] - iv[0]) * i / 12);
+        for (let x = -50.13; x <= 50; x += 0.97) pts.push(x);
+        for (let k = -3; k <= 6; k++) { pts.push(Math.pow(10, k) * 1.37); pts.push(-Math.pow(10, k) * 1.37); }
+        pass(pts);
       }
     } catch (e) { throw new MErr(NO_SE); }
     if (ok < 2) throw new MErr(NO_SE);
@@ -273,10 +287,35 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
     if (!Number.isFinite(r)) throw new MErr('La función no está definida en todo el intervalo: no puedo calcular la integral.');
     return r;
   }
+  const IMPROPER = 'La integral es impropia: la función no está acotada en [a, b].';
   function guardInterval(ast, v, a, b) {
-    for (let i = 0; i <= 200; i++) {
-      const y = evalNum(ast, { [v]: a + (b - a) * i / 200 });
-      if (!Number.isFinite(y) || Math.abs(y) > 1e9) throw new MErr('La función no está definida (o se dispara) en el intervalo: es una integral impropia.');
+    if (a === b) return;
+    const f = (x) => evalNum(ast, { [v]: x });
+    const N0 = 2000, step = (b - a) / N0, ys = [];
+    for (let i = 0; i <= N0; i++) {
+      const y = f(i === N0 ? b : a + step * i);
+      if (!Number.isFinite(y)) throw new MErr(IMPROPER);
+      ys.push(Math.abs(y));
+    }
+    const cand = [];
+    for (let i = 0; i <= N0; i++) if ((i === 0 || ys[i] >= ys[i - 1]) && (i === N0 || ys[i] >= ys[i + 1])) cand.push(i);
+    cand.sort((p, q) => ys[q] - ys[p]);
+    const lo = Math.min(a, b), hi = Math.max(a, b);
+    for (const i of cand.slice(0, 30)) {
+      let c = a + step * i, h = Math.abs(step), m0 = 0, mk = 0;
+      for (let k = 0; k <= 7; k++) {
+        let m = -1, cm = c;
+        for (let j = -20; j <= 20; j++) {
+          const x = c + h * j / 20;
+          if (x < lo || x > hi) continue;
+          const y = f(x);
+          if (!Number.isFinite(y)) throw new MErr(IMPROPER);
+          if (Math.abs(y) > m) { m = Math.abs(y); cm = x; }
+        }
+        if (k === 0) m0 = m;
+        mk = m; c = cm; h /= 10;
+      }
+      if (mk > 100 * Math.max(m0, 1e-300)) throw new MErr(IMPROPER);
     }
   }
   const lim = (ast) => {
@@ -292,7 +331,9 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
     const head = '\\int' + (it.lo ? '_{' + L(it.lo).trim() + '}^{' + L(it.hi).trim() + '}' : '') + ' ' + pretty(ast) + '\\,d' + v;
     const rules = new Set();
     let Fp = null, err = null;
-    try { Fp = integrate(ast, v, rules); } catch (e) { if (!(e instanceof MErr)) throw e; err = e; }
+    let iv = null;
+    if (it.lo) { try { iv = [lim(it.lo).x, lim(it.hi).x]; } catch (e) { /* lo avisará luego */ } }
+    try { Fp = integrate(ast, v, rules, iv); } catch (e) { if (!(e instanceof MErr)) throw e; err = e; }
     const out = { it, v, ast, head, Fp, rules: [...rules], definite: !!it.lo };
     if (!it.lo) { if (!Fp) throw err; return out; }
     const A = lim(it.lo), B = lim(it.hi);

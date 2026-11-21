@@ -74,7 +74,7 @@ MatIA.define('ui/ops-menu', ['core/dom', 'model/board', 'model/schema', 'ui/stat
       ['integral', 'Integral paso a paso', '∫ f(x) dx o ∫ₐᵇ f(x) dx (desde Cálculo ▾ o escrito a mano): reglas aplicadas, primitiva + C y, si es definida, la regla de Barrow.'],
       ['extr1', 'Máximos y mínimos de f(x)', 'f(x) = … (y si quieres un intervalo: f(x)=x^3-3x, x∈[-3,2]). Puntos críticos, clasificación con f″, inflexión, crecimiento, absolutos y gráfica con los puntos marcados.'],
       ['extr2', 'Extremos de f(x, y) y puntos de silla', 'z = f(x, y): gradiente, puntos críticos, hessiana y clasificación (mínimo, máximo, punto de silla) con la superficie 3D marcada.'],
-      ['graph', 'Graficar función', 'f(x) = … (varias separadas por ;). Rueda para acercar, arrastra para moverte.'],
+      ['graph', 'Graficar función', 'f(x) = … Añade más funciones con «+ Añadir función»; acerca, aleja y muévete con los botones de la gráfica o arrastrando.'],
       ['values', 'Tabla de valores', 'f(x) = …: valores para x de −3 a 3.'],
     ]],
   ];

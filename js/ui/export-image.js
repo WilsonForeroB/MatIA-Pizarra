@@ -12,11 +12,11 @@ MatIA.define('ui/export-image', ['core/dom', 'model/board', 'ui/state', 'ui/toas
   /* ---------------- Exportar gráficos como imagen ---------------- */
   // Se deriva del registro de bloques: son exportables los tipos registrados con exportable: true
   const EXPORTABLE = { has: (t) => { const d = R('blocks/registry').get(t); return !!(d && d.exportable); } };
-  const EXP_NAME = { graph: 'grafica', graph3d: 'superficie-3d', net: 'grafo', venn: 'diagrama-venn', chart: 'grafico', ptree: 'arbol-probabilidad', geo: 'geometria' };
+  const EXP_NAME = { graph: 'grafica', graph3d: 'superficie-3d', solid: 'solido-revolucion', net: 'grafo', venn: 'diagrama-venn', chart: 'grafico', ptree: 'arbol-probabilidad', geo: 'geometria' };
   let expTarget = null;
   function openExport(b, el, anchor) {
     expTarget = { b, el };
-    $('#expPop [data-exp="svg"]').hidden = b.type === 'graph3d';
+    $('#expPop [data-exp="svg"]').hidden = b.type === 'graph3d' || b.type === 'solid';
     if (st.openPop && st.openPop.p.id === 'expPop') { closePop(); return; }
     showPop('expPop', anchor);
     const pop = $('#expPop'), r = anchor.getBoundingClientRect();
@@ -145,9 +145,10 @@ MatIA.define('ui/export-image', ['core/dom', 'model/board', 'ui/state', 'ui/toas
       const base = (EXP_NAME[b.type] || 'grafico') + '-' + d.toISOString().slice(0, 10) + '_' + String(d.getHours()).padStart(2, '0') + String(d.getMinutes()).padStart(2, '0') + String(d.getSeconds()).padStart(2, '0');
       const bg = light ? '#ffffff' : getComputedStyle(body).getPropertyValue('--surface-sunken').trim();
       let blob, ext = kind === 'svg' ? 'svg' : 'png';
-      if (b.type === 'graph3d') {
-        const cv3 = el.querySelector('.g3d canvas');
-        const cap = el.querySelector('.g3d .g-cap');
+      if (b.type === 'graph3d' || b.type === 'solid') {
+        const cv3 = el.querySelector(b.type === 'solid' ? '.sol-wrap canvas' : '.g3d canvas');
+        const cap = b.type === 'solid' ? el.querySelector('.sol-num') : el.querySelector('.g3d .g-cap');
+        if (!cv3) throw new Error('No encuentro el gráfico.');
         const sc = Math.max(1, 2 / (window.devicePixelRatio || 1));
         if (cv3._draw) cv3._draw(sc);
         try { blob = await canvasToPngBlob(cv3, cap ? cap.textContent : '', bg); } finally { if (cv3._draw) cv3._draw(); }
