@@ -125,3 +125,18 @@ Dependencias cruzadas:
 - `extremos.js` depende de `D`/`polish` (derivadas), `toPoly` (expr/poly), `P`/`rationalRoots` (ops/poly), `quadRootsLatex` (ecuaciones) y `latexText` (común). `numL`, `isNice`, `numT`, `zerosOf` no se usan fuera de la sección 11 (verificado por búsqueda), así que pueden ser privados del módulo.
 - El árbol de expresiones es la base de **todo** `OPS`: álgebra (ecuaciones, polinomios, `paramDiscussion`), estadística (`evalExact`/`evalNum`/`parseExpr` en `dataList`, `bayes`, `binomial`, `normal`) y geometría (usa su propio parser pequeño `geoParse`, no éste).
 - `parseExpr`, `evalNum`, `L` también los consume la interfaz directamente (`compile3d`, `pizarra.html:5932-5936`): deben seguir exportados.
+
+## 7. Cálculo vectorial (`js/engine/ops/vec-input.js`, `vectorial.js`, `campos.js`)
+
+Menú Operaciones ▾ → **Cálculo vectorial**. `vec-input.js` lee la línea (`f(x,y)=…`, un punto opcional `P=(1,2)` y un vector `u=(3,4)`; también campos `F=(P,Q,R)` y cambios de variables) y las demás operaciones lo usan. Todas escriben un bloque de desarrollo paso a paso.
+
+| Operación | Qué escribir | Qué muestra |
+|---|---|---|
+| Derivadas parciales | `f(x,y)=…` o `f(x,y,z)=…`, y si quieres `, P=(1,2)` | Cada parcial tratando las otras variables como constantes, segundas derivadas, Schwarz (f_xy = f_yx) y valores en P. |
+| Gradiente y derivada direccional | `f(x,y)=…, P=(1,2), u=(3,4)` | ∇f, ∇f(P) y su módulo (máxima pendiente), vector unitario, derivada direccional y plano tangente. |
+| Matriz hessiana | `f(x,y)` o `f(x,y,z)` y, si quieres, `, P=(1,1)` | Segundas derivadas, matriz hessiana y, en P, menores principales y criterio de Sylvester. |
+| Matriz jacobiana | `F(x,y)=(x^2y,\ x+\sin y)` o un cambio `x=r\cos\theta, y=r\sin\theta` (y, si quieres, `, P=(…)`) | Jacobiana, su determinante y su significado (p. ej. dA = r dr dθ). |
+| Divergencia, rotacional y laplaciano | Un campo `F=(P,Q,R)` en x, y, z (o `F=(P,Q)`); o una función f | Divergencia, rotacional y si es conservativo; con una función, el laplaciano Δf. |
+| Extremos de f(x, y) | `z=f(x,y)` | Gradiente, puntos críticos, hessiana y clasificación (mínimo, máximo o punto de silla) con la superficie 3D marcada. |
+
+Con fórmulas anchas (matrices, determinantes) el desarrollo coloca las notas bajo cada paso en vez de al lado (`blocks/deriv`, `fitStack`). Pruebas: `node tests/vectorial.js`.
