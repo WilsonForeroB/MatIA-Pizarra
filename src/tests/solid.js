@@ -74,6 +74,7 @@ function pageFile(name) {
   await page.waitForTimeout(300);
   // captura
   const shot = path.join(ROOT, 'src/docs/img/solido-revolucion.png');
+  fs.mkdirSync(path.dirname(shot), { recursive: true }); // en main no está src/docs
   fs.mkdirSync(path.dirname(shot), { recursive: true });
   const blocks = await page.$$('#blocks > .blk');
   await blocks[4].scrollIntoViewIfNeeded();

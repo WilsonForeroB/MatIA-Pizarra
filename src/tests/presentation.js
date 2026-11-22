@@ -73,6 +73,7 @@ const MOCK = () => {
   ok('Texto: fórmulas en línea dentro de la lista', await pg.evaluate(() => document.querySelectorAll('.blk-text .math-inline math-field').length === 2));
   await pg.evaluate(() => document.activeElement && document.activeElement.blur());
   await pg.waitForTimeout(300);
+  fs.mkdirSync(path.join(ROOT, 'src/docs/img'), { recursive: true }); // en main no está src/docs
   await pg.locator('#sheet').screenshot({ path: path.join(ROOT, 'src/docs/img/presentacion-diapositiva.png') });
   await pg.locator('#blocks > .blk').nth(0).locator('.blk-text').click();
   await pg.waitForTimeout(400);
