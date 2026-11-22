@@ -47,4 +47,4 @@ Sirven para que quien empieza vea lo que puede hacer la pizarra y aprenda cambi�
 
    La miniatura queda en `ejemplos/img/<id>.jpg`. Si no existe, la tarjeta muestra el icono del tema.
 
-El formato de `board` (tipos de bloque y campos) está en [`docs/FORMATO-JSON.md`](../docs/FORMATO-JSON.md).
+El formato de `board` (tipos de bloque y campos) está en [`src/docs/FORMATO-JSON.md`](../src/docs/FORMATO-JSON.md).
