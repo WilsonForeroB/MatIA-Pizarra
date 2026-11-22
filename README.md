@@ -14,22 +14,23 @@ Pizarra para dar clase de matemáticas: fórmulas con atajos de teclado, matrice
 ## Estructura
 
 ```
-pizarra.html      ← la pizarra: ábrelo con doble clic (junta todos los módulos)
-css/              ← estilos (tokens del sistema de diseño MatIA y componentes)
-js/               ← código en módulos: core, model, engine (motor matemático), blocks, ui, storage, app
-vendor/           ← MathLive y fuentes, incluidos para que funcione sin red
-docs/             ← arquitectura, estilos, formato JSON y una ficha por funcionalidad
-tests/            ← pruebas automáticas (opcionales, con Node y Playwright)
+pizarra.html      ← la pizarra: ábrela con doble clic
+historial/        ← carpeta sugerida para guardar tus clases (su contenido no se sube a Git)
 ejemplos/         ← banco de ejemplos de la ventana «Ejemplos» (ver ejemplos/LEEME.md para añadir más)
-legacy/           ← prototipo original de un único fichero (referencia de las pruebas)
-historial/        ← carpeta sugerida para guardar clases (su contenido no se sube a Git)
+src/              ← todo lo técnico; no hace falta tocarlo para usar la pizarra
+  css/            ← estilos (tokens del sistema de diseño MatIA y componentes)
+  js/             ← código en módulos: core, model, engine (motor matemático), blocks, ui, storage, app
+  vendor/         ← MathLive y fuentes, incluidos para que funcione sin red
+  docs/           ← arquitectura, estilos, formato JSON y una ficha por funcionalidad
+  tests/          ← pruebas automáticas (opcionales, con Node y Playwright)
+  legacy/         ← prototipo original de un único fichero (referencia de las pruebas)
 ```
 
-La organización del código y cómo ampliarlo está en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
+La organización del código y cómo ampliarlo está en [`src/docs/ARQUITECTURA.md`](src/docs/ARQUITECTURA.md).
 
 ## Requisitos
 
-- **Cualquier navegador moderno** de escritorio. No necesita conexión: MathLive (MIT) y las fuentes están en `vendor/`.
+- **Cualquier navegador moderno** de escritorio. No necesita conexión: MathLive (MIT) y las fuentes están en `src/vendor/`.
 - **Chrome o Edge**: la pizarra guarda directamente en la carpeta que elijas.
 - **Firefox y Safari**: también sirven para dar clase. En el historial solo pueden *leer* la carpeta; para guardar descargan el JSON y hay que moverlo a esa carpeta a mano. Las imágenes de la clase se ven, pero no se pueden insertar nuevas.
 
@@ -168,9 +169,9 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 
 ## Desarrollo
 
-- Código modular sin compilación: scripts clásicos registrados con `MatIA.define` (funciona con `file://`). Ver [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
-- Estilos: [`docs/ESTILOS.md`](docs/ESTILOS.md). Formato de las clases: [`docs/FORMATO-JSON.md`](docs/FORMATO-JSON.md). Fichas por funcionalidad: [`docs/funcionalidades/`](docs/funcionalidades/).
-- Pruebas (opcionales, con Node y Playwright): `node tests/golden/run.js compare pizarra.html`, `node tests/e2e.js legacy/pizarra.html pizarra.html`, `node tests/storage.js`, `node tests/engine-features.js` (normalización de funciones e integrales, sin navegador), `node tests/features.js` (gráfica 2D, explicación en la línea, Desarrollo, integrales y sólidos) `node tests/solid.js` (sólido de revolución), `node tests/graph3d.js` (superficies 3D y ayuda de las gráficas), `node tests/ejemplos.js` (cada ejemplo se abre y dibuja sin avisos, y la ventana «Ejemplos»; con `--capturas` regenera las miniaturas), `node tests/vectorial.js` (cálculo vectorial: motor y menú; con `--capturas` regenera las imágenes), `node tests/fit.js` (fórmulas que no caben), `node tests/text.js` (texto con formato), `node tests/images.js` (imágenes) y `node tests/presentation.js` (presentación de extremo a extremo; genera `docs/img/presentacion.pdf` y las capturas de `docs/img/`).
+- Código modular sin compilación: scripts clásicos registrados con `MatIA.define` (funciona con `file://`). Ver [`src/docs/ARQUITECTURA.md`](src/docs/ARQUITECTURA.md).
+- Estilos: [`src/docs/ESTILOS.md`](src/docs/ESTILOS.md). Formato de las clases: [`src/docs/FORMATO-JSON.md`](src/docs/FORMATO-JSON.md). Fichas por funcionalidad: [`src/docs/funcionalidades/`](src/docs/funcionalidades/).
+- Pruebas (opcionales, con Node y Playwright): `node src/tests/golden/run.js compare pizarra.html`, `node src/tests/e2e.js src/legacy/pizarra.html pizarra.html`, `node src/tests/storage.js`, `node src/tests/engine-features.js` (normalización de funciones e integrales, sin navegador), `node src/tests/features.js` (gráfica 2D, explicación en la línea, Desarrollo, integrales y sólidos) `node src/tests/solid.js` (sólido de revolución), `node src/tests/graph3d.js` (superficies 3D y ayuda de las gráficas), `node src/tests/ejemplos.js` (cada ejemplo se abre y dibuja sin avisos, y la ventana «Ejemplos»; con `--capturas` regenera las miniaturas), `node src/tests/vectorial.js` (cálculo vectorial: motor y menú; con `--capturas` regenera las imágenes), `node src/tests/fit.js` (fórmulas que no caben), `node src/tests/text.js` (texto con formato), `node src/tests/images.js` (imágenes) y `node src/tests/presentation.js` (presentación de extremo a extremo; genera `src/docs/img/presentacion.pdf` y las capturas de `src/docs/img/`).
 - No guarda credenciales ni datos personales. El historial vive solo en la carpeta local de quien la usa.
 
 ## Autoría y derechos

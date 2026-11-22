@@ -2,16 +2,16 @@
 /* Pruebas de referencia («golden»): abren la pizarra por file:// en Chromium, ejecutan el motor con
    los casos de cases.js, cargan un tablero con todos los tipos de bloque y guardan un resumen del DOM.
    Uso:
-     node tests/golden/run.js record  [legacy/pizarra.html]   → escribe tests/golden/expected.json
-     node tests/golden/run.js compare [pizarra.html]     → compara con expected.json (sale con código 1 si difiere)
+     node src/tests/golden/run.js record  [legacy/pizarra.html]   → escribe tests/golden/expected.json
+     node src/tests/golden/run.js compare [pizarra.html]     → compara con expected.json (sale con código 1 si difiere)
    Las capturas de cada página quedan en tests/golden/out/ para revisarlas a ojo. */
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
 
-const ROOT = path.resolve(__dirname, '../..');
+const ROOT = path.resolve(__dirname, '../../..');
 const mode = process.argv[2] || 'compare';
-const target = path.resolve(ROOT, process.argv[3] || (mode === 'record' ? 'legacy/pizarra.html' : 'pizarra.html'));
+const target = path.resolve(ROOT, process.argv[3] || (mode === 'record' ? 'src/legacy/pizarra.html' : 'pizarra.html'));
 const OUT = path.join(__dirname, 'out');
 const EXPECTED = path.join(__dirname, 'expected.json');
 const cases = require('./cases.js');
@@ -27,7 +27,7 @@ const RENDER_FROM = ['graphOf', 'extrema1', 'extrema2', 'statsSummary', 'freqTab
   // El prototipo carga MathLive y las fuentes de un CDN: se sirven desde vendor/ para que la prueba no dependa de la red.
   await ctx.route(/cdn\.jsdelivr\.net\/npm\/mathlive@[^/]+\//, (r) => {
     const rel = new URL(r.request().url()).pathname.replace(/^\/npm\/mathlive@[^/]+\//, '');
-    const f = path.join(ROOT, 'vendor/mathlive', rel);
+    const f = path.join(ROOT, 'src/vendor/mathlive', rel);
     return fs.existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: '' });
   });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.fulfill({ body: '', contentType: 'text/css' }));

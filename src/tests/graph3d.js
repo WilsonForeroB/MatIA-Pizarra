@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /* Gráficas 3D y ayuda de las gráficas: girar no deja el dibujo en blanco, varias superficies,
    botones y teclado para mover la vista, centrar el bloque y ayuda visible en 2D y 3D.
-   Uso: node tests/graph3d.js */
+   Uso: node src/tests/graph3d.js */
 const path = require('path');
 const { chromium } = require('playwright');
-const URL_ = 'file://' + path.resolve(__dirname, '..', 'pizarra.html');
+const URL_ = 'file://' + path.resolve(__dirname, '..', '..', 'pizarra.html');
 
 (async () => {
   const br = await chromium.launch();

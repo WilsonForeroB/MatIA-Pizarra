@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-/* Pruebas de funciones nuevas del motor (normalizeFn, integrales) sin navegador. Uso: node tests/engine-features.js */
+/* Pruebas de funciones nuevas del motor (normalizeFn, integrales) sin navegador. Uso: node src/tests/engine-features.js */
 const path = require('path');
 const fs = require('fs');
 const vm = require('vm');
-const ROOT = path.resolve(__dirname, '..');
-const FILES = ['js/core/namespace.js', 'js/engine/core/fraction-matrix.js', 'js/engine/core/tokenizer.js', 'js/engine/core/parser.js', 'js/engine/core/latex-definitions.js', 'js/engine/core/gauss-systems.js', 'js/engine/core.js',
-  'js/engine/ops/common.js', 'js/engine/ops/poly.js', 'js/engine/ops/expr.js', 'js/engine/ops/ecuaciones.js', 'js/engine/ops/matrices.js', 'js/engine/ops/vectores.js', 'js/engine/ops/aritmetica.js', 'js/engine/ops/polinomios.js',
-  'js/engine/ops/combinatoria-logica.js', 'js/engine/ops/conjuntos-venn.js', 'js/engine/ops/analisis.js', 'js/engine/ops/estadistica-probabilidad.js', 'js/engine/ops/geometria.js', 'js/engine/ops/integrales.js', 'js/engine/ops/vec-input.js', 'js/engine/ops/vectorial.js', 'js/engine/ops/campos.js', 'js/engine/ops.js'];
+const ROOT = path.resolve(__dirname, '..', '..');
+const FILES = ['src/js/core/namespace.js', 'src/js/engine/core/fraction-matrix.js', 'src/js/engine/core/tokenizer.js', 'src/js/engine/core/parser.js', 'src/js/engine/core/latex-definitions.js', 'src/js/engine/core/gauss-systems.js', 'src/js/engine/core.js',
+  'src/js/engine/ops/common.js', 'src/js/engine/ops/poly.js', 'src/js/engine/ops/expr.js', 'src/js/engine/ops/ecuaciones.js', 'src/js/engine/ops/matrices.js', 'src/js/engine/ops/vectores.js', 'src/js/engine/ops/aritmetica.js', 'src/js/engine/ops/polinomios.js',
+  'src/js/engine/ops/combinatoria-logica.js', 'src/js/engine/ops/conjuntos-venn.js', 'src/js/engine/ops/analisis.js', 'src/js/engine/ops/estadistica-probabilidad.js', 'src/js/engine/ops/geometria.js', 'src/js/engine/ops/integrales.js', 'src/js/engine/ops/vec-input.js', 'src/js/engine/ops/vectorial.js', 'src/js/engine/ops/campos.js', 'src/js/engine/ops.js'];
 const ctx = { console, BigInt, Math, JSON, Number, String, Array, Object, Set, Map, Error, TypeError, RangeError, isFinite, parseFloat, parseInt, Symbol, RegExp, Infinity, NaN };
 ctx.window = ctx; ctx.globalThis = ctx;
 vm.createContext(ctx);

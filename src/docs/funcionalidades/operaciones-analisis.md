@@ -93,7 +93,7 @@ Exportados: `parseExpr, L, simpAll, D, evalNum, compileFn, P, rationalRoots` (`p
 
 ## 5. Normalización de funciones (`normalizeFn`, `js/engine/ops/analisis.js`)
 
-`normalizeFn(src)` convierte texto plano o variantes en LaTeX que entiende `parseExpr`: `sen x`/`sin(x)`, `tg`, `ctg`, `cosec`, `raiz`, `pi`, `sqrt(x)`, `exp(u)`, `abs(x)`, `x^(1/2)`, `x^-2`. No toca el LaTeX ya válido. La usan la gráfica 2D (`blocks/graph.js`), el sólido (`blocks/solid.js`) y la integración. Pruebas: `node tests/engine-features.js`.
+`normalizeFn(src)` convierte texto plano o variantes en LaTeX que entiende `parseExpr`: `sen x`/`sin(x)`, `tg`, `ctg`, `cosec`, `raiz`, `pi`, `sqrt(x)`, `exp(u)`, `abs(x)`, `x^(1/2)`, `x^-2`. No toca el LaTeX ya válido. La usan la gráfica 2D (`blocks/graph.js`), el sólido (`blocks/solid.js`) y la integración. Pruebas: `node src/tests/engine-features.js`.
 
 ## 6. Integrales (`js/engine/ops/integrales.js`)
 
@@ -139,4 +139,4 @@ Menú Operaciones ▾ → **Cálculo vectorial**. `vec-input.js` lee la línea (
 | Divergencia, rotacional y laplaciano | Un campo `F=(P,Q,R)` en x, y, z (o `F=(P,Q)`); o una función f | Divergencia, rotacional y si es conservativo; con una función, el laplaciano Δf. |
 | Extremos de f(x, y) | `z=f(x,y)` | Gradiente, puntos críticos, hessiana y clasificación (mínimo, máximo o punto de silla) con la superficie 3D marcada. |
 
-Con fórmulas anchas (matrices, determinantes) el desarrollo coloca las notas bajo cada paso en vez de al lado (`blocks/deriv`, `fitStack`). Pruebas: `node tests/vectorial.js`.
+Con fórmulas anchas (matrices, determinantes) el desarrollo coloca las notas bajo cada paso en vez de al lado (`blocks/deriv`, `fitStack`). Pruebas: `node src/tests/vectorial.js`.

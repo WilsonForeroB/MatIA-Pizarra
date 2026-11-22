@@ -2,10 +2,10 @@
 /* Prueba de los flujos de carpeta con una carpeta simulada (Playwright no puede manejar las ventanas nativas).
    Comprueba: ventana con estilo antes del selector nativo, cualquier nombre de carpeta (sin forzar «historial»),
    guardar, listar, abrir, borrar con confirmación propia, y la alternativa de solo lectura (Firefox/Safari).
-   Uso: node tests/storage.js */
+   Uso: node src/tests/storage.js */
 const path = require('path');
 const { chromium } = require('playwright');
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', '..');
 const URL_ = 'file://' + path.join(ROOT, 'pizarra.html');
 
 const MOCK = () => {

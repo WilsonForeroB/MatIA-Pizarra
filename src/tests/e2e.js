@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /* Prueba de interacción: ejecuta el mismo recorrido de usuario en dos páginas y compara el estado final.
-   Uso: node tests/e2e.js [referencia=legacy/pizarra.html] [candidata=pizarra.html] */
+   Uso: node src/tests/e2e.js [referencia=legacy/pizarra.html] [candidata=pizarra.html] */
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', '..');
 
 async function scenario(file) {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   await ctx.route(/cdn\.jsdelivr\.net\/npm\/mathlive@[^/]+\//, (r) => {
-    const f = path.join(ROOT, 'vendor/mathlive', new URL(r.request().url()).pathname.replace(/^\/npm\/mathlive@[^/]+\//, ''));
+    const f = path.join(ROOT, 'src/vendor/mathlive', new URL(r.request().url()).pathname.replace(/^\/npm\/mathlive@[^/]+\//, ''));
     return fs.existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: '' });
   });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.fulfill({ body: '', contentType: 'text/css' }));
@@ -71,7 +71,7 @@ async function scenario(file) {
 }
 
 (async () => {
-  const [ref, cand] = [process.argv[2] || 'legacy/pizarra.html', process.argv[3] || 'pizarra.html'];
+  const [ref, cand] = [process.argv[2] || 'src/legacy/pizarra.html', process.argv[3] || 'pizarra.html'];
   const a = await scenario(ref), b = await scenario(cand);
   let bad = 0;
   a.steps.forEach(([label, s], i) => {

@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /* Banco de ejemplos: cada ejemplo de ejemplos/ se abre sin errores y todos sus bloques se dibujan;
    y la ventana «Ejemplos» (temas, buscador, abrir una copia, añadir páginas).
-   Uso: node tests/ejemplos.js [--capturas] [id …]
+   Uso: node src/tests/ejemplos.js [--capturas] [id …]
    --capturas genera las miniaturas ejemplos/img/<id>.jpg que muestra la ventana. */
 const path = require('path');
 const { chromium } = require('playwright');
-const URL_ = 'file://' + path.resolve(__dirname, '..', 'pizarra.html');
+const URL_ = 'file://' + path.resolve(__dirname, '..', '..', 'pizarra.html');
 const TEMAS = ['algebra', 'calculo', 'graficas', 'estadistica', 'geometria', 'discreta', 'presentaciones'];
 const fs = require('fs');
 const CAPT = process.argv.includes('--capturas');
 const only = process.argv.slice(2).filter((a) => !a.startsWith('--'));
-const IMG = path.resolve(__dirname, '..', 'ejemplos', 'img');
+const IMG = path.resolve(__dirname, '..', '..', 'ejemplos', 'img');
 
 /* La ventana «Ejemplos» */
 async function ui(br, ok, list) {

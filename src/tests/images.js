@@ -1,21 +1,21 @@
 #!/usr/bin/env node
 /* Prueba del bloque «Imagen» y del almacén de imágenes (storage/assets) con una carpeta simulada con subcarpetas.
-   Uso: node tests/images.js [pizarra.html]
+   Uso: node src/tests/images.js [pizarra.html]
    Si pizarra.html aún no carga image.js/assets.js se crea una copia temporal con <base> y los scripts/estilos añadidos. */
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', '..');
 const SCRATCH = '/tmp/claude-0/-home-user-MatIA-Pizarra/01dbf8ae-b7ca-56a2-a637-356d3606271a/scratchpad';
 
 function pageFile(name) {
   const src = path.resolve(ROOT, name || 'pizarra.html');
   let html = fs.readFileSync(src, 'utf8');
-  if (html.includes('js/blocks/image.js') && html.includes('js/storage/assets.js')) return src;
+  if (html.includes('src/js/blocks/image.js') && html.includes('src/js/storage/assets.js')) return src;
   html = html.replace('<head>', '<head>\n<base href="file://' + ROOT + '/">');
-  if (!html.includes('css/image.css')) html = html.replace('<link rel="stylesheet" href="css/print.css">', '<link rel="stylesheet" href="css/image.css">\n<link rel="stylesheet" href="css/print.css">');
-  if (!html.includes('js/blocks/image.js')) html = html.replace('<script src="js/model/board.js"></script>', '<script src="js/blocks/image.js"></script>\n<script src="js/model/board.js"></script>');
-  if (!html.includes('js/storage/assets.js')) html = html.replace('<script src="js/storage/history.js"></script>', '<script src="js/storage/history.js"></script>\n<script src="js/storage/assets.js"></script>');
+  if (!html.includes('src/css/image.css')) html = html.replace('<link rel="stylesheet" href="src/css/print.css">', '<link rel="stylesheet" href="src/css/image.css">\n<link rel="stylesheet" href="src/css/print.css">');
+  if (!html.includes('src/js/blocks/image.js')) html = html.replace('<script src="src/js/model/board.js"></script>', '<script src="src/js/blocks/image.js"></script>\n<script src="src/js/model/board.js"></script>');
+  if (!html.includes('src/js/storage/assets.js')) html = html.replace('<script src="src/js/storage/history.js"></script>', '<script src="src/js/storage/history.js"></script>\n<script src="src/js/storage/assets.js"></script>');
   fs.mkdirSync(SCRATCH, { recursive: true });
   const out = path.join(SCRATCH, 'index-images.html');
   fs.writeFileSync(out, html);
@@ -70,7 +70,7 @@ const MOCK = () => {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1000, height: 1200 } });
   await ctx.route(/cdn\.jsdelivr\.net\/npm\/mathlive@[^/]+\//, (r) => {
-    const f = path.join(ROOT, 'vendor/mathlive', new URL(r.request().url()).pathname.replace(/^\/npm\/mathlive@[^/]+\//, ''));
+    const f = path.join(ROOT, 'src/vendor/mathlive', new URL(r.request().url()).pathname.replace(/^\/npm\/mathlive@[^/]+\//, ''));
     return fs.existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: '' });
   });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.fulfill({ body: '', contentType: 'text/css' }));

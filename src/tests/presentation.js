@@ -2,11 +2,11 @@
 /* Presentación de extremo a extremo: diapositivas con título con formato, texto, fórmula en línea,
    imagen guardada en la carpeta de clases (simulada) y fórmulas; «PDF» → ventana MatIA → impresión.
    Genera un PDF real con Chromium (page.pdf) y capturas para la documentación.
-   Uso: node tests/presentation.js   (deja docs/img/presentacion-*.png y docs/img/presentacion.pdf) */
+   Uso: node src/tests/presentation.js   (deja docs/img/presentacion-*.png y docs/img/presentacion.pdf) */
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', '..');
 
 // carpeta de clases en memoria, con subcarpetas y binarios (como tests/images.js)
 const MOCK = () => {
@@ -73,10 +73,10 @@ const MOCK = () => {
   ok('Texto: fórmulas en línea dentro de la lista', await pg.evaluate(() => document.querySelectorAll('.blk-text .math-inline math-field').length === 2));
   await pg.evaluate(() => document.activeElement && document.activeElement.blur());
   await pg.waitForTimeout(300);
-  await pg.locator('#sheet').screenshot({ path: path.join(ROOT, 'docs/img/presentacion-diapositiva.png') });
+  await pg.locator('#sheet').screenshot({ path: path.join(ROOT, 'src/docs/img/presentacion-diapositiva.png') });
   await pg.locator('#blocks > .blk').nth(0).locator('.blk-text').click();
   await pg.waitForTimeout(400);
-  await pg.screenshot({ path: path.join(ROOT, 'docs/img/presentacion-barra-texto.png'), clip: { x: 0, y: 0, width: 1400, height: 520 } });
+  await pg.screenshot({ path: path.join(ROOT, 'src/docs/img/presentacion-barra-texto.png'), clip: { x: 0, y: 0, width: 1400, height: 520 } });
 
   // PDF: botón → ventana MatIA → impresión con una hoja por diapositiva
   await pg.click('#pdfBtn'); await pg.waitForTimeout(200);
@@ -87,7 +87,7 @@ const MOCK = () => {
   ok('PDF: una hoja por diapositiva', pr.pages === 2, JSON.stringify(pr));
   ok('PDF: la imagen está cargada antes de imprimir', pr.imgs.length >= 1 && pr.imgs.every(Boolean), JSON.stringify(pr.imgs));
   await pg.emulateMedia({ media: 'print' });
-  const pdf = await pg.pdf({ path: path.join(ROOT, 'docs/img/presentacion.pdf'), preferCSSPageSize: true, printBackground: true });
+  const pdf = await pg.pdf({ path: path.join(ROOT, 'src/docs/img/presentacion.pdf'), preferCSSPageSize: true, printBackground: true });
   ok('PDF: se genera el archivo', pdf.length > 10000, Math.round(pdf.length / 1024) + ' KB');
   ok('Sin errores de página', !errs.length, errs.join(' | '));
   await br.close();

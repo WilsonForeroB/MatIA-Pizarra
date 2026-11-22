@@ -3,10 +3,10 @@
    gráfica 2D (lista de funciones, texto plano sin/ln, x^(1/2), sin zoom con la rueda, panel de zoom),
    explicación en la línea, Desarrollo desde cualquier línea, color de selección,
    integrales en Calcular y en Operaciones, y sólido de revolución desde el menú Gráficos.
-   Uso: node tests/features.js */
+   Uso: node src/tests/features.js */
 const path = require('path');
 const { chromium } = require('playwright');
-const URL_ = 'file://' + path.resolve(__dirname, '..', 'pizarra.html');
+const URL_ = 'file://' + path.resolve(__dirname, '..', '..', 'pizarra.html');
 
 (async () => {
   const br = await chromium.launch();

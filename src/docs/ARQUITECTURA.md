@@ -6,12 +6,17 @@ Esa condición manda sobre todo lo demás:
 - **No hay módulos ES** (`import`/`export`): con `file://`, Chrome los bloquea por CORS. Cada fichero `.js` es un `<script>` clásico.
 - **No hay `fetch` de ficheros locales** (también lo bloquea `file://`): los datos (plantillas, SVG de Pío…) viven dentro de los `.js`.
 - **No hay paso de compilación**: lo que está en el repositorio es lo que se ejecuta.
-- **Las dependencias van en `vendor/`**: MathLive 0.108.2 (MIT) y las fuentes (SIL OFL 1.1).
+- **Las dependencias van en `src/vendor/`**: MathLive 0.108.2 (MIT) y las fuentes (SIL OFL 1.1).
 
 ## Estructura
 
+Junto a `pizarra.html` solo hay lo que usa quien da o recibe la clase: `historial/` (carpeta sugerida para guardar las clases)
+y `ejemplos/` (banco de ejemplos). Todo lo técnico está dentro de `src/`; las rutas de este documento son relativas a `src/`.
+
 ```
-pizarra.html            ← único punto de ensamblado: HTML + <link> de estilos + <script> en orden
+../pizarra.html         ← único punto de ensamblado: HTML + <link> de estilos + <script> en orden (rutas src/…)
+../historial/           ← carpeta sugerida para guardar clases (su contenido no se sube a Git)
+../ejemplos/            ← banco de ejemplos: un .js por ejemplo y sus miniaturas en img/
 css/                    ← estilos (orden de carga = orden de la cascada original)
   tokens.css            · colores, tipografía, espacios (claro/oscuro)
   components/matia.css  · componentes mi-* del sistema de diseño
@@ -132,22 +137,22 @@ Requieren Node y Playwright (no hacen falta para usar la pizarra).
 
 | Comando | Qué comprueba |
 | --- | --- |
-| `node tests/golden/engine-node.js <ficheros del motor>` | El motor da los mismos 53 resultados que el prototipo (sin navegador). |
-| `node tests/golden/run.js compare pizarra.html` | Motor + render de todos los tipos de bloque idénticos a la referencia. |
-| `node tests/e2e.js legacy/pizarra.html pizarra.html` | Un recorrido de uso da el mismo estado en el prototipo y en la versión modular. |
-| `node tests/storage.js` | Flujos de carpeta (cualquier carpeta, ventanas con estilo, guardar, abrir, borrar, solo lectura). |
-| `node tests/engine-features.js` | Sin navegador: `normalizeFn` (texto plano) e integrales (primitiva, Barrow, casos no soportados). |
-| `node tests/features.js` | Gráfica 2D (funciones, rango Y, sin zoom con la rueda), explicación en la línea, Desarrollo desde cualquier línea, integrales y sólido desde el menú. |
-| `node tests/solid.js` | Bloque «sólido de revolución» (perfil, volumen, vista 3D). |
-| `node tests/graph3d.js` | Superficies 3D: girar sin quedar en blanco, varias superficies, panel y teclado de vista, centrar, ayuda en 2D y 3D. |
-| `node tests/vectorial.js [--capturas]` | Cálculo vectorial: 35 comprobaciones del motor (parciales, gradiente, hessiana, jacobiana, divergencia/rotacional) y del menú Operaciones; `--capturas` guarda imágenes. |
-| `node tests/fit.js [pizarra.html]` | Fórmulas que no caben: reducción hasta el 60 %, aviso «No cabe en la hoja» con «Partir», y `\text{…}` que pasa a línea de texto. |
-| `node tests/text.js [pizarra.html]` | Texto enriquecido: barra de formato, saneado de `html` y fórmulas en línea. |
-| `node tests/images.js [pizarra.html]` | Bloque imagen y almacén `imagenes/` con una carpeta simulada con subcarpetas. |
-| `node tests/ejemplos.js [--capturas] [id…]` | Cada ejemplo se sanea sin perder bloques y se dibuja sin errores ni avisos; la ventana «Ejemplos». `--capturas` regenera `ejemplos/img/`. |
-| `node tests/presentation.js` | Presentación de extremo a extremo; genera `docs/img/presentacion.pdf` y las capturas de `docs/img/`. |
+| `node src/tests/golden/engine-node.js <ficheros del motor>` | El motor da los mismos 53 resultados que el prototipo (sin navegador). |
+| `node src/tests/golden/run.js compare pizarra.html` | Motor + render de todos los tipos de bloque idénticos a la referencia. |
+| `node src/tests/e2e.js src/legacy/pizarra.html pizarra.html` | Un recorrido de uso da el mismo estado en el prototipo y en la versión modular. |
+| `node src/tests/storage.js` | Flujos de carpeta (cualquier carpeta, ventanas con estilo, guardar, abrir, borrar, solo lectura). |
+| `node src/tests/engine-features.js` | Sin navegador: `normalizeFn` (texto plano) e integrales (primitiva, Barrow, casos no soportados). |
+| `node src/tests/features.js` | Gráfica 2D (funciones, rango Y, sin zoom con la rueda), explicación en la línea, Desarrollo desde cualquier línea, integrales y sólido desde el menú. |
+| `node src/tests/solid.js` | Bloque «sólido de revolución» (perfil, volumen, vista 3D). |
+| `node src/tests/graph3d.js` | Superficies 3D: girar sin quedar en blanco, varias superficies, panel y teclado de vista, centrar, ayuda en 2D y 3D. |
+| `node src/tests/vectorial.js [--capturas]` | Cálculo vectorial: 35 comprobaciones del motor (parciales, gradiente, hessiana, jacobiana, divergencia/rotacional) y del menú Operaciones; `--capturas` guarda imágenes. |
+| `node src/tests/fit.js [pizarra.html]` | Fórmulas que no caben: reducción hasta el 60 %, aviso «No cabe en la hoja» con «Partir», y `\text{…}` que pasa a línea de texto. |
+| `node src/tests/text.js [pizarra.html]` | Texto enriquecido: barra de formato, saneado de `html` y fórmulas en línea. |
+| `node src/tests/images.js [pizarra.html]` | Bloque imagen y almacén `imagenes/` con una carpeta simulada con subcarpetas. |
+| `node src/tests/ejemplos.js [--capturas] [id…]` | Cada ejemplo se sanea sin perder bloques y se dibuja sin errores ni avisos; la ventana «Ejemplos». `--capturas` regenera `ejemplos/img/`. |
+| `node src/tests/presentation.js` | Presentación de extremo a extremo; genera `docs/img/presentacion.pdf` y las capturas de `docs/img/`. |
 
-`tests/golden/expected.json` se generó con el prototipo (`node tests/golden/run.js record legacy/pizarra.html`).
+`tests/golden/expected.json` se generó con el prototipo (`node src/tests/golden/run.js record legacy/pizarra.html`).
 Si cambias el comportamiento a propósito, regenera la referencia con `record pizarra.html` y revisa el diff.
 
 ## Documentación por funcionalidad

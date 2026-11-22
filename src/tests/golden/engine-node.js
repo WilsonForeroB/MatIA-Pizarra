@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /* Compara el motor modular con la referencia sin abrir el navegador (el motor no usa el DOM).
-   Uso: node tests/golden/engine-node.js js/engine/a.js js/engine/b.js …   (en el orden de pizarra.html)
+   Uso: node src/tests/golden/engine-node.js js/engine/a.js js/engine/b.js …   (en el orden de pizarra.html)
    Carga js/core/namespace.js + los ficheros dados y ejecuta tests/golden/cases.js contra expected.json. */
 const path = require('path');
 const fs = require('fs');
 const vm = require('vm');
-const ROOT = path.resolve(__dirname, '../..');
+const ROOT = path.resolve(__dirname, '../../..');
 const ctx = { console, BigInt, Math, JSON, Number, String, Array, Object, Set, Map, Error, TypeError, RangeError, isFinite, parseFloat, parseInt, Symbol, RegExp, Infinity, NaN };
 ctx.window = ctx; ctx.globalThis = ctx;
 vm.createContext(ctx);
-for (const f of ['js/core/namespace.js', ...process.argv.slice(2)]) vm.runInContext(fs.readFileSync(path.resolve(ROOT, f), 'utf8'), ctx, { filename: f });
+for (const f of ['src/js/core/namespace.js', ...process.argv.slice(2)]) vm.runInContext(fs.readFileSync(path.resolve(ROOT, f), 'utf8'), ctx, { filename: f });
 const cases = require('./cases.js');
 const exp = JSON.parse(fs.readFileSync(path.join(__dirname, 'expected.json'), 'utf8')).engine;
 const me = ctx.MatIA.require('engine/core');

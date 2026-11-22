@@ -1,5 +1,5 @@
-tests/golden/out/
+src/tests/golden/out/
 historial/*
 !historial/.gitkeep
 node_modules/
-tests/capturas/
+src/tests/capturas/

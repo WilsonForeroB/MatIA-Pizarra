@@ -69,7 +69,7 @@ MatIA.define('ui/examples', ['core/dom', 'model/board', 'model/schema', 'ui/toas
     fig.dataset.tema = t.id;
     const ic = document.createElement('span'); ic.className = 'ex-icon'; ic.setAttribute('aria-hidden', 'true'); ic.textContent = t.icon;
     fig.appendChild(ic);
-    // miniatura generada por «node tests/ejemplos.js --capturas»; si no existe se queda el icono del tema
+    // miniatura generada por «node src/tests/ejemplos.js --capturas»; si no existe se queda el icono del tema
     const img = new Image();
     img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
     img.addEventListener('load', () => fig.classList.add('has-img'));

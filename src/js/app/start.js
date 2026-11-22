@@ -9,7 +9,7 @@ MatIA.define('app/start', ['model/board', 'ui/state', 'ui/toast', 'assets/pio'],
     st.mlReady = true;
     const MFE = window.MathfieldElement;
     try {
-      MFE.fontsDirectory = new URL('vendor/mathlive/fonts/', location.href).href;
+      MFE.fontsDirectory = new URL('src/vendor/mathlive/fonts/', location.href).href;
       MFE.soundsDirectory = null;
       MFE.plonkSound = null;
       MFE.keypressSound = null;

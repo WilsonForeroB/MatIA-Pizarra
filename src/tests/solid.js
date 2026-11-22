@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 /* Prueba del bloque «sólido de revolución».
-   Uso: node tests/solid.js [pizarra.html]
+   Uso: node src/tests/solid.js [pizarra.html]
    Si pizarra.html aún no carga js/blocks/solid.js, se crea una copia temporal con <base> y los scripts/estilos añadidos. */
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', '..');
 const SCRATCH = '/tmp/claude-0/-home-user-MatIA-Pizarra/01dbf8ae-b7ca-56a2-a637-356d3606271a/scratchpad';
 
 function pageFile(name) {
   const src = path.resolve(ROOT, name || 'pizarra.html');
   let html = fs.readFileSync(src, 'utf8');
-  if (html.includes('js/blocks/solid.js')) return src; // ya integrado
+  if (html.includes('src/js/blocks/solid.js')) return src; // ya integrado
   html = html.replace('<head>', '<head>\n<base href="file://' + ROOT + '/">')
-    .replace('<link rel="stylesheet" href="css/print.css">', '<link rel="stylesheet" href="css/solid.css">\n<link rel="stylesheet" href="css/print.css">')
-    .replace('<script src="js/model/schema.js"></script>', '<script src="js/model/schema.js"></script>\n<script src="js/blocks/canvas3d.js"></script>\n<script src="js/blocks/solid.js"></script>');
+    .replace('<link rel="stylesheet" href="src/css/print.css">', '<link rel="stylesheet" href="src/css/solid.css">\n<link rel="stylesheet" href="src/css/print.css">')
+    .replace('<script src="src/js/model/schema.js"></script>', '<script src="src/js/model/schema.js"></script>\n<script src="src/js/blocks/canvas3d.js"></script>\n<script src="src/js/blocks/solid.js"></script>');
   fs.mkdirSync(SCRATCH, { recursive: true });
   const out = path.join(SCRATCH, 'index-solid.html');
   fs.writeFileSync(out, html);
@@ -26,7 +26,7 @@ function pageFile(name) {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1000, height: 1400 }, deviceScaleFactor: 2 });
   await ctx.route(/cdn\.jsdelivr\.net\/npm\/mathlive@[^/]+\//, (r) => {
-    const f = path.join(ROOT, 'vendor/mathlive', new URL(r.request().url()).pathname.replace(/^\/npm\/mathlive@[^/]+\//, ''));
+    const f = path.join(ROOT, 'src/vendor/mathlive', new URL(r.request().url()).pathname.replace(/^\/npm\/mathlive@[^/]+\//, ''));
     return fs.existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: '' });
   });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.fulfill({ body: '', contentType: 'text/css' }));
@@ -73,7 +73,7 @@ function pageFile(name) {
   await page.evaluate(() => { document.documentElement.setAttribute('data-theme', 'light'); MatIA.require('blocks/graph3d').redrawers.forEach((f) => f()); });
   await page.waitForTimeout(300);
   // captura
-  const shot = path.join(ROOT, 'docs/img/solido-revolucion.png');
+  const shot = path.join(ROOT, 'src/docs/img/solido-revolucion.png');
   fs.mkdirSync(path.dirname(shot), { recursive: true });
   const blocks = await page.$$('#blocks > .blk');
   await blocks[4].scrollIntoViewIfNeeded();

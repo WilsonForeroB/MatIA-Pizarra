@@ -1,21 +1,21 @@
 #!/usr/bin/env node
 /* Prueba del bloque «texto enriquecido» (js/blocks/text.js, js/ui/text-format.js, css/text.css).
-   Uso: node tests/text.js [pizarra.html]
+   Uso: node src/tests/text.js [pizarra.html]
    Si pizarra.html aún no carga js/blocks/text.js, se crea una copia temporal con <base> y los scripts/estilos añadidos. */
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', '..');
 const SCRATCH = '/tmp/claude-0/-home-user-MatIA-Pizarra/01dbf8ae-b7ca-56a2-a637-356d3606271a/scratchpad';
 
 function pageFile(name) {
   const src = path.resolve(ROOT, name || 'pizarra.html');
   let html = fs.readFileSync(src, 'utf8');
-  if (html.includes('js/blocks/text.js')) return src; // ya integrado
+  if (html.includes('src/js/blocks/text.js')) return src; // ya integrado
   html = html.replace('<head>', '<head>\n<base href="file://' + ROOT + '/">')
-    .replace('<link rel="stylesheet" href="css/print.css">', '<link rel="stylesheet" href="css/text.css">\n<link rel="stylesheet" href="css/print.css">')
-    .replace('<script src="js/model/board.js"></script>', '<script src="js/blocks/text.js"></script>\n<script src="js/model/board.js"></script>')
-    .replace('<script src="js/app/start.js"></script>', '<script src="js/ui/text-format.js"></script>\n<script src="js/app/start.js"></script>');
+    .replace('<link rel="stylesheet" href="src/css/print.css">', '<link rel="stylesheet" href="src/css/text.css">\n<link rel="stylesheet" href="src/css/print.css">')
+    .replace('<script src="src/js/model/board.js"></script>', '<script src="src/js/blocks/text.js"></script>\n<script src="src/js/model/board.js"></script>')
+    .replace('<script src="src/js/app/start.js"></script>', '<script src="src/js/ui/text-format.js"></script>\n<script src="src/js/app/start.js"></script>');
   fs.mkdirSync(SCRATCH, { recursive: true });
   const out = path.join(SCRATCH, 'index-text.html');
   fs.writeFileSync(out, html);
@@ -27,7 +27,7 @@ function pageFile(name) {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1200, height: 900 } });
   await ctx.route(/cdn\.jsdelivr\.net\/npm\/mathlive@[^/]+\//, (r) => {
-    const f = path.join(ROOT, 'vendor/mathlive', new URL(r.request().url()).pathname.replace(/^\/npm\/mathlive@[^/]+\//, ''));
+    const f = path.join(ROOT, 'src/vendor/mathlive', new URL(r.request().url()).pathname.replace(/^\/npm\/mathlive@[^/]+\//, ''));
     return fs.existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: '' });
   });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.fulfill({ body: '', contentType: 'text/css' }));

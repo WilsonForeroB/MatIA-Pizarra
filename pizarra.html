@@ -12,26 +12,26 @@
   Ver LICENSE en la raíz del repositorio y «Archivo → Acerca de y derechos» dentro de la pizarra.
 -->
 <!-- MatIA · Pizarra matemática. Creada por Wilson Forero (https://github.com/WilsonForeroB) con asistencia de IA (Claude, de Anthropic). © 2026 Wilson Forero.
-     Dependencias (incluidas en vendor/, sin red): MathLive 0.108.2 (licencia MIT) y fuentes IBM Plex Sans, JetBrains Mono y Source Serif 4 (SIL OFL 1.1).
+     Dependencias (incluidas en src/vendor/, sin red): MathLive 0.108.2 (licencia MIT) y fuentes IBM Plex Sans, JetBrains Mono y Source Serif 4 (SIL OFL 1.1).
 <!-- ÚNICO PUNTO DE ENSAMBLADO. Abre este fichero con doble clic: no hace falta servidor ni instalar nada.
      Orden de carga: estilos → MathLive → núcleo → modelo → motor → interfaz → arranque (ver docs/ARQUITECTURA.md). -->
-<link rel="stylesheet" href="vendor/fonts/fonts.css">
-<link rel="stylesheet" href="css/tokens.css">
-<link rel="stylesheet" href="css/components/matia.css">
-<link rel="stylesheet" href="css/layout.css">
-<link rel="stylesheet" href="css/blocks.css">
-<link rel="stylesheet" href="css/fit.css">
-<link rel="stylesheet" href="css/components/popovers.css">
-<link rel="stylesheet" href="css/components/dialogs.css">
-<link rel="stylesheet" href="css/components/tools.css">
-<link rel="stylesheet" href="css/graphics.css">
-<link rel="stylesheet" href="css/solid.css">
-<link rel="stylesheet" href="css/text.css">
-<link rel="stylesheet" href="css/image.css">
-<link rel="stylesheet" href="css/examples.css">
-<link rel="stylesheet" href="css/print.css">
-<link rel="stylesheet" href="css/responsive.css">
-<script defer src="vendor/mathlive/mathlive.min.js"></script>
+<link rel="stylesheet" href="src/vendor/fonts/fonts.css">
+<link rel="stylesheet" href="src/css/tokens.css">
+<link rel="stylesheet" href="src/css/components/matia.css">
+<link rel="stylesheet" href="src/css/layout.css">
+<link rel="stylesheet" href="src/css/blocks.css">
+<link rel="stylesheet" href="src/css/fit.css">
+<link rel="stylesheet" href="src/css/components/popovers.css">
+<link rel="stylesheet" href="src/css/components/dialogs.css">
+<link rel="stylesheet" href="src/css/components/tools.css">
+<link rel="stylesheet" href="src/css/graphics.css">
+<link rel="stylesheet" href="src/css/solid.css">
+<link rel="stylesheet" href="src/css/text.css">
+<link rel="stylesheet" href="src/css/image.css">
+<link rel="stylesheet" href="src/css/examples.css">
+<link rel="stylesheet" href="src/css/print.css">
+<link rel="stylesheet" href="src/css/responsive.css">
+<script defer src="src/vendor/mathlive/mathlive.min.js"></script>
 <style id="pageStyle">@media print{@page{margin:14mm}}</style>
 </head>
 <body class="mi-scope" data-mode="write">
@@ -450,81 +450,81 @@
 
 <!-- ==== SCRIPTS (scripts clásicos: funcionan con file://) ==== -->
 <!-- @scripts-start -->
-<script src="js/core/namespace.js"></script>
-<script src="js/core/dom.js"></script>
-<script src="js/core/event-bus.js"></script>
-<script src="js/assets/pio.js"></script>
-<script src="js/model/schema.js"></script>
+<script src="src/js/core/namespace.js"></script>
+<script src="src/js/core/dom.js"></script>
+<script src="src/js/core/event-bus.js"></script>
+<script src="src/js/assets/pio.js"></script>
+<script src="src/js/model/schema.js"></script>
 <!-- solid registra su saneador: debe cargarse antes de model/board, que sanea el tablero guardado al crearse -->
-<script src="js/blocks/canvas3d.js"></script>
-<script src="js/blocks/solid.js"></script>
-<script src="js/blocks/text.js"></script>
-<script src="js/blocks/image.js"></script>
-<script src="js/model/board.js"></script>
-<script src="js/ui/state.js"></script>
-<script src="js/ui/toast.js"></script>
-<script src="js/ui/dialogs.js"></script>
-<script src="js/blocks/registry.js"></script>
-<script src="js/engine/core/fraction-matrix.js"></script>
-<script src="js/engine/core/tokenizer.js"></script>
-<script src="js/engine/core/parser.js"></script>
-<script src="js/engine/core/latex-definitions.js"></script>
-<script src="js/engine/core/gauss-systems.js"></script>
-<script src="js/engine/core.js"></script>
-<script src="js/engine/ops/common.js"></script>
-<script src="js/engine/ops/poly.js"></script>
-<script src="js/engine/ops/expr.js"></script>
-<script src="js/engine/ops/ecuaciones.js"></script>
-<script src="js/engine/ops/matrices.js"></script>
-<script src="js/engine/ops/vectores.js"></script>
-<script src="js/engine/ops/aritmetica.js"></script>
-<script src="js/engine/ops/polinomios.js"></script>
-<script src="js/engine/ops/combinatoria-logica.js"></script>
-<script src="js/engine/ops/conjuntos-venn.js"></script>
-<script src="js/engine/ops/analisis.js"></script>
-<script src="js/engine/ops/estadistica-probabilidad.js"></script>
-<script src="js/engine/ops/geometria.js"></script>
-<script src="js/engine/ops/integrales.js"></script>
-<script src="js/engine/ops/vec-input.js"></script>
-<script src="js/engine/ops/vectorial.js"></script>
-<script src="js/engine/ops/campos.js"></script>
-<script src="js/engine/ops.js"></script>
-<script src="js/blocks/svg-utils.js"></script>
-<script src="js/blocks/table.js"></script>
-<script src="js/blocks/graph.js"></script>
-<script src="js/blocks/graph3d.js"></script>
-<script src="js/blocks/chart.js"></script>
-<script src="js/blocks/geo.js"></script>
-<script src="js/blocks/ptree.js"></script>
-<script src="js/blocks/venn.js"></script>
-<script src="js/blocks/net.js"></script>
-<script src="js/blocks/fit.js"></script>
-<script src="js/blocks/deriv.js"></script>
-<script src="js/ui/export-image.js"></script>
-<script src="js/blocks/editor.js"></script>
-<script src="js/ui/bayes-dialog.js"></script>
-<script src="js/ui/nn-dialog.js"></script>
-<script src="js/ui/graphics-panel.js"></script>
-<script src="js/ui/view.js"></script>
-<script src="js/ui/templates.js"></script>
-<script src="js/ui/popovers.js"></script>
-<script src="js/ui/toolbar.js"></script>
-<script src="js/ui/calc.js"></script>
-<script src="js/ui/ops-menu.js"></script>
-<script src="js/ui/mode-pages.js"></script>
-<script src="js/storage/kv-store.js"></script>
-<script src="js/storage/folders.js"></script>
-<script src="js/storage/folder-access.js"></script>
-<script src="js/storage/history.js"></script>
-<script src="js/storage/assets.js"></script>
-<script src="js/storage/dirty.js"></script>
-<script src="js/storage/file.js"></script>
-<script src="js/ui/examples.js"></script>
-<script src="js/ui/print.js"></script>
-<script src="js/ui/drawing.js"></script>
-<script src="js/ui/shortcuts.js"></script>
-<script src="js/ui/text-format.js"></script>
-<script src="js/ui/image-insert.js"></script>
+<script src="src/js/blocks/canvas3d.js"></script>
+<script src="src/js/blocks/solid.js"></script>
+<script src="src/js/blocks/text.js"></script>
+<script src="src/js/blocks/image.js"></script>
+<script src="src/js/model/board.js"></script>
+<script src="src/js/ui/state.js"></script>
+<script src="src/js/ui/toast.js"></script>
+<script src="src/js/ui/dialogs.js"></script>
+<script src="src/js/blocks/registry.js"></script>
+<script src="src/js/engine/core/fraction-matrix.js"></script>
+<script src="src/js/engine/core/tokenizer.js"></script>
+<script src="src/js/engine/core/parser.js"></script>
+<script src="src/js/engine/core/latex-definitions.js"></script>
+<script src="src/js/engine/core/gauss-systems.js"></script>
+<script src="src/js/engine/core.js"></script>
+<script src="src/js/engine/ops/common.js"></script>
+<script src="src/js/engine/ops/poly.js"></script>
+<script src="src/js/engine/ops/expr.js"></script>
+<script src="src/js/engine/ops/ecuaciones.js"></script>
+<script src="src/js/engine/ops/matrices.js"></script>
+<script src="src/js/engine/ops/vectores.js"></script>
+<script src="src/js/engine/ops/aritmetica.js"></script>
+<script src="src/js/engine/ops/polinomios.js"></script>
+<script src="src/js/engine/ops/combinatoria-logica.js"></script>
+<script src="src/js/engine/ops/conjuntos-venn.js"></script>
+<script src="src/js/engine/ops/analisis.js"></script>
+<script src="src/js/engine/ops/estadistica-probabilidad.js"></script>
+<script src="src/js/engine/ops/geometria.js"></script>
+<script src="src/js/engine/ops/integrales.js"></script>
+<script src="src/js/engine/ops/vec-input.js"></script>
+<script src="src/js/engine/ops/vectorial.js"></script>
+<script src="src/js/engine/ops/campos.js"></script>
+<script src="src/js/engine/ops.js"></script>
+<script src="src/js/blocks/svg-utils.js"></script>
+<script src="src/js/blocks/table.js"></script>
+<script src="src/js/blocks/graph.js"></script>
+<script src="src/js/blocks/graph3d.js"></script>
+<script src="src/js/blocks/chart.js"></script>
+<script src="src/js/blocks/geo.js"></script>
+<script src="src/js/blocks/ptree.js"></script>
+<script src="src/js/blocks/venn.js"></script>
+<script src="src/js/blocks/net.js"></script>
+<script src="src/js/blocks/fit.js"></script>
+<script src="src/js/blocks/deriv.js"></script>
+<script src="src/js/ui/export-image.js"></script>
+<script src="src/js/blocks/editor.js"></script>
+<script src="src/js/ui/bayes-dialog.js"></script>
+<script src="src/js/ui/nn-dialog.js"></script>
+<script src="src/js/ui/graphics-panel.js"></script>
+<script src="src/js/ui/view.js"></script>
+<script src="src/js/ui/templates.js"></script>
+<script src="src/js/ui/popovers.js"></script>
+<script src="src/js/ui/toolbar.js"></script>
+<script src="src/js/ui/calc.js"></script>
+<script src="src/js/ui/ops-menu.js"></script>
+<script src="src/js/ui/mode-pages.js"></script>
+<script src="src/js/storage/kv-store.js"></script>
+<script src="src/js/storage/folders.js"></script>
+<script src="src/js/storage/folder-access.js"></script>
+<script src="src/js/storage/history.js"></script>
+<script src="src/js/storage/assets.js"></script>
+<script src="src/js/storage/dirty.js"></script>
+<script src="src/js/storage/file.js"></script>
+<script src="src/js/ui/examples.js"></script>
+<script src="src/js/ui/print.js"></script>
+<script src="src/js/ui/drawing.js"></script>
+<script src="src/js/ui/shortcuts.js"></script>
+<script src="src/js/ui/text-format.js"></script>
+<script src="src/js/ui/image-insert.js"></script>
 <!-- Banco de ejemplos (carpeta ejemplos/, ver ejemplos/LEEME.md). Un <script> por ejemplo. -->
 <!-- ejemplos: álgebra, cálculo y gráficas -->
 <script src="ejemplos/algebra-sistema-gauss.js"></script>
@@ -551,8 +551,8 @@
 <script src="ejemplos/discreta-tabla-verdad.js"></script>
 <script src="ejemplos/presentaciones-teorema-pitagoras.js"></script>
 <!-- /ejemplos: estadística, geometría, discreta y presentaciones -->
-<script src="js/app/start.js"></script>
+<script src="src/js/app/start.js"></script>
 <!-- @scripts-end -->
-<script src="js/app/main.js"></script>
+<script src="src/js/app/main.js"></script>
 </body>
 </html>

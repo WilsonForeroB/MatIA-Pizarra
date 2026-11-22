@@ -41,8 +41,8 @@ Sirven para que quien empieza vea lo que puede hacer la pizarra y aprenda cambi√
 4. Comprueba que se abre bien y genera su miniatura:
 
    ```
-   node tests/ejemplos.js calculo-mi-ejemplo
-   node tests/ejemplos.js --capturas calculo-mi-ejemplo
+   node src/tests/ejemplos.js calculo-mi-ejemplo
+   node src/tests/ejemplos.js --capturas calculo-mi-ejemplo
    ```
 
    La miniatura queda en `ejemplos/img/<id>.jpg`. Si no existe, la tarjeta muestra el icono del tema.

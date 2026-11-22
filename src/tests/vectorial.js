@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /* Cálculo vectorial: derivadas parciales, gradiente, hessiana, jacobiana, divergencia/rotacional/laplaciano.
    Parte 1: motor (sin navegador) con resultados verificados a mano. Parte 2: menú Operaciones en el navegador.
-   Uso: node tests/vectorial.js [--capturas] */
+   Uso: node src/tests/vectorial.js [--capturas] */
 const path = require('path');
 const fs = require('fs');
 const vm = require('vm');
-const ROOT = path.resolve(__dirname, '..');
-const FILES = ['js/core/namespace.js', 'js/engine/core/fraction-matrix.js', 'js/engine/core/tokenizer.js', 'js/engine/core/parser.js', 'js/engine/core/latex-definitions.js', 'js/engine/core/gauss-systems.js', 'js/engine/core.js',
-  'js/engine/ops/common.js', 'js/engine/ops/poly.js', 'js/engine/ops/expr.js', 'js/engine/ops/ecuaciones.js', 'js/engine/ops/matrices.js', 'js/engine/ops/vectores.js', 'js/engine/ops/aritmetica.js', 'js/engine/ops/polinomios.js',
-  'js/engine/ops/combinatoria-logica.js', 'js/engine/ops/conjuntos-venn.js', 'js/engine/ops/analisis.js', 'js/engine/ops/estadistica-probabilidad.js', 'js/engine/ops/geometria.js', 'js/engine/ops/integrales.js',
-  'js/engine/ops/vec-input.js', 'js/engine/ops/vectorial.js', 'js/engine/ops/campos.js', 'js/engine/ops.js'];
+const ROOT = path.resolve(__dirname, '..', '..');
+const FILES = ['src/js/core/namespace.js', 'src/js/engine/core/fraction-matrix.js', 'src/js/engine/core/tokenizer.js', 'src/js/engine/core/parser.js', 'src/js/engine/core/latex-definitions.js', 'src/js/engine/core/gauss-systems.js', 'src/js/engine/core.js',
+  'src/js/engine/ops/common.js', 'src/js/engine/ops/poly.js', 'src/js/engine/ops/expr.js', 'src/js/engine/ops/ecuaciones.js', 'src/js/engine/ops/matrices.js', 'src/js/engine/ops/vectores.js', 'src/js/engine/ops/aritmetica.js', 'src/js/engine/ops/polinomios.js',
+  'src/js/engine/ops/combinatoria-logica.js', 'src/js/engine/ops/conjuntos-venn.js', 'src/js/engine/ops/analisis.js', 'src/js/engine/ops/estadistica-probabilidad.js', 'src/js/engine/ops/geometria.js', 'src/js/engine/ops/integrales.js',
+  'src/js/engine/ops/vec-input.js', 'src/js/engine/ops/vectorial.js', 'src/js/engine/ops/campos.js', 'src/js/engine/ops.js'];
 const ctx = { console, BigInt, Math, JSON, Number, String, Array, Object, Set, Map, Error, TypeError, RangeError, isFinite, parseFloat, parseInt, Symbol, RegExp, Infinity, NaN };
 ctx.window = ctx; ctx.globalThis = ctx;
 vm.createContext(ctx);
@@ -135,10 +135,10 @@ has('laplaciano = 6', 'divRot', 'f(x,y,z)=x^2+y^2+z^2', ['=6']);
   ok('navegador: ningún paso se sale de la hoja', overflow === 0, overflow + ' avisos');
   ok('navegador: sin errores', !errs.length, errs.join(' | '));
   if (CAPS) {
-    const out = path.join(ROOT, 'tests', 'capturas');
+    const out = path.join(ROOT, 'src', 'tests', 'capturas');
     fs.mkdirSync(out, { recursive: true });
     await pg.screenshot({ path: path.join(out, 'vectorial.png'), fullPage: true });
-    console.log('Captura en tests/capturas/vectorial.png');
+    console.log('Captura en src/tests/capturas/vectorial.png');
   }
   await br.close();
   const bad = results.filter((x) => !x).length;

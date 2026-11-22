@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 /* Prueba de «lo que no cabe en la hoja» (js/blocks/fit.js).
-   Uso: node tests/fit.js [pizarra.html]
+   Uso: node src/tests/fit.js [pizarra.html]
    Si pizarra.html aún no carga js/blocks/fit.js, se crea una copia temporal con <base> y los scripts/estilos añadidos. */
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', '..');
 const SCRATCH = '/tmp/claude-0/-home-user-MatIA-Pizarra/01dbf8ae-b7ca-56a2-a637-356d3606271a/scratchpad';
 
 function pageFile(name) {
   const src = path.resolve(ROOT, name || 'pizarra.html');
   let html = fs.readFileSync(src, 'utf8');
-  if (html.includes('js/blocks/fit.js')) return src;
+  if (html.includes('src/js/blocks/fit.js')) return src;
   html = html.replace('<head>', '<head>\n<base href="file://' + ROOT + '/">')
-    .replace('<link rel="stylesheet" href="css/print.css">', '<link rel="stylesheet" href="css/fit.css">\n<link rel="stylesheet" href="css/print.css">')
-    .replace('<script src="js/blocks/editor.js"></script>', '<script src="js/blocks/fit.js"></script>\n<script src="js/blocks/editor.js"></script>');
+    .replace('<link rel="stylesheet" href="src/css/print.css">', '<link rel="stylesheet" href="src/css/fit.css">\n<link rel="stylesheet" href="src/css/print.css">')
+    .replace('<script src="src/js/blocks/editor.js"></script>', '<script src="src/js/blocks/fit.js"></script>\n<script src="src/js/blocks/editor.js"></script>');
   fs.mkdirSync(SCRATCH, { recursive: true });
   const out = path.join(SCRATCH, 'index-fit.html');
   fs.writeFileSync(out, html);
@@ -26,7 +26,7 @@ function pageFile(name) {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1000, height: 1000 } });
   await ctx.route(/cdn\.jsdelivr\.net\/npm\/mathlive@[^/]+\//, (r) => {
-    const f = path.join(ROOT, 'vendor/mathlive', new URL(r.request().url()).pathname.replace(/^\/npm\/mathlive@[^/]+\//, ''));
+    const f = path.join(ROOT, 'src/vendor/mathlive', new URL(r.request().url()).pathname.replace(/^\/npm\/mathlive@[^/]+\//, ''));
     return fs.existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: '' });
   });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.fulfill({ body: '', contentType: 'text/css' }));
