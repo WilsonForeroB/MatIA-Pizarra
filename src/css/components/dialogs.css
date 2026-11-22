@@ -1,0 +1,62 @@
+/* Diálogos: base, preguntas con Pío, acerca de, historial y atajos. Origen: pizarra.html:287-343. */
+dialog{border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-lg);background:var(--surface-raised);color:var(--ink);padding:0;max-width:min(860px,calc(100vw - 32px));max-height:calc(100vh - 48px);width:100%}
+.pio-title{display:flex;align-items:center;gap:var(--space-3)}
+.hist-empty{display:flex;align-items:center;gap:var(--space-3)}
+.ops-head{display:flex;align-items:center;gap:var(--space-3)}
+/* Diálogo de confirmación con Pío */
+dialog.ask{max-width:min(540px,calc(100vw - 32px));border-color:var(--accent);background:var(--accent-soft);animation:mi-rise var(--duration-base) var(--ease-out) both}
+dialog.ask.aviso{border-color:var(--warning);background:var(--surface-raised)}
+.ask-box{display:grid;grid-template-columns:auto 1fr;gap:var(--space-4);align-items:start;padding:var(--space-5)}
+.ask-pio .pio-badge{width:72px;height:72px;animation:mi-pop var(--duration-slow) var(--ease-out) both}
+.ask-main{display:flex;flex-direction:column;gap:var(--space-2);min-width:0}
+.ask-main .mi-label{font:600 12px/18px var(--font-sans);letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+dialog.ask.aviso .ask-main .mi-label{color:var(--warning)}
+.ask-main h2{margin:0;font:600 20px/28px var(--font-sans);color:var(--ink)}
+.ask-main p{margin:0;font:400 16px/26px var(--font-serif);color:var(--ink)}
+.ask-acts{display:flex;flex-wrap:wrap;gap:var(--space-2);justify-content:flex-end;margin-top:var(--space-3)}
+.mi-btn--danger{background:var(--warning);border-color:var(--warning);color:var(--surface-raised)}
+.mi-btn--danger:hover{background:var(--warning);border-color:var(--warning);filter:brightness(1.1)}
+@media (max-width:520px){.ask-box{grid-template-columns:1fr}.ask-pio .pio-badge{width:56px;height:56px}}
+.about-body{padding:var(--space-4) var(--space-5) var(--space-5);display:flex;flex-direction:column;gap:var(--space-3);font:400 15px/24px var(--font-sans);color:var(--ink);max-width:72ch}
+.about-lead{margin:0;font:400 17px/27px var(--font-serif)}
+.about-dl{display:grid;grid-template-columns:max-content 1fr;gap:6px var(--space-4);margin:0}
+.about-dl dt{font-weight:600;color:var(--ink-muted)}
+.about-dl dd{margin:0}
+.about-body h3{margin:var(--space-2) 0 0;font:600 14px/22px var(--font-sans);color:var(--accent)}
+.about-ul{margin:0;padding-left:1.2em}
+.about-small{margin:0;font-size:13px;line-height:20px;color:var(--ink-muted)}
+.about-body a,.help-foot a{color:var(--brand)}
+.help-foot{margin:0;padding:var(--space-3) var(--space-5) var(--space-4);border-top:var(--border-width-thin) solid var(--border);font:400 12px/19px var(--font-sans);color:var(--ink-muted)}
+@media (max-width:520px){.about-dl{grid-template-columns:1fr}}
+.hist-body{padding:var(--space-4) var(--space-5) var(--space-5);display:flex;flex-direction:column;gap:var(--space-3)}
+.hist-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-3)}
+.hist-status{font:600 13px/20px var(--font-mono);color:var(--ink);margin-right:auto}
+.hist-status.on{color:var(--brand)}
+.hist-help{margin:0;font:400 14px/22px var(--font-sans);color:var(--ink-muted);max-width:70ch}
+.hist-help code{font:400 .9em var(--font-mono);background:var(--surface-sunken);padding:1px 5px;border-radius:var(--radius-sm)}
+.hist-title{display:flex;align-items:center;gap:var(--space-2);flex:1 1 280px;font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
+.hist-title input{flex:1 1 auto;min-width:0;font:400 14px var(--font-sans);color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:6px 10px}
+.hist-title input:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+.mi-check{display:flex;gap:var(--space-2);align-items:center;font:400 14px/20px var(--font-sans);color:var(--ink)}
+.mi-check input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+.hist-list{display:flex;flex-direction:column;border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);max-height:46vh;overflow-y:auto}
+.hist-item{display:grid;grid-template-columns:1fr auto;gap:var(--space-1) var(--space-3);align-items:center;padding:var(--space-2) var(--space-3);border-bottom:var(--border-width-thin) solid var(--border)}
+.hist-item:last-child{border-bottom:0}
+.hist-item.cur{background:var(--accent-soft)}
+.hist-item b{font:600 15px/22px var(--font-sans);color:var(--ink);overflow-wrap:anywhere}
+.hist-item small{display:block;font:400 12px/18px var(--font-mono);color:var(--ink-muted)}
+.hist-item .acts{display:flex;gap:var(--space-1);flex-wrap:wrap;justify-content:flex-end}
+.hist-empty{padding:var(--space-4);font:400 14px/22px var(--font-sans);color:var(--ink-muted)}
+dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
+.dlg-head{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-5);border-bottom:var(--border-width-thin) solid var(--border);position:sticky;top:0;background:var(--surface-raised)}
+.dlg-head h2{margin:0;font:600 20px/28px var(--font-sans)}
+.dlg-body{padding:var(--space-4) var(--space-5) var(--space-5);display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--space-5)}
+.dlg-body h3{font:600 14px/22px var(--font-sans);margin:0 0 var(--space-2);color:var(--accent)}
+.keys{width:100%;border-collapse:collapse;font:400 14px/22px var(--font-sans)}
+.keys td{padding:4px 0;border-bottom:var(--border-width-thin) solid var(--border);vertical-align:top}
+.keys td:first-child{white-space:nowrap;padding-right:var(--space-3);font-family:var(--font-mono);font-size:13px}
+
+/* Campo de texto de dialogs.prompt (añadido en la versión modular) */
+.ask .ask-field { margin: 0 0 12px; }
+.ask .ask-field input { width: 100%; box-sizing: border-box; font: inherit; padding: 8px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface-raised); color: inherit; }
+.ask .ask-field input:focus { outline: 2px solid var(--focus-ring); outline-offset: 1px; }

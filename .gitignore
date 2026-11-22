@@ -1,0 +1,7 @@
+src/tests/golden/out/
+historial/*
+!historial/.gitkeep
+node_modules/
+src/tests/capturas/
+# En main no se publica la documentación técnica (está en la rama dev); las pruebas dejan aquí sus capturas
+src/docs/

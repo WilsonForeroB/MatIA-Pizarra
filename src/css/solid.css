@@ -1,0 +1,27 @@
+/* Bloque sólido de revolución */
+.sol{display:flex;flex-direction:column;gap:var(--space-2);width:min(100%,760px);outline:none}
+.sol .sol-profile{background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);padding:var(--space-2)}
+.sol .sol-prof{display:block;width:100%;max-height:170px}
+.sol .sol-region{fill:var(--data-1);fill-opacity:.28;stroke:none}
+.sol .sol-curve{fill:none;stroke:var(--data-2);stroke-width:2.2;stroke-linejoin:round}
+.sol .sol-ref{stroke:var(--ink-muted);stroke-width:1;opacity:.55}
+.sol .sol-axis{stroke:var(--data-5);stroke-width:2;stroke-dasharray:6 4}
+.sol .sol-lab{fill:var(--data-5);font:600 11px var(--font-sans)}
+.sol .sol-tick{fill:var(--ink-muted);font:400 10px var(--font-mono)}
+.sol .sol-wrap{position:relative}
+.sol canvas{display:block;width:100%;height:320px;background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);touch-action:none;cursor:grab}
+.sol canvas:active{cursor:grabbing}
+.sol .sol-vol{display:flex;flex-direction:column;gap:var(--space-1);font:400 15px/22px var(--font-serif);color:var(--ink)}
+.sol .sol-int{font-size:18px;max-width:100%;border:0;background:transparent}
+.sol .sol-vn{font-weight:700;font-family:var(--font-mono)}
+.sol .sol-exact{color:var(--ink-muted)}
+.sol .sol-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-3);font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
+.sol .sol-ctrl label{display:flex;align-items:center;gap:6px}
+.sol .sol-ctrl input,.sol .sol-ctrl select{font:400 13px var(--font-mono);color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:4px 8px}
+.sol .sol-ctrl input[type=number]{width:72px}
+.sol .sol-fl{flex:1 1 240px}
+.sol .sol-fn{flex:1;min-width:0;font-size:16px}
+.sol math-field.sol-fn{background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);padding:2px 6px}
+.sol .g-err{color:var(--warning);font:400 13px/20px var(--font-sans)}
+.sol .g-err:empty{display:none}
+@media (max-width:560px){.sol canvas{height:260px}.sol .sol-fl{flex-basis:100%}}

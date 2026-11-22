@@ -1,0 +1,41 @@
+/* Componentes base mi-* del sistema MatIA (botones, segmentados, avisos, etiquetas). Origen: pizarra.html:62-101. */
+/* ===== MatIA · matia.css (Apéndice C, componentes usados) ===== */
+.mi-scope,[data-module]{--accent:var(--brand);--on-accent:var(--on-brand);--accent-soft:var(--brand-soft)}
+[data-module="math"]{--accent:var(--mod-math);--on-accent:var(--on-mod);--accent-soft:var(--mod-math-soft)}
+.mi-btn,.mi-seg button,.mi-field input,.mi-field select{font-family:var(--font-sans)}
+.mi-btn:focus-visible,.mi-seg button:focus-visible,.mi-field input:focus-visible,.sw:focus-visible,.tb-btn:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+.mi-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);font-size:14px;line-height:20px;font-weight:500;padding:8px 16px;cursor:pointer;
+  color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);white-space:nowrap;
+  transition:background-color var(--duration-fast) var(--ease-standard),border-color var(--duration-fast) var(--ease-standard),color var(--duration-fast) var(--ease-standard),transform var(--duration-fast) var(--ease-standard),filter var(--duration-fast) var(--ease-standard)}
+.mi-btn:hover{background:var(--accent-soft);border-color:var(--accent)}
+.mi-btn:active{transform:translateY(1px)}
+.mi-btn--primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.mi-btn--primary:hover{background:var(--accent);border-color:var(--accent);filter:brightness(1.1)}
+.mi-btn--ghost{background:transparent;border-color:transparent;color:var(--accent)}
+.mi-btn--ghost:hover{background:var(--accent-soft);border-color:transparent}
+.mi-btn--sm{padding:5px 12px;font-size:13px;line-height:18px}
+.mi-btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);box-shadow:inset 0 0 0 var(--border-width-thin) var(--accent)}
+.mi-btn:disabled{opacity:.45;cursor:default;transform:none;filter:none}
+.mi-seg{display:inline-flex;border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);overflow:hidden;background:var(--surface-raised);flex:none}
+.mi-seg button{border:0;background:transparent;color:var(--ink-muted);padding:6px 12px;font-size:14px;line-height:20px;cursor:pointer;white-space:nowrap;
+  transition:background-color var(--duration-fast) var(--ease-standard),color var(--duration-fast) var(--ease-standard)}
+.mi-seg button+button{border-left:var(--border-width-thin) solid var(--border-strong)}
+.mi-seg button:hover{color:var(--ink);background:var(--accent-soft)}
+.mi-seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.mi-field{display:grid;grid-template-columns:1fr auto;gap:0 8px;align-items:center;font:400 13px/18px var(--font-sans);color:var(--ink)}
+.mi-field output{font:600 13px var(--font-mono);color:var(--ink)}
+.mi-field input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--accent);margin:2px 0}
+.mi-callout{background:var(--surface-raised);color:var(--ink);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);font:400 16px/26px var(--font-serif)}
+.mi-callout .mi-label{display:block;font:600 12px/18px var(--font-sans);letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:var(--space-1)}
+.mi-callout p{margin:0}
+.mi-callout--nota{background:var(--surface-sunken);border-color:var(--border)}
+.mi-callout--nota .mi-label{color:var(--ink-muted)}
+.mi-callout--aviso{border-color:var(--warning)}
+.mi-callout--aviso .mi-label{color:var(--warning)}
+.mi-callout--pio{display:grid;grid-template-columns:auto 1fr;gap:var(--space-4);align-items:center;background:var(--accent-soft);border-color:var(--accent)}
+.mi-pio{width:72px;height:72px;border-radius:50%;background:var(--pio-tile);display:grid;place-items:center;border:var(--border-width-thin) solid var(--border);animation:mi-pop var(--duration-slow) var(--ease-out) both}
+.mi-pio img{width:60px;height:60px;object-fit:contain;display:block}
+@keyframes mi-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes mi-pop{from{opacity:0;transform:scale(.9) translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+

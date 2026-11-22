@@ -1,0 +1,101 @@
+/* Bloques: líneas, desarrollo alineado (deriv), acciones de línea, añadir línea, vacío. Origen: pizarra.html:171-255. */
+.blk{display:flex;align-items:flex-start;gap:var(--space-2);border:var(--border-width-thin) solid transparent;border-radius:var(--radius-md);padding:2px 4px;transition:border-color var(--duration-fast) var(--ease-standard),background-color var(--duration-fast) var(--ease-standard)}
+.blk:hover{border-color:var(--border)}
+.blk.is-active{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 35%,transparent)}
+.blk.drop-before{box-shadow:0 -3px 0 var(--accent)}
+.blk.drop-after{box-shadow:0 3px 0 var(--accent)}
+.blk-handle{flex:none;width:22px;align-self:stretch;min-height:34px;border:0;background:transparent;color:var(--ink-muted);cursor:grab;border-radius:var(--radius-sm);font:600 14px/1 var(--font-mono);opacity:0;transition:opacity var(--duration-fast) var(--ease-standard)}
+.blk:hover .blk-handle,.blk.is-active .blk-handle,.blk-handle:focus-visible{opacity:1}
+.blk-handle:hover{background:var(--accent-soft);color:var(--ink)}
+.blk-body{flex:1 1 auto;min-width:0;display:flex;justify-content:flex-start;overflow-x:auto;scrollbar-width:thin}
+.blk[data-align="center"] .blk-body{justify-content:center}
+.blk[data-align="right"] .blk-body{justify-content:flex-end}
+.blk.is-boxed math-field,.blk.is-boxed .blk-text{border:var(--border-width-medium) solid var(--accent);border-radius:var(--radius-md);padding:2px 10px}
+.blk.is-result math-field{background:var(--surface-sunken);border-radius:var(--radius-md)}
+math-field{font-size:calc(24px * var(--scale));min-width:3em;max-width:100%;background:transparent;border:0;outline:none;color:var(--ink);padding:2px 4px;
+  --caret-color:var(--accent);--primary:var(--ink);--selection-background-color:var(--selection);--selection-color:var(--ink);
+  --contains-highlight-background-color:color-mix(in srgb,var(--selection) 55%,transparent);--placeholder-color:var(--ink-muted);--smart-fence-color:var(--ink-muted);
+  --keyboard-zindex:200}
+math-field:focus-within{outline:none}
+math-field::part(menu-toggle),math-field::part(virtual-keyboard-toggle){display:none}
+.blk-text{font:400 calc(19px * var(--scale))/1.5 var(--font-serif);color:var(--ink);min-width:6em;max-width:100%;outline:none;padding:4px 6px;white-space:pre-wrap;overflow-wrap:anywhere}
+.blk-text:empty::before{content:attr(data-ph);color:var(--ink-muted)}
+/* Desarrollo alineado por el = */
+.deriv{display:grid;grid-template-columns:max-content max-content max-content minmax(12em,1fr) auto auto;align-items:stretch;column-gap:0;row-gap:2px}
+.dcell math-field{display:inline-block;width:auto;min-width:1.2em}
+.drow{display:contents}
+.drow>*{grid-row:var(--gr)}
+.dl{grid-column:1}.deq{grid-column:2}.dr{grid-column:3}.dnote{grid-column:4}.drow-del{grid-column:5}
+.dcell{display:flex;align-items:center;min-height:calc(34px * var(--scale));border:var(--border-width-thin) solid transparent;border-left-width:0;border-right-width:0;padding:0 2px}
+.dcell.dl{padding-left:6px}.dcell.dr{padding-right:6px}
+.dcell.dl{justify-content:flex-end;border-left-width:var(--border-width-thin);border-radius:var(--radius-md) 0 0 var(--radius-md)}
+.dcell.dr{justify-content:flex-start;border-right-width:var(--border-width-thin);border-radius:0 var(--radius-md) var(--radius-md) 0}
+.dcell.deq{justify-content:center;font:400 calc(24px * var(--scale))/1 KaTeX_Main,"Times New Roman",var(--font-serif);color:var(--ink);padding:0 calc(4px * var(--scale));user-select:none}
+.dcell.on{background:color-mix(in srgb,var(--accent-soft) 70%,transparent)}
+.dcell.boxed{border-color:var(--accent);border-width:var(--border-width-medium);border-left-width:0;border-right-width:0}
+.dcell.dl.boxed{border-left-width:var(--border-width-medium)}
+.dcell.dr.boxed{border-right-width:var(--border-width-medium)}
+.dnote{align-self:stretch;display:flex;align-items:center;font:400 calc(15px * var(--scale))/1.4 var(--font-serif);color:var(--ink-muted);border-left:var(--border-width-thin) solid var(--border);padding:2px 0 2px var(--space-4);margin-left:var(--space-4);outline:none;min-width:8em;white-space:pre-wrap;overflow-wrap:anywhere}
+.dnote:empty::before{content:attr(data-ph);opacity:.55}
+.dnote:focus{color:var(--ink)}
+.dnote.on{border-left-color:var(--accent)}
+.blk-deriv.is-active{background:transparent}
+/* Botones para borrar: × por paso y × por línea o bloque */
+.x-del{flex:none;align-self:center;width:28px;height:28px;padding:0;display:grid;place-items:center;border:var(--border-width-thin) solid transparent;border-radius:var(--radius-md);background:transparent;color:var(--ink-muted);font:400 18px/1 var(--font-sans);cursor:pointer;opacity:0;
+  transition:opacity var(--duration-fast) var(--ease-standard),background-color var(--duration-fast) var(--ease-standard),color var(--duration-fast) var(--ease-standard)}
+.x-del:hover{background:var(--accent-soft);color:var(--warning);border-color:var(--warning)}
+.x-del:focus-visible{opacity:1;outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+.blk:hover>.blk-del,.blk.is-active>.blk-del{opacity:1}
+.drow:hover>.drow-del,.drow-del.on{opacity:1}
+.drow-del{margin-left:var(--space-2)}
+.blk-deriv>.blk-del{align-self:flex-start;margin-top:2px}
+.blk>.blk-exp{align-self:flex-start;margin-top:2px}
+.blk-exp:hover{color:var(--accent);border-color:var(--accent)}
+/* Duplicar: ⧉ por línea y por paso */
+.blk-deriv>.blk-dup,.blk>.blk-exp~.blk-dup{align-self:flex-start;margin-top:2px}
+.blk-dup,.drow-dup{font-size:16px}
+.x-del.blk-dup:hover,.x-del.drow-dup:hover{color:var(--accent);border-color:var(--accent)}
+.drow:hover>.drow-dup,.drow-dup.on{opacity:1}
+.drow-dup{grid-column:6}
+/* Números de línea (1, 2, 3… y 3.1, 3.2… en los pasos) */
+#blocks{counter-reset:ln}
+#blocks>.blk{counter-increment:ln;counter-reset:st}
+#blocks>.blk::before{content:counter(ln);flex:none;align-self:flex-start;min-width:1.6em;margin-top:calc(9px * var(--scale));text-align:right;font:600 12px/1 var(--font-mono);color:var(--ink-muted);opacity:.75;user-select:none;pointer-events:none}
+#blocks>.blk.is-active::before{color:var(--accent);opacity:1}
+#blocks .dcell.dl{position:relative;counter-increment:st}
+#blocks .dcell.dl::before{content:counter(ln) "." counter(st);position:absolute;left:2px;top:1px;font:500 10px/1 var(--font-mono);color:var(--ink-muted);opacity:.7;user-select:none;pointer-events:none}
+body.no-ln #blocks>.blk::before,body.no-ln #blocks .dcell.dl::before,body.presenting #blocks>.blk::before,body.presenting #blocks .dcell.dl::before{display:none}
+/* Botón «+ Nueva línea» al final de la página */
+.add-line{display:flex;align-items:center;gap:6px;margin:var(--space-3) 0 0 30px;padding:6px 14px;border:var(--border-width-thin) dashed var(--border-strong);border-radius:var(--radius-pill);background:transparent;color:var(--ink-muted);font:600 13px/20px var(--font-sans);cursor:pointer;position:relative;z-index:1}
+.add-line:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.add-line:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+body[data-mode="draw"] .add-line,body.presenting .add-line{display:none}
+.blk>.blk-exp+.blk-del{align-self:flex-start;margin-top:2px}
+@media (hover:none){.x-del{opacity:.7}}
+#toast .mi-callout{display:flex;align-items:center;gap:var(--space-4)}
+#toast .mi-callout p{flex:1 1 auto}
+/* Fórmulas anchas: las explicaciones van debajo de cada paso (lo decide blocks/deriv.fitStack) */
+.deriv.stacked{grid-template-columns:auto max-content max-content minmax(0,1fr)}
+.deriv.stacked .dcell,.deriv.stacked .drow-del{grid-row:var(--gm)}
+.deriv.stacked .dnote{grid-row:var(--gn);grid-column:2/5;min-width:0;margin:0 0 var(--space-2);padding-left:var(--space-3)}
+.deriv.stacked .drow-del{grid-column:1;margin:0}
+.deriv.stacked .drow-dup{grid-row:var(--gn);grid-column:1;margin:0}
+.deriv.stacked .dl{grid-column:2}.deriv.stacked .deq{grid-column:3}.deriv.stacked .dr{grid-column:4}
+@media (max-width:640px){
+  .deriv{grid-template-columns:auto max-content max-content max-content}
+  .deriv .dcell,.deriv .drow-del{grid-row:var(--gm)}
+  .deriv .dnote{grid-row:var(--gn);grid-column:2/5;margin:0 0 var(--space-2);padding-left:var(--space-3)}
+  .deriv .drow-del{grid-column:1;margin:0}
+  .deriv .drow-dup{grid-row:var(--gn);grid-column:1;margin:0}
+  .deriv .dl{grid-column:2}.deriv .deq{grid-column:3}.deriv .dr{grid-column:4}
+}
+.empty-pio{max-width:620px;margin:var(--space-5) 0 0 30px;animation:mi-rise var(--duration-base) var(--ease-out) both}
+
+
+/* Selección: azul (token --selection) para que no se confunda con el fondo verde de la línea activa */
+#blocks ::selection,.blk-text::selection,.blk-note::selection{background:var(--selection);color:var(--ink)}
+/* Explicación a la derecha de una línea de fórmula (b.note) */
+.blk-note{align-self:stretch;display:flex;align-items:center;font:400 calc(15px * var(--scale))/1.4 var(--font-serif);color:var(--ink-muted);border-left:var(--border-width-thin) solid var(--border);padding:2px 0 2px var(--space-4);margin-left:var(--space-4);outline:none;min-width:8em;max-width:45%;white-space:pre-wrap;overflow-wrap:anywhere}
+.blk-note:empty::before{content:attr(data-ph);opacity:.55}
+.blk-note:focus{color:var(--ink);border-left-color:var(--accent)}
+.blk>.blk-note-btn{font-size:14px}

@@ -1,0 +1,20 @@
+/* Bloque imagen */
+.img-blk{position:relative;margin:var(--space-2) 0;max-width:100%;min-width:60px;display:flex;flex-direction:column;gap:var(--space-1)}
+.blk[data-align=center] .img-blk{margin-inline:auto}
+.blk[data-align=right] .img-blk{margin-inline-start:auto}
+.img-blk .img-frame{position:relative;line-height:0;border-radius:var(--radius-md);overflow:visible}
+.img-blk img{display:block;width:100%;height:auto;border-radius:var(--radius-md);background:var(--surface-sunken);user-select:none}
+.img-blk .img-grip{position:absolute;right:-6px;bottom:-6px;width:18px;height:18px;border-radius:50%;background:var(--surface-raised);border:2px solid var(--border-strong);cursor:ew-resize;touch-action:none;opacity:0;transition:opacity .15s}
+.img-blk .img-alt{position:absolute;left:var(--space-1);top:var(--space-1);opacity:0;transition:opacity .15s;line-height:1.2}
+.img-blk:hover .img-grip,.img-blk:hover .img-alt,.img-blk:focus-within .img-grip,.img-blk:focus-within .img-alt{opacity:1}
+@media (hover:none){.img-blk .img-grip,.img-blk .img-alt{opacity:1}.img-blk .img-grip{width:26px;height:26px}}
+.img-blk .img-cap{font:italic 400 14px/20px var(--font-serif);color:var(--ink-muted);text-align:center;outline:none;min-height:20px;overflow-wrap:anywhere}
+.img-blk .img-cap:empty::before{content:attr(data-ph);color:var(--ink-faint,var(--ink-muted));opacity:.7}
+.img-blk .img-cap:focus{color:var(--ink)}
+.img-blk .img-miss{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);padding:var(--space-3);color:var(--ink);background:var(--surface-sunken);border:var(--border-width-thin) dashed var(--border-strong);border-radius:var(--radius-md);font:400 14px/20px var(--font-sans)}
+.img-blk .img-miss[hidden],.img-blk .img-frame[hidden]{display:none}
+@media (max-width:560px){.img-blk{min-width:0}}
+@media print{.img-blk{break-inside:avoid}.img-blk .img-grip,.img-blk .img-alt{display:none}}
+
+/* Hoja mientras se arrastra una imagen encima */
+#sheet.img-drop{outline:3px dashed var(--accent);outline-offset:-6px}

@@ -1,0 +1,70 @@
+/* Estructura: cabecera, barra de herramientas, papel, modo presentación y hoja. Origen: pizarra.html:102-170. */
+/* ===== Pizarra ===== */
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--surface);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;overflow:hidden}
+kbd,.keys td:first-child{font-variant-ligatures:none}
+kbd{font:600 .85em var(--font-mono);background:var(--surface-sunken);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-sm);padding:0 5px}
+
+.top{display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border-bottom:var(--border-width-thin) solid var(--border);background:var(--surface-raised);flex:none;overflow-x:auto;scrollbar-width:thin}
+.brand{display:flex;align-items:center;gap:var(--space-2);flex:none;margin-right:var(--space-2)}
+.save-dot{width:8px;height:8px;border-radius:50%;background:var(--on-accent);opacity:0;transition:opacity var(--duration-fast) var(--ease-standard)}
+#saveBtn.dirty .save-dot{opacity:1}
+.pio-badge{flex:none;display:grid;place-items:center;border-radius:50%;background:var(--pio-tile);border:var(--border-width-thin) solid var(--border);width:40px;height:40px}
+.pio-badge img{width:84%;height:84%;object-fit:contain;display:block}
+.pio-badge.pio-logo{width:36px;height:36px;animation:mi-pop var(--duration-slow) var(--ease-out) both}
+.pio-badge.pio-sm{width:32px;height:32px}
+.pio-badge.pio-lg{width:56px;height:56px}
+.brand b{font:600 20px/28px var(--font-sans);color:var(--brand)}
+.brand span{font:500 14px/20px var(--font-sans);color:var(--ink-muted)}
+.pages{display:flex;align-items:center;gap:var(--space-1);flex:none}
+.pages output{font:600 13px var(--font-mono);color:var(--ink);min-width:52px;text-align:center}
+.spacer{flex:1 1 auto}
+.top .mi-field{width:118px;flex:none}
+.icon-btn{padding:6px 10px;min-width:36px}
+
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border-bottom:var(--border-width-thin) solid var(--border);background:var(--surface);flex:none}
+@media (max-width:720px){.toolbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}}
+.grp{display:flex;align-items:center;gap:var(--space-1);flex:none;padding-right:var(--space-2);border-right:var(--border-width-thin) solid var(--border)}
+.grp:last-child{border-right:0;padding-right:0}
+.grp-push{margin-left:auto}
+.tb-btn{font:400 16px/20px var(--font-serif);min-width:36px;height:34px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;
+  color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);white-space:nowrap;
+  transition:background-color var(--duration-fast) var(--ease-standard),border-color var(--duration-fast) var(--ease-standard)}
+.tb-btn:hover{background:var(--accent-soft);border-color:var(--accent)}
+.tb-btn:active{transform:translateY(1px)}
+.tb-btn.txt{font:500 13px/18px var(--font-sans)}
+.tb-btn .caret{font-size:10px;color:var(--ink-muted)}
+.sw{width:30px;height:30px;border-radius:50%;border:var(--border-width-thin) solid var(--border-strong);background:var(--surface-raised);display:grid;place-items:center;cursor:pointer;padding:0}
+.sw::before{content:"";width:18px;height:18px;border-radius:50%;background:var(--sw)}
+.sw[aria-pressed="true"]{border:var(--border-width-medium) solid var(--accent);box-shadow:inset 0 0 0 2px var(--surface-raised)}
+body[data-mode="write"] .only-draw,body[data-mode="draw"] .only-write{display:none}
+
+.wrap{flex:1 1 auto;overflow:auto;padding:var(--space-4);position:relative}
+.sheet.paper{max-width:none;width:var(--pw);min-height:var(--ph);border-color:var(--border-strong);border-radius:var(--radius-md)}
+.page-end{position:absolute;left:0;right:0;height:0;border-top:2px dashed var(--warning);pointer-events:none;z-index:3}
+.page-end span{position:absolute;right:10px;top:-24px;font:600 12px/18px var(--font-sans);color:var(--warning);background:var(--surface-raised);padding:1px 8px;border:var(--border-width-thin) solid var(--warning);border-radius:var(--radius-pill)}
+.paper-sel{width:100%;padding:7px 10px;font:400 14px var(--font-sans);color:var(--ink);background:var(--surface-raised);border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md)}
+.paper-sel:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+#viewPop .mi-field{width:100%}
+#presBtn svg{margin-right:2px}
+/* Modo presentación */
+body.presenting .top,body.presenting .toolbar,body.presenting .show-chrome{display:none!important}
+body.presenting .wrap{padding:0;background:var(--surface-sunken)}
+body.presenting .sheet{margin:0 auto;border-color:transparent;border-radius:0}
+body.presenting.pres-paper .wrap{display:grid;place-items:center;overflow:hidden}
+body.presenting .sheet.paper{border-color:var(--border)}
+body.presenting .blk-handle,body.presenting .x-del,body.presenting .empty-pio,body.presenting .page-end span{display:none!important}
+body.presenting .blk,body.presenting .blk:hover,body.presenting .blk.is-active{border-color:transparent;background:transparent}
+.pres-bar{position:fixed;left:0;right:0;bottom:var(--space-4);margin:0 auto;width:max-content;display:none;align-items:center;gap:var(--space-2);padding:6px 10px;border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-pill);background:var(--surface-raised);z-index:160;transition:opacity var(--duration-base) var(--ease-standard)}
+.pres-bar output{font:600 13px var(--font-mono);color:var(--ink);min-width:56px;text-align:center}
+body.presenting .pres-bar{display:flex}
+.pres-bar.idle{opacity:0}
+.pres-bar.idle:hover,.pres-bar.idle:focus-within{opacity:1}
+.sheet{position:relative;max-width:1400px;margin:0 auto;background:var(--surface-raised);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-lg);min-height:100%;padding:var(--space-5) var(--space-5) var(--space-8)}
+#ink{position:absolute;left:0;top:0;pointer-events:none;z-index:2;border-radius:var(--radius-lg)}
+body[data-mode="draw"] #ink{pointer-events:auto;cursor:crosshair;touch-action:none}
+body[data-mode="draw"] .sheet{cursor:crosshair}
+#blocks{position:relative;z-index:1;display:flex;flex-direction:column;gap:var(--space-1)}
+

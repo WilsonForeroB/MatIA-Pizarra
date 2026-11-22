@@ -1,0 +1,40 @@
+/* Tokens del sistema de diseño MatIA (colores, tipografía, espacios, radios). Modo claro y oscuro. Origen: pizarra.html:23-61. */
+/* ===== MatIA · tokens.css (Apéndice A) ===== */
+:root, [data-theme="light"] {
+  --surface:#f7faf6; --surface-raised:#ffffff; --surface-sunken:#ebf1ea; --ink:#14201a; --ink-muted:#46554c;
+  --border:#d5e0d4; --border-strong:#76867b; --brand:#0f5a3a; --on-brand:#ffffff; --brand-soft:#e2f0e7; --focus-ring:#0f7a4d;
+  --mod-math:#1d58c9; --mod-math-soft:#e3ebfa; --on-mod:#ffffff;
+  --data-1:#009b71; --data-2:#0072b2; --data-3:#b87f00; --data-4:#bc6f9a; --data-5:#d55e00; --data-6:#4590ba; --data-7:#7b5ea7; --data-8:#8f8f00; --selection:#cfe2f6; --selection-strong:#0072b2;
+  --warning:#a8480c; --pio-tile:#fff6d6;
+  color-scheme: light;
+}
+[data-theme="dark"] {
+  --surface:#0e1612; --surface-raised:#151f1a; --surface-sunken:#0a110e; --ink:#e8f1ea; --ink-muted:#a6b8ac;
+  --border:#25352d; --border-strong:#6c8074; --brand:#6fd3a0; --on-brand:#08140e; --brand-soft:#123324; --focus-ring:#7fe0ae;
+  --mod-math:#7fa8f5; --mod-math-soft:#14274a; --on-mod:#0b1220;
+  --data-1:#2fc79a; --data-2:#4aa3df; --data-3:#f5b62e; --data-4:#e59ac3; --data-5:#f0824a; --data-6:#7cc8f2; --data-7:#a58bd4; --data-8:#d6d34a; --selection:#1e4467; --selection-strong:#4aa3df;
+  --warning:#f2a068; --pio-tile:#fff6d6;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface:#0e1612; --surface-raised:#151f1a; --surface-sunken:#0a110e; --ink:#e8f1ea; --ink-muted:#a6b8ac;
+    --border:#25352d; --border-strong:#6c8074; --brand:#6fd3a0; --on-brand:#08140e; --brand-soft:#123324; --focus-ring:#7fe0ae;
+    --mod-math:#7fa8f5; --mod-math-soft:#14274a; --on-mod:#0b1220;
+    --data-1:#2fc79a; --data-2:#4aa3df; --data-3:#f5b62e; --data-4:#e59ac3; --data-5:#f0824a; --data-6:#7cc8f2; --data-7:#a58bd4; --data-8:#d6d34a; --selection:#1e4467; --selection-strong:#4aa3df;
+    --warning:#f2a068; --pio-tile:#fff6d6;
+    color-scheme: dark;
+  }
+}
+:root {
+  --font-sans:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-serif:"Source Serif 4", "Iowan Old Style", Palatino, Georgia, serif;
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px;
+  --radius-sm:4px; --radius-md:8px; --radius-lg:14px; --radius-pill:999px;
+  --duration-fast:150ms; --duration-base:220ms; --duration-slow:320ms; --duration-demo:600ms;
+  --ease-standard:cubic-bezier(0.2, 0, 0, 1); --ease-out:cubic-bezier(0.16, 1, 0.3, 1); --ease-in-out:cubic-bezier(0.45, 0, 0.55, 1);
+  --border-width-thin:1px; --border-width-medium:2px; --border-width-thick:3px;
+  --scale:1.4;
+}
+

@@ -1,0 +1,10 @@
+{ "app": "MatIA Pizarra", "formato": 1, "title": "Referencia", "paper": "slide", "cur": 0,
+  "pages": [
+    { "blocks": [
+      { "type": "math", "v": "x+1=5", "align": "left" },
+      { "type": "text", "v": "Texto de prueba" },
+      { "type": "deriv", "rows": [{ "l": "x+1", "r": "5", "note": "Planteamiento" }, { "l": "x", "r": "4", "note": "Restamos 1" }] },
+      { "type": "table", "rows": [["x", "-1", "0", "1"], ["f(x)", "1", "0", "1"]] },
+      { "type": "graph", "fns": ["f(x)=x^2"], "xmin": -5, "xmax": 5 }
+    ], "strokes": [{ "tool": "pen", "color": "#000", "w": 3, "pts": [[10, 10], [50, 50], [90, 20]] }] }
+  ] }

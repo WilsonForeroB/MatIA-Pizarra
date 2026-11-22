@@ -1,0 +1,42 @@
+/* Selección de líneas, menú Operaciones y tablas. Origen: pizarra.html:344-384. */
+/* Elegir la línea */
+.pick-bar{position:fixed;left:0;right:0;bottom:var(--space-5);margin:0 auto;z-index:140;width:min(760px,calc(100vw - 32px));display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-3);align-items:center;font-size:15px;line-height:23px;animation:mi-rise var(--duration-base) var(--ease-out) both}
+.pick-bar .pick-acts{display:flex;gap:var(--space-2);flex-wrap:wrap;justify-content:flex-end}
+body.picking .blk{position:relative}
+body.picking .blk.pick-ok{cursor:pointer;border:var(--border-width-medium) dashed color-mix(in srgb,var(--accent) 55%,transparent);animation:pick-pulse 1.6s var(--ease-standard) infinite}
+body.picking .blk.pick-no{opacity:.4;cursor:not-allowed;filter:grayscale(.6)}
+body.picking .blk math-field,body.picking .blk .blk-text,body.picking .blk .dnote{pointer-events:none}
+body.picking .blk.pick-active{border-style:solid;border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 55%,transparent)}
+body.picking .blk-deriv.pick-active{background:transparent}
+body.picking .dcell.pick-arow,body.picking .dnote.pick-arow{background:color-mix(in srgb,var(--accent-soft) 70%,transparent)}
+body.picking .blk.pick-hover{border-style:solid;border-color:var(--accent);background:var(--accent-soft);animation:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}
+body.picking .blk-deriv.pick-hover{background:transparent}
+body.picking .dcell.pick-rhover,body.picking .dnote.pick-rhover{background:var(--accent-soft);box-shadow:inset 0 -3px 0 var(--accent)}
+body.picking .blk[data-pl].pick-active::after,body.picking .blk[data-pl].pick-hover::after{content:attr(data-pl);position:absolute;right:8px;top:-12px;z-index:5;padding:2px 10px;border-radius:var(--radius-pill);background:var(--accent);color:var(--surface-raised);font:700 12px/18px var(--font-sans);white-space:nowrap;pointer-events:none;animation:mi-pop var(--duration-fast) var(--ease-out) both}
+body.picking.pick-hovering .blk.pick-active:not(.pick-hover)::after{display:none}
+.blk.pick-done{animation:pick-flash .9s var(--ease-out) both}
+.pick-bar .pk-nudge{animation:pk-nudge .6s var(--ease-out)}
+@keyframes pk-nudge{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 60%,transparent);transform:scale(1)}40%{transform:scale(1.06)}100%{box-shadow:0 0 0 10px transparent;transform:scale(1)}}
+@keyframes pick-pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 0%,transparent)}50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)}}
+@keyframes pick-flash{0%{background:var(--accent-soft);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 45%,transparent);border-color:var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){body.picking .blk.pick-ok,.blk.pick-done,body.picking .blk[data-pl]::after,.pick-bar .pk-nudge{animation:none}.blk.pick-done{background:var(--accent-soft);border-color:var(--accent)}}
+@media (max-width:640px){.pick-bar{grid-template-columns:auto 1fr;bottom:var(--space-4)}.pick-bar .pick-acts{grid-column:1/-1}}
+/* Operaciones */
+.pop-ops{width:min(560px,calc(100vw - 16px));max-height:min(75vh,640px);overflow-y:auto;gap:var(--space-2)}
+.pop-ops .ops-hint{margin:0;font:400 13px/20px var(--font-sans);color:var(--ink-muted)}
+.ops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:4px}
+.ops-grid .mi-btn{justify-content:flex-start;white-space:normal;text-align:left;height:auto;min-height:34px}
+/* Tablas (Ruffini, verdad, valores) */
+.mtable-wrap{display:flex;flex-direction:column;gap:var(--space-2);max-width:100%;overflow-x:auto;outline:none;padding:4px 2px}
+.mtable-cap{margin:0;font:600 calc(13px * var(--scale))/1.4 var(--font-sans);color:var(--ink-muted)}
+.mtable{border-collapse:collapse;font:400 calc(17px * var(--scale))/1.3 var(--font-serif);color:var(--ink)}
+.mtable th,.mtable td{padding:4px calc(10px * var(--scale));text-align:center;white-space:nowrap}
+.mtable th{font-weight:600;border-bottom:var(--border-width-medium) solid var(--ink)}
+.mtable td.vbar,.mtable th.vbar{border-right:var(--border-width-medium) solid var(--ink)}
+.mtable tr.hline td{border-top:var(--border-width-medium) solid var(--ink)}
+.mtable.ruffini td{text-align:right;font-family:var(--font-mono);font-size:calc(15px * var(--scale))}
+.mtable td.mark{border:var(--border-width-medium) solid var(--accent);color:var(--accent);font-weight:600}
+.mtable td.bold,.mtable th.bold{font-weight:600;background:var(--accent-soft)}
+.mtable.truth td.t{color:var(--data-1)}
+.mtable.values td:first-child,.mtable.values th:first-child{font-style:italic}
+.mtable.values tr td{border:var(--border-width-thin) solid var(--border)}

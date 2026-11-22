@@ -1,0 +1,2874 @@
+{
+ "engine": {
+  "compute-frac": {
+   "ok": {
+    "latex": "\\frac{3}{4}+\\frac{1}{6}=\\frac{11}{12}",
+    "value": {
+     "t": "s",
+     "v": {
+      "n": "11n",
+      "d": "12n"
+     }
+    }
+   }
+  },
+  "compute-matprod": {
+   "ok": {
+    "latex": "A\\cdot B=\\begin{pmatrix}7 & 10\\\\ 15 & 22\\end{pmatrix}",
+    "value": {
+     "t": "m",
+     "a": [
+      [
+       {
+        "n": "7n",
+        "d": "1n"
+       },
+       {
+        "n": "10n",
+        "d": "1n"
+       }
+      ],
+      [
+       {
+        "n": "15n",
+        "d": "1n"
+       },
+       {
+        "n": "22n",
+        "d": "1n"
+       }
+      ]
+     ],
+     "r": 2,
+     "c": 2,
+     "aug": null
+    }
+   }
+  },
+  "compute-det": {
+   "ok": {
+    "latex": "\\det(A)=-1",
+    "value": {
+     "t": "s",
+     "v": {
+      "n": "-1n",
+      "d": "1n"
+     }
+    }
+   }
+  },
+  "compute-err": {
+   "err": "MErr: Escribe primero una operación, por ejemplo A\\cdot B."
+  },
+  "gaussLines": {
+   "ok": [
+    "\\left(\\begin{matrix}2 & 1\\\\ 1 & -1\\end{matrix}\\,\\middle|\\,\\begin{matrix}3\\\\ 0\\end{matrix}\\right)",
+    "\\xrightarrow{F_{1}\\leftrightarrow F_{2}}\\left(\\begin{matrix}1 & -1\\\\ 2 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}0\\\\ 3\\end{matrix}\\right)",
+    "\\xrightarrow{F_{2}-2F_{1}}\\left(\\begin{matrix}1 & -1\\\\ 0 & 3\\end{matrix}\\,\\middle|\\,\\begin{matrix}0\\\\ 3\\end{matrix}\\right)",
+    "\\operatorname{rg}(A)=\\operatorname{rg}(A|b)=2=\\text{ n.º de incógnitas}\\Rightarrow\\text{Compatible determinado}",
+    "x=1,\\quad y=1"
+   ]
+  },
+  "gaussLines-jordan": {
+   "ok": [
+    "\\left(\\begin{matrix}2 & 1\\\\ 1 & -1\\end{matrix}\\,\\middle|\\,\\begin{matrix}3\\\\ 0\\end{matrix}\\right)",
+    "\\xrightarrow{F_{1}\\leftrightarrow F_{2}}\\left(\\begin{matrix}1 & -1\\\\ 2 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}0\\\\ 3\\end{matrix}\\right)",
+    "\\xrightarrow{F_{2}-2F_{1}}\\left(\\begin{matrix}1 & -1\\\\ 0 & 3\\end{matrix}\\,\\middle|\\,\\begin{matrix}0\\\\ 3\\end{matrix}\\right)",
+    "\\xrightarrow{F_{2}\\to \\frac{1}{3}F_{2}}\\left(\\begin{matrix}1 & -1\\\\ 0 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}0\\\\ 1\\end{matrix}\\right)",
+    "\\xrightarrow{F_{1}+F_{2}}\\left(\\begin{matrix}1 & 0\\\\ 0 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}1\\\\ 1\\end{matrix}\\right)",
+    "\\operatorname{rg}(A)=\\operatorname{rg}(A|b)=2=\\text{ n.º de incógnitas}\\Rightarrow\\text{Compatible determinado}",
+    "x=1,\\quad y=1"
+   ]
+  },
+  "inverseSteps": {
+   "ok": [
+    {
+     "type": "math",
+     "v": "(A\\,|\\,I)=\\left(\\begin{matrix}1 & 2\\\\ 3 & 4\\end{matrix}\\,\\middle|\\,\\begin{matrix}1 & 0\\\\ 0 & 1\\end{matrix}\\right)"
+    },
+    {
+     "type": "math",
+     "v": "\\xrightarrow{F_{2}-3F_{1}}\\left(\\begin{matrix}1 & 2\\\\ 0 & -2\\end{matrix}\\,\\middle|\\,\\begin{matrix}1 & 0\\\\ -3 & 1\\end{matrix}\\right)"
+    },
+    {
+     "type": "math",
+     "v": "\\xrightarrow{F_{2}\\to -\\frac{1}{2}F_{2}}\\left(\\begin{matrix}1 & 2\\\\ 0 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}1 & 0\\\\ \\frac{3}{2} & -\\frac{1}{2}\\end{matrix}\\right)"
+    },
+    {
+     "type": "math",
+     "v": "\\xrightarrow{F_{1}-2F_{2}}\\left(\\begin{matrix}1 & 0\\\\ 0 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}-2 & 1\\\\ \\frac{3}{2} & -\\frac{1}{2}\\end{matrix}\\right)"
+    },
+    {
+     "type": "math",
+     "v": "A^{-1}=\\begin{pmatrix}-2 & 1\\\\ \\frac{3}{2} & -\\frac{1}{2}\\end{pmatrix}"
+    }
+   ]
+  },
+  "detSarrus": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\begin{vmatrix}2 & 1 & -1\\\\ -3 & -1 & 2\\\\ -2 & 1 & 2\\end{vmatrix}",
+       "r": "2\\cdot \\left(-1\\right)\\cdot 2+1\\cdot 2\\cdot \\left(-2\\right)+\\left(-1\\right)\\cdot \\left(-3\\right)\\cdot 1-\\left(\\left(-1\\right)\\cdot \\left(-1\\right)\\cdot \\left(-2\\right)+2\\cdot 2\\cdot 1+1\\cdot \\left(-3\\right)\\cdot 2\\right)",
+       "note": "Regla de Sarrus: diagonales hacia la derecha menos diagonales hacia la izquierda",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\left(\\left(-4\\right)+\\left(-4\\right)+3\\right)-\\left(\\left(-2\\right)+4+\\left(-6\\right)\\right)",
+       "note": "Multiplicamos",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\left(-5\\right)-\\left(-4\\right)",
+       "note": "Sumamos cada paréntesis",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "-1",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "detCofactor": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\begin{vmatrix}2 & 1 & -1\\\\ -3 & -1 & 2\\\\ -2 & 1 & 2\\end{vmatrix}",
+       "r": "2\\cdot \\begin{vmatrix}-1 & 2\\\\ 1 & 2\\end{vmatrix}-\\begin{vmatrix}-3 & 2\\\\ -2 & 2\\end{vmatrix}-\\begin{vmatrix}-3 & -1\\\\ -2 & 1\\end{vmatrix}",
+       "note": "Desarrollamos por la fila 1 (la que tiene más ceros); signo (−1)^(i+j)",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "2\\cdot \\left(-4\\right)-\\left(-2\\right)-\\left(-5\\right)",
+       "note": "Calculamos cada menor",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "-1",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "detGauss": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\begin{vmatrix}2 & 1 & -1\\\\ -3 & -1 & 2\\\\ -2 & 1 & 2\\end{vmatrix}",
+       "r": "\\begin{vmatrix}2 & 1 & -1\\\\ 0 & \\frac{1}{2} & \\frac{1}{2}\\\\ 0 & 2 & 1\\end{vmatrix}",
+       "note": "Triangulamos con F_i − k·F_j (no cambia el determinante); cada intercambio cambia el signo. F2 + 3/2F1, F3 + F1",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\begin{vmatrix}2 & 1 & -1\\\\ 0 & \\frac{1}{2} & \\frac{1}{2}\\\\ 0 & 0 & -1\\end{vmatrix}",
+       "note": "F3 − 4F2",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "2\\cdot \\frac{1}{2}\\cdot \\left(-1\\right)",
+       "note": "Matriz triangular: producto de la diagonal",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "-1",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "cramer": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\Delta",
+       "r": "\\begin{vmatrix}2 & 1\\\\ 1 & -1\\end{vmatrix}=-3",
+       "note": "Determinante de la matriz de coeficientes",
+       "boxed": false
+      },
+      {
+       "l": "\\Delta_{x}",
+       "r": "\\begin{vmatrix}3 & 1\\\\ 0 & -1\\end{vmatrix}=-3",
+       "note": "Cambiamos la columna de x por los términos independientes",
+       "boxed": false
+      },
+      {
+       "l": "\\Delta_{y}",
+       "r": "\\begin{vmatrix}2 & 3\\\\ 1 & 0\\end{vmatrix}=-3",
+       "note": "Cambiamos la columna de y por los términos independientes",
+       "boxed": false
+      },
+      {
+       "l": "x",
+       "r": "\\frac{\\Delta_{x}}{\\Delta}=\\frac{-3}{-3}=1",
+       "note": "",
+       "boxed": true
+      },
+      {
+       "l": "y",
+       "r": "\\frac{\\Delta_{y}}{\\Delta}=\\frac{-3}{-3}=1",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "productDeveloped": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "A\\cdot B",
+       "r": "\\begin{pmatrix}1\\cdot 1+2\\cdot 3 & 1\\cdot 2+2\\cdot 4\\\\ 3\\cdot 1+4\\cdot 3 & 3\\cdot 2+4\\cdot 4\\end{pmatrix}",
+       "note": "Cada elemento c_ij = fila i de la primera · columna j de la segunda",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\begin{pmatrix}7 & 10\\\\ 15 & 22\\end{pmatrix}",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "paramDiscussion": {
+   "ok": [
+    {
+     "type": "math",
+     "v": "(A\\,|\\,b)=\\left(\\begin{matrix}1 & 1 & a\\\\ 1 & a & 1\\\\ a & 1 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}1\\\\ 1\\\\ 1\\end{matrix}\\right)"
+    },
+    {
+     "type": "math",
+     "v": "|A|=\\begin{vmatrix}1 & 1 & a\\\\ 1 & a & 1\\\\ a & 1 & 1\\end{vmatrix}=-a^{3}+3a-2"
+    },
+    {
+     "type": "math",
+     "v": "|A|=0\\Leftrightarrow a=-2,\\ a=1"
+    },
+    {
+     "type": "math",
+     "v": "a\\neq -2,\\ a\\neq 1:\\ \\operatorname{rg}(A)=\\operatorname{rg}(A|b)=3\\Rightarrow\\text{Compatible determinado}"
+    },
+    {
+     "type": "math",
+     "v": "a=-2:\\ \\left(\\begin{matrix}1 & 1 & -2\\\\ 1 & -2 & 1\\\\ -2 & 1 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}1\\\\ 1\\\\ 1\\end{matrix}\\right)\\ \\operatorname{rg}(A)=2,\\ \\operatorname{rg}(A|b)=3\\Rightarrow\\text{Incompatible}"
+    },
+    {
+     "type": "math",
+     "v": "a=1:\\ \\left(\\begin{matrix}1 & 1 & 1\\\\ 1 & 1 & 1\\\\ 1 & 1 & 1\\end{matrix}\\,\\middle|\\,\\begin{matrix}1\\\\ 1\\\\ 1\\end{matrix}\\right)\\ \\operatorname{rg}(A)=1,\\ \\operatorname{rg}(A|b)=1\\Rightarrow\\text{Compatible indeterminado}"
+    }
+   ]
+  },
+  "eigen": {
+   "ok": [
+    {
+     "type": "math",
+     "v": "|A-\\lambda I|=\\begin{vmatrix}-\\lambda+2 & 0\\\\ 0 & -\\lambda+3\\end{vmatrix}=\\lambda^{2}-5\\lambda+6"
+    },
+    {
+     "type": "math",
+     "v": "|A-\\lambda I|=\\left(\\lambda-2\\right)\\left(\\lambda-3\\right)=0"
+    },
+    {
+     "type": "math",
+     "v": "\\text{Autovalores: }\\lambda=2,\\quad \\lambda=3"
+    },
+    {
+     "type": "math",
+     "v": "\\lambda=2:\\ (A-2I)\\,v=0\\Rightarrow V_{2}=\\left\\langle (1,0)\\right\\rangle ,\\ \\dim=1"
+    },
+    {
+     "type": "math",
+     "v": "\\lambda=3:\\ (A-3I)\\,v=0\\Rightarrow V_{3}=\\left\\langle (0,1)\\right\\rangle ,\\ \\dim=1"
+    },
+    {
+     "type": "math",
+     "v": "\\text{Diagonalizable: }P=\\begin{pmatrix}1 & 0\\\\ 0 & 1\\end{pmatrix},\\ D=\\begin{pmatrix}2 & 0\\\\ 0 & 3\\end{pmatrix},\\ A=PDP^{-1}"
+    }
+   ]
+  },
+  "vecDot": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "u\\cdot v",
+       "r": "1\\cdot 4+2\\cdot 5+3\\cdot 6",
+       "note": "Multiplicamos coordenada a coordenada y sumamos",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "4+10+18",
+       "note": "",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "32",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "vecCross": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "u\\times v",
+       "r": "\\begin{vmatrix}\\vec{i} & \\vec{j} & \\vec{k}\\\\ 1 & 0 & 0\\\\ 0 & 1 & 0\\end{vmatrix}",
+       "note": "Determinante simbólico con i, j, k en la primera fila",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\begin{vmatrix}0 & 0\\\\ 1 & 0\\end{vmatrix}\\vec{i}-\\begin{vmatrix}1 & 0\\\\ 0 & 0\\end{vmatrix}\\vec{j}+\\begin{vmatrix}1 & 0\\\\ 0 & 1\\end{vmatrix}\\vec{k}",
+       "note": "Desarrollamos por la primera fila",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\vec{k}",
+       "note": "",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\left(0,\\ 0,\\ 1\\right)",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "vecNorm": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\left\\lVert u\\right\\rVert",
+       "r": "\\sqrt{3^{2}+4^{2}}",
+       "note": "Raíz de la suma de los cuadrados",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\sqrt{25}",
+       "note": "",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "5",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "vecAngle": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\cos\\alpha",
+       "r": "\\frac{u\\cdot v}{\\left\\lVert u\\right\\rVert\\,\\left\\lVert v\\right\\rVert}",
+       "note": "Fórmula del ángulo entre dos vectores",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\frac{0}{\\sqrt{1}\\cdot\\sqrt{1}}",
+       "note": "u·v = 0, ‖u‖² = 1, ‖v‖² = 1",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "0\\approx 0.0000",
+       "note": "",
+       "boxed": false
+      },
+      {
+       "l": "\\alpha",
+       "r": "\\arccos\\left(0\\right)\\approx 90.00^{\\circ}",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "vecProj": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\operatorname{proy}_{v}u",
+       "r": "\\frac{u\\cdot v}{\\left\\lVert v\\right\\rVert^{2}}\\,v",
+       "note": "Proyección ortogonal de u sobre v",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\frac{2}{1}\\left(1,\\ 0\\right)",
+       "note": "",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\left(2,\\ 0\\right)",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "solveEquation": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "2x+1",
+       "r": "5",
+       "note": "Ecuación",
+       "boxed": false
+      },
+      {
+       "l": "2x",
+       "r": "5-1",
+       "note": "El +1 pasa restando a la derecha",
+       "boxed": false
+      },
+      {
+       "l": "2x",
+       "r": "4",
+       "note": "Agrupamos términos semejantes",
+       "boxed": false
+      },
+      {
+       "l": "x",
+       "r": "\\frac{4}{2}",
+       "note": "El 2 que multiplica a x pasa dividiendo",
+       "boxed": false
+      },
+      {
+       "l": "x",
+       "r": "2",
+       "note": "Simplificamos",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "solveEquation-quad": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "x^2-5x+6",
+       "r": "0",
+       "note": "Ecuación",
+       "boxed": false
+      },
+      {
+       "l": "\\Delta",
+       "r": "b^{2}-4ac=\\left(-5\\right)^{2}-4\\cdot 1\\cdot 6=1",
+       "note": "a = 1, b = -5, c = 6",
+       "boxed": false
+      },
+      {
+       "l": "x",
+       "r": "\\frac{-b\\pm\\sqrt{\\Delta}}{2a}=\\frac{5\\pm\\sqrt{1}}{2}",
+       "note": "Fórmula de la ecuación de segundo grado",
+       "boxed": false
+      },
+      {
+       "l": "x_{1}",
+       "r": "3",
+       "note": "",
+       "boxed": true
+      },
+      {
+       "l": "x_{2}",
+       "r": "2",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "solveEquation-err": {
+   "err": "MErr: Escribe una ecuación con un solo signo =, por ejemplo 2x+1=5."
+  },
+  "eqSteps": {
+   "ok": [
+    {
+     "l": "3x",
+     "r": "7+2",
+     "note": "El −2 pasa sumando a la derecha"
+    },
+    {
+     "l": "3x",
+     "r": "9",
+     "note": "Agrupamos términos semejantes"
+    },
+    {
+     "l": "x",
+     "r": "\\frac{9}{3}",
+     "note": "El 3 que multiplica a x pasa dividiendo"
+    },
+    {
+     "l": "x",
+     "r": "3",
+     "note": "Simplificamos",
+     "boxed": true
+    }
+   ]
+  },
+  "simplifyFraction": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\frac{12}{18}",
+       "r": "\\frac{2^{2}\\cdot 3}{2\\cdot 3^{2}}",
+       "note": "Descomponemos numerador y denominador",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\frac{12:6}{18:6}",
+       "note": "Dividimos entre el m.c.d. = 6",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\frac{2}{3}",
+       "note": "Fracción irreducible",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "fractionOps": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\frac{1}{2}+\\frac{1}{3}",
+       "r": "\\frac{3}{6}+\\frac{2}{6}",
+       "note": "m.c.m. de los denominadores = 6; multiplicamos 1/2 arriba y abajo por 3; multiplicamos 1/3 arriba y abajo por 2",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\frac{3+2}{6}",
+       "note": "Mismo denominador: sumamos los numeradores",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\frac{5}{6}",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "gcdLcm": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "12",
+       "r": "2^{2}\\cdot 3",
+       "note": "Descomponemos en factores primos",
+       "boxed": false
+      },
+      {
+       "l": "18",
+       "r": "2\\cdot 3^{2}",
+       "note": "",
+       "boxed": false
+      },
+      {
+       "l": "\\operatorname{m.c.d.}(12,18)",
+       "r": "2\\cdot 3=6",
+       "note": "Factores comunes con el menor exponente",
+       "boxed": true
+      },
+      {
+       "l": "\\operatorname{m.c.m.}(12,18)",
+       "r": "2^{2}\\cdot 3^{2}=36",
+       "note": "Factores comunes y no comunes con el mayor exponente",
+       "boxed": true
+      }
+     ]
+    },
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "18",
+       "r": "1\\cdot 12+6",
+       "note": "Algoritmo de Euclides: dividimos y seguimos con el resto",
+       "boxed": false
+      },
+      {
+       "l": "12",
+       "r": "2\\cdot 6+0",
+       "note": "",
+       "boxed": false
+      },
+      {
+       "l": "\\operatorname{m.c.d.}",
+       "r": "6",
+       "note": "El último resto distinto de 0",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "primeFactor": {
+   "ok": [
+    {
+     "type": "math",
+     "v": "\\begin{array}{r|l}360&2\\\\180&2\\\\90&2\\\\45&3\\\\15&3\\\\5&5\\\\1&\\end{array}"
+    },
+    {
+     "type": "math",
+     "v": "360=2^{3}\\cdot 3^{2}\\cdot 5"
+    }
+   ]
+  },
+  "polyOperate": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "(x+1)(x-2)",
+       "r": "x^{2}-x-2",
+       "note": "Desarrollamos y agrupamos términos semejantes",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "polyDivide": {
+   "ok": [
+    {
+     "type": "table",
+     "caption": "Ruffini: (x^3-1) : (x − 1)",
+     "rows": [
+      [
+       "",
+       "1",
+       "0",
+       "0",
+       "-1"
+      ],
+      [
+       "1",
+       "",
+       "1",
+       "1",
+       "1"
+      ],
+      [
+       "",
+       "1",
+       "1",
+       "1",
+       "0"
+      ]
+     ],
+     "vbar": 1,
+     "hline": 2,
+     "mark": [
+      2,
+      4
+     ],
+     "kind": "ruffini"
+    },
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "C(x)",
+       "r": "x^{2}+x+1",
+       "note": "Cociente",
+       "boxed": true
+      },
+      {
+       "l": "R(x)",
+       "r": "0",
+       "note": "Resto",
+       "boxed": true
+      },
+      {
+       "l": "x^{3}-1",
+       "r": "\\left(x-1\\right)\\left(x^{2}+x+1\\right)",
+       "note": "Comprobación: D = d·C + R",
+       "boxed": false
+      }
+     ]
+    }
+   ]
+  },
+  "polyRoots": {
+   "ok": [
+    {
+     "type": "table",
+     "caption": "Ruffini con las raíces enteras/racionales (divisores del término independiente)",
+     "rows": [
+      [
+       "",
+       "1",
+       "-6",
+       "11",
+       "-6"
+      ],
+      [
+       "1",
+       "",
+       "1",
+       "-5",
+       "6"
+      ],
+      [
+       "",
+       "1",
+       "-5",
+       "6",
+       "0"
+      ],
+      [
+       "2",
+       "",
+       "2",
+       "-6"
+      ],
+      [
+       "",
+       "1",
+       "-3",
+       "0"
+      ],
+      [
+       "3",
+       "",
+       "3"
+      ],
+      [
+       "",
+       "1",
+       "0"
+      ]
+     ],
+     "vbar": 1,
+     "hlines": [
+      2,
+      4,
+      6
+     ],
+     "kind": "ruffini"
+    },
+    {
+     "type": "math",
+     "v": "x^{3}-6x^{2}+11x-6=\\left(x-1\\right)\\left(x-2\\right)\\left(x-3\\right)"
+    },
+    {
+     "type": "math",
+     "v": "\\text{Raíces: }x=1,\\quad x=2,\\quad x=3"
+    }
+   ]
+  },
+  "combinatorics": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\binom{5}{2}",
+       "r": "\\frac{5!}{2!\\,3!}",
+       "note": "Combinaciones: importa qué, no el orden",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\frac{5\\cdot 4}{2\\cdot 1}",
+       "note": "Simplificamos 3!",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "10",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "pascal": {
+   "ok": [
+    {
+     "type": "math",
+     "v": "1",
+     "align": "center"
+    },
+    {
+     "type": "math",
+     "v": "1\\quad 1",
+     "align": "center"
+    },
+    {
+     "type": "math",
+     "v": "1\\quad 2\\quad 1",
+     "align": "center"
+    },
+    {
+     "type": "math",
+     "v": "1\\quad 3\\quad 3\\quad 1",
+     "align": "center"
+    },
+    {
+     "type": "math",
+     "v": "1\\quad 4\\quad 6\\quad 4\\quad 1",
+     "align": "center"
+    },
+    {
+     "type": "math",
+     "v": "1\\quad 5\\quad 10\\quad 10\\quad 5\\quad 1",
+     "align": "center"
+    }
+   ]
+  },
+  "truthTable": {
+   "ok": [
+    {
+     "type": "table",
+     "head": [
+      "p",
+      "q",
+      "r",
+      "p ∧ q",
+      "(p ∧ q) → r"
+     ],
+     "rows": [
+      [
+       "V",
+       "V",
+       "V",
+       "V",
+       "V"
+      ],
+      [
+       "V",
+       "V",
+       "F",
+       "V",
+       "F"
+      ],
+      [
+       "V",
+       "F",
+       "V",
+       "F",
+       "V"
+      ],
+      [
+       "V",
+       "F",
+       "F",
+       "F",
+       "V"
+      ],
+      [
+       "F",
+       "V",
+       "V",
+       "F",
+       "V"
+      ],
+      [
+       "F",
+       "V",
+       "F",
+       "F",
+       "V"
+      ],
+      [
+       "F",
+       "F",
+       "V",
+       "F",
+       "V"
+      ],
+      [
+       "F",
+       "F",
+       "F",
+       "F",
+       "V"
+      ]
+     ],
+     "vbar": 3,
+     "kind": "truth",
+     "caption": "Contingencia: a veces verdadera y a veces falsa",
+     "lastBold": true
+    }
+   ]
+  },
+  "setOperate": {
+   "ok": [
+    {
+     "type": "math",
+     "v": "A\\cup B=\\left\\lbrace 1,\\ 2,\\ 3,\\ 4\\right\\rbrace "
+    }
+   ]
+  },
+  "vennEval": {
+   "ok": {
+    "n": 2,
+    "masks": [
+     3
+    ]
+   }
+  },
+  "derivative": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "f(x)",
+       "r": "x^{2}\\sin x",
+       "note": "Función",
+       "boxed": false
+      },
+      {
+       "l": "f'(x)",
+       "r": "2x\\sin x+x^{2}\\cos x",
+       "note": "Reglas: producto, potencia, trigonométricas",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "graphOf": {
+   "ok": [
+    {
+     "type": "graph",
+     "fns": [
+      "f(x)=x^2"
+     ],
+     "xmin": -5,
+     "xmax": 5
+    }
+   ]
+  },
+  "valueTable": {
+   "ok": [
+    {
+     "type": "table",
+     "rows": [
+      [
+       "x",
+       "-3",
+       "-2",
+       "-1",
+       "0",
+       "1",
+       "2",
+       "3"
+      ],
+      [
+       "f(x)",
+       "-5",
+       "-3",
+       "-1",
+       "1",
+       "3",
+       "5",
+       "7"
+      ]
+     ],
+     "vbar": 1,
+     "kind": "values",
+     "caption": "Tabla de valores de f(x) = 2x+1"
+    }
+   ]
+  },
+  "extrema1": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "f(x)",
+       "r": "x^{3}-3x",
+       "note": "Función",
+       "boxed": false
+      },
+      {
+       "l": "f'(x)",
+       "r": "3x^{2}-3",
+       "note": "Derivamos",
+       "boxed": false
+      },
+      {
+       "l": "3x^{2}-3",
+       "r": "0",
+       "note": "Puntos críticos: anulamos la derivada",
+       "boxed": false
+      },
+      {
+       "l": "x",
+       "r": "-1,\\quad 1",
+       "note": "2 puntos críticos",
+       "boxed": false
+      },
+      {
+       "l": "f''(x)",
+       "r": "6x",
+       "note": "Segunda derivada para clasificarlos",
+       "boxed": false
+      },
+      {
+       "l": "f''\\left(-1\\right)",
+       "r": "-6<0",
+       "note": "Máximo relativo en (−1, 2)",
+       "boxed": false
+      },
+      {
+       "l": "f''\\left(1\\right)",
+       "r": "6>0",
+       "note": "Mínimo relativo en (1, −2)",
+       "boxed": false
+      },
+      {
+       "l": "f''(x)",
+       "r": "0\\Rightarrow x=0",
+       "note": "Puntos de inflexión: f″ cambia de signo (cambia la concavidad)",
+       "boxed": false
+      },
+      {
+       "l": "\\lim_{x\\to\\pm\\infty}f(x)",
+       "r": "-\\infty,\\ +\\infty",
+       "note": "Comportamiento en ±∞ para decidir los extremos absolutos",
+       "boxed": false
+      },
+      {
+       "l": "\\text{Absolutos}",
+       "r": "\\nexists\\ \\text{máx abs.},\\quad \\nexists\\ \\text{mín abs.}",
+       "note": "No tiene máximo absoluto: la función tiende a +∞. No tiene mínimo absoluto: la función tiende a −∞.",
+       "boxed": false
+      }
+     ]
+    },
+    {
+     "type": "table",
+     "head": [
+      "x",
+      "(−∞, −1)",
+      "−1",
+      "(−1, 1)",
+      "1",
+      "(1, +∞)"
+     ],
+     "rows": [
+      [
+       "f′(x)",
+       "+",
+       "0",
+       "−",
+       "0",
+       "+"
+      ],
+      [
+       "f(x)",
+       "↗ crece",
+       "máx",
+       "↘ decrece",
+       "mín",
+       "↗ crece"
+      ]
+     ],
+     "vbar": 1,
+     "kind": "mono",
+     "caption": "Crecimiento y decrecimiento de f(x)"
+    },
+    {
+     "type": "graph",
+     "fns": [
+      "f(x)=x^3-3x"
+     ],
+     "xmin": -2,
+     "xmax": 2,
+     "marks": [
+      {
+       "x": -1,
+       "y": 2,
+       "kind": "max",
+       "label": "máx (−1, 2)"
+      },
+      {
+       "x": 1,
+       "y": -2,
+       "kind": "min",
+       "label": "mín (1, −2)"
+      },
+      {
+       "x": 0,
+       "y": 0,
+       "kind": "infl",
+       "label": "infl (0, 0)"
+      }
+     ]
+    }
+   ]
+  },
+  "extrema2": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "f(x,y)",
+       "r": "x^{2}-y^{2}",
+       "note": "Función de dos variables",
+       "boxed": false
+      },
+      {
+       "l": "f_{x}",
+       "r": "2x",
+       "note": "Derivada parcial respecto de x",
+       "boxed": false
+      },
+      {
+       "l": "f_{y}",
+       "r": "-2y",
+       "note": "Derivada parcial respecto de y",
+       "boxed": false
+      },
+      {
+       "l": "\\nabla f",
+       "r": "0\\Rightarrow\\begin{cases}2x=0\\\\ -2y=0\\end{cases}",
+       "note": "Puntos críticos: anulamos el gradiente",
+       "boxed": false
+      },
+      {
+       "l": "\\text{Puntos críticos}",
+       "r": "P_{1}=\\left(0,\\ 0\\right)",
+       "note": "Soluciones del sistema",
+       "boxed": false
+      },
+      {
+       "l": "H(x,y)",
+       "r": "\\begin{pmatrix}2 & 0\\\\ 0 & -2\\end{pmatrix}",
+       "note": "Matriz hessiana: f_xx, f_xy / f_yx, f_yy",
+       "boxed": false
+      },
+      {
+       "l": "|H(P_{1})|",
+       "r": "\\begin{vmatrix}2 & 0\\\\ 0 & -2\\end{vmatrix}=-4",
+       "note": "|H| < 0: punto de silla. f(P1) = 0",
+       "boxed": true
+      },
+      {
+       "l": "\\text{Absolutos}",
+       "r": "\\text{en un recinto cerrado}",
+       "note": "Los extremos absolutos de f(x, y) se estudian en un recinto cerrado y acotado: además de los puntos críticos interiores hay que mirar la frontera.",
+       "boxed": false
+      }
+     ]
+    },
+    {
+     "type": "graph3d",
+     "fn": "z=x^2-y^2",
+     "xmin": -2.5,
+     "xmax": 2.5,
+     "ymin": -2.5,
+     "ymax": 2.5,
+     "az": -0.8,
+     "el": 0.55,
+     "zoom": 1,
+     "marks": [
+      {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "kind": "saddle",
+       "label": "P1 silla"
+      }
+     ]
+    }
+   ]
+  },
+  "statsSummary": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\text{Datos ordenados}",
+       "r": "2,\\ 3,\\ 5,\\ 5,\\ 7",
+       "note": "n = 5 datos",
+       "boxed": false
+      },
+      {
+       "l": "\\bar{x}",
+       "r": "\\frac{\\sum x_{i}}{n}=\\frac{22}{5}\\approx 4.4",
+       "note": "Media: suma de los datos entre el número de datos",
+       "boxed": true
+      },
+      {
+       "l": "Me",
+       "r": "5",
+       "note": "Mediana: el dato central (posición 3)",
+       "boxed": true
+      },
+      {
+       "l": "Mo",
+       "r": "5",
+       "note": "El valor más repetido (2 veces)",
+       "boxed": true
+      },
+      {
+       "l": "\\text{Rango}",
+       "r": "7-2=5",
+       "note": "Máximo menos mínimo",
+       "boxed": false
+      },
+      {
+       "l": "\\sigma^{2}",
+       "r": "\\frac{\\left(-\\frac{12}{5}\\right)^{2}+\\left(-\\frac{7}{5}\\right)^{2}+\\left(\\frac{3}{5}\\right)^{2}+\\left(\\frac{3}{5}\\right)^{2}+\\left(\\frac{13}{5}\\right)^{2}}{5}=\\frac{\\frac{76}{5}}{5}=\\frac{76}{25}\\approx 3.04",
+       "note": "Varianza poblacional: media de los cuadrados de las desviaciones",
+       "boxed": false
+      },
+      {
+       "l": "\\sigma",
+       "r": "\\sqrt{\\frac{76}{25}}=\\frac{2\\sqrt{19}}{5}\\approx 1.7436",
+       "note": "Desviación típica poblacional",
+       "boxed": true
+      },
+      {
+       "l": "s^{2}",
+       "r": "\\frac{\\frac{76}{5}}{4}=\\frac{19}{5}\\approx 3.8",
+       "note": "Varianza muestral (cuasivarianza): se divide entre n − 1",
+       "boxed": false
+      },
+      {
+       "l": "s",
+       "r": "\\sqrt{\\frac{19}{5}}=\\frac{\\sqrt{95}}{5}\\approx 1.9494",
+       "note": "Desviación típica muestral",
+       "boxed": false
+      },
+      {
+       "l": "Q_{1},\\ Q_{2},\\ Q_{3}",
+       "r": "\\frac{5}{2},\\ 5,\\ 6",
+       "note": "Cuartiles: Q₁ y Q₃ son las medianas de la mitad inferior y de la superior",
+       "boxed": false
+      },
+      {
+       "l": "\\text{RIC}",
+       "r": "Q_{3}-Q_{1}=\\frac{7}{2}",
+       "note": "Rango intercuartílico",
+       "boxed": false
+      },
+      {
+       "l": "CV",
+       "r": "\\frac{\\sigma}{\\bar{x}}\\approx 0.3963\\ (39.63\\%)",
+       "note": "Coeficiente de variación: dispersión relativa a la media",
+       "boxed": false
+      }
+     ]
+    },
+    {
+     "type": "chart",
+     "kind": "box",
+     "title": "Diagrama de caja",
+     "data": [
+      2,
+      3,
+      5,
+      5,
+      7
+     ],
+     "min": 2,
+     "max": 7,
+     "q1": 2.5,
+     "med": 5,
+     "q3": 6,
+     "mean": 4.4
+    }
+   ]
+  },
+  "freqTable": {
+   "ok": [
+    {
+     "type": "table",
+     "head": [
+      "xᵢ",
+      "nᵢ",
+      "fᵢ",
+      "Nᵢ",
+      "Fᵢ",
+      "%",
+      "xᵢ·nᵢ"
+     ],
+     "rows": [
+      [
+       "1",
+       "1",
+       "1/6 ≈ 0,167",
+       "1",
+       "1/6",
+       "16,7 %",
+       "1"
+      ],
+      [
+       "2",
+       "2",
+       "1/3 ≈ 0,333",
+       "3",
+       "1/2",
+       "33,3 %",
+       "4"
+      ],
+      [
+       "3",
+       "3",
+       "1/2 ≈ 0,5",
+       "6",
+       "1",
+       "50 %",
+       "9"
+      ],
+      [
+       "Total",
+       "6",
+       "1",
+       "",
+       "",
+       "100 %",
+       "14"
+      ]
+     ],
+     "vbar": 1,
+     "hline": 3,
+     "kind": "freq",
+     "caption": "Tabla de frecuencias (n = 6): absoluta nᵢ, relativa fᵢ = nᵢ/n, acumuladas Nᵢ y Fᵢ. Media = Σxᵢnᵢ / n = 7/3"
+    },
+    {
+     "type": "chart",
+     "kind": "bars",
+     "title": "Diagrama de barras",
+     "labels": [
+      "1",
+      "2",
+      "3"
+     ],
+     "values": [
+      1,
+      2,
+      3
+     ],
+     "ylabel": "nᵢ"
+    }
+   ]
+  },
+  "sampleSpace": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\Omega",
+       "r": "\\left\\lbrace (C,C),\\ (C,X),\\ (X,C),\\ (X,X)\\right\\rbrace ",
+       "note": "Espacio muestral de moneda × moneda (C = cara, X = cruz)",
+       "boxed": false
+      },
+      {
+       "l": "|\\Omega|",
+       "r": "2\\cdot 2=4",
+       "note": "Principio de multiplicación: resultados de cada experimento multiplicados",
+       "boxed": true
+      },
+      {
+       "l": "P(\\text{cada resultado})",
+       "r": "\\frac{1}{4}",
+       "note": "Regla de Laplace: casos favorables / casos posibles (resultados equiprobables)",
+       "boxed": false
+      }
+     ]
+    },
+    {
+     "type": "chart",
+     "kind": "bars",
+     "title": "Número de caras al lanzar 2 monedas",
+     "labels": [
+      "0",
+      "1",
+      "2"
+     ],
+     "values": [
+      0.25,
+      0.5,
+      0.25
+     ],
+     "valueLabels": [
+      "1/4",
+      "1/2",
+      "1/4"
+     ],
+     "ylabel": "P"
+    }
+   ]
+  },
+  "binomial": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\text{Modelo}",
+       "r": "X\\sim B(10,\\ 0.5)",
+       "note": "Binomial: número de éxitos en 10 pruebas independientes con probabilidad de éxito p = 0.5",
+       "boxed": false
+      },
+      {
+       "l": "P(X=k)",
+       "r": "\\binom{10}{k}\\,0.5^{k}\\,\\left(0.5\\right)^{10-k}",
+       "note": "Fórmula de la binomial",
+       "boxed": false
+      },
+      {
+       "l": "P(X=3)",
+       "r": "\\binom{10}{3}\\,0.5^{3}\\,\\left(0.5\\right)^{7}=120\\cdot 0.125\\cdot 0.007813\\approx 0.1172",
+       "note": "Sustituimos k = 3",
+       "boxed": true
+      },
+      {
+       "l": "E[X]",
+       "r": "np=10\\cdot 0.5=5",
+       "note": "Media (esperanza)",
+       "boxed": false
+      },
+      {
+       "l": "\\operatorname{Var}(X)",
+       "r": "np(1-p)=2.5,\\quad \\sigma=\\sqrt{np(1-p)}\\approx 1.5811",
+       "note": "Varianza y desviación típica",
+       "boxed": false
+      }
+     ]
+    },
+    {
+     "type": "chart",
+     "kind": "bars",
+     "title": "Distribución B(10, 0,5): en color los valores de k que suman P(X=3)",
+     "labels": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+     ],
+     "values": [
+      0.0009765625,
+      0.009765625,
+      0.0439453125,
+      0.1171875,
+      0.205078125,
+      0.24609375,
+      0.205078125,
+      0.1171875,
+      0.0439453125,
+      0.009765625,
+      0.0009765625
+     ],
+     "hi": [
+      3
+     ],
+     "ylabel": "P(X = k)"
+    }
+   ]
+  },
+  "normal": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\text{Modelo}",
+       "r": "X\\sim N(0,\\ 1)",
+       "note": "Normal de media μ = 0 y desviación típica σ = 1",
+       "boxed": false
+      },
+      {
+       "l": "Z",
+       "r": "\\frac{X-\\mu}{\\sigma}\\sim N(0,1)",
+       "note": "Tipificamos para usar la normal estándar",
+       "boxed": false
+      },
+      {
+       "l": "P(X<1)",
+       "r": "P\\left(Z\\le \\frac{1-0}{1}=1\\right)",
+       "note": "Tipificamos",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\Phi(1)\\approx 0.8413",
+       "note": "Valor de la tabla de la normal N(0, 1)",
+       "boxed": true
+      },
+      {
+       "l": "\\text{En porcentaje}",
+       "r": "84.13\\%",
+       "note": "Aproximadamente",
+       "boxed": false
+      }
+     ]
+    },
+    {
+     "type": "chart",
+     "kind": "normal",
+     "title": "N(0, 1): área sombreada ≈ 0,8413",
+     "mu": 0,
+     "sigma": 1,
+     "a": null,
+     "b": 1
+    }
+   ]
+  },
+  "bayes": {
+   "ok": [
+    {
+     "type": "ptree",
+     "ev": "D",
+     "causes": [
+      {
+       "name": "A",
+       "p": "0,3",
+       "l": "0,1",
+       "nl": "0,9",
+       "prod": "0,03",
+       "nprod": "0,27"
+      },
+      {
+       "name": "B",
+       "p": "0,7",
+       "l": "0,2",
+       "nl": "0,8",
+       "prod": "0,14",
+       "nprod": "0,56"
+      }
+     ]
+    },
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "P(D)",
+       "r": "P(A)\\,P(D\\mid A)+P(B)\\,P(D\\mid B)",
+       "note": "Teorema de la probabilidad total: sumamos las ramas que llegan a D",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "0.3\\cdot 0.1+0.7\\cdot 0.2",
+       "note": "",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "0.03+0.14=0.17",
+       "note": "",
+       "boxed": true
+      },
+      {
+       "l": "P(A\\mid D)",
+       "r": "\\frac{P(A)\\,P(D\\mid A)}{P(D)}=\\frac{0.03}{0.17}=0.1765",
+       "note": "Teorema de Bayes: probabilidad de cada causa sabiendo que ha ocurrido D",
+       "boxed": true
+      },
+      {
+       "l": "P(B\\mid D)",
+       "r": "\\frac{P(B)\\,P(D\\mid B)}{P(D)}=\\frac{0.14}{0.17}=0.8235",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    }
+   ]
+  },
+  "angleConvert": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "150^{\\circ}",
+       "r": "150\\cdot\\frac{\\pi}{180}",
+       "note": "De grados a radianes: multiplicamos por π/180",
+       "boxed": false
+      },
+      {
+       "l": "",
+       "r": "\\frac{5\\pi}{6}\\ \\text{rad}\\approx 2.618\\ \\text{rad}",
+       "note": "Simplificamos la fracción 150/180",
+       "boxed": true
+      },
+      {
+       "l": "\\text{Posición}",
+       "r": "\\text{cuadrante II}",
+       "note": "Entre 90° y 180°: seno +, coseno −, tangente −",
+       "boxed": false
+      }
+     ]
+    },
+    {
+     "type": "geo",
+     "kind": "unit",
+     "deg": 150,
+     "label": "150°"
+    }
+   ]
+  },
+  "trigRatios": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\theta",
+       "r": "150^{\\circ}=\\frac{5\\pi}{6}\\ \\text{rad}",
+       "note": "En grados y radianes",
+       "boxed": false
+      },
+      {
+       "l": "\\text{Posición}",
+       "r": "\\text{cuadrante II}",
+       "note": "Entre 90° y 180°: seno +, coseno −, tangente −",
+       "boxed": false
+      },
+      {
+       "l": "\\alpha",
+       "r": "180^{\\circ}-150^{\\circ}=30^{\\circ}",
+       "note": "Ángulo de referencia en el primer cuadrante: suplementario (180° − θ)",
+       "boxed": false
+      },
+      {
+       "l": "\\operatorname{sen} 150^{\\circ}",
+       "r": "\\operatorname{sen} 30^{\\circ}=\\frac{1}{2}\\approx 0.5",
+       "note": "Mismo valor que en 30° con el signo del cuadrante II (+)",
+       "boxed": true
+      }
+     ]
+    },
+    {
+     "type": "table",
+     "head": [
+      "Razón",
+      "Definición",
+      "Valor",
+      "Decimal"
+     ],
+     "rows": [
+      [
+       "sen θ",
+       "cateto opuesto / hipotenusa = y/r",
+       "1/2",
+       "0,5"
+      ],
+      [
+       "cos θ",
+       "cateto contiguo / hipotenusa = x/r",
+       "−√3/2",
+       "−0,866"
+      ],
+      [
+       "tg θ",
+       "sen θ / cos θ = y/x",
+       "−√3/3",
+       "−0,5774"
+      ],
+      [
+       "cosec θ",
+       "1 / sen θ",
+       "2",
+       "2"
+      ],
+      [
+       "sec θ",
+       "1 / cos θ",
+       "−2√3/3",
+       "−1,1547"
+      ],
+      [
+       "cotg θ",
+       "1 / tg θ = cos θ / sen θ",
+       "−√3",
+       "−1,7321"
+      ]
+     ],
+     "kind": "trig",
+     "caption": "Razones de θ = 150°. Comprobación: sen²θ + cos²θ = 1."
+    },
+    {
+     "type": "geo",
+     "kind": "unit",
+     "deg": 150,
+     "label": "150°"
+    }
+   ]
+  },
+  "notableTable": {
+   "ok": [
+    {
+     "type": "table",
+     "head": [
+      "Grados",
+      "Radianes",
+      "sen",
+      "cos",
+      "tg"
+     ],
+     "rows": [
+      [
+       "0°",
+       "0",
+       "0",
+       "1",
+       "0"
+      ],
+      [
+       "30°",
+       "π/6",
+       "1/2",
+       "√3/2",
+       "√3/3"
+      ],
+      [
+       "45°",
+       "π/4",
+       "√2/2",
+       "√2/2",
+       "1"
+      ],
+      [
+       "60°",
+       "π/3",
+       "√3/2",
+       "1/2",
+       "√3"
+      ],
+      [
+       "90°",
+       "π/2",
+       "1",
+       "0",
+       "∄"
+      ],
+      [
+       "120°",
+       "2π/3",
+       "√3/2",
+       "−1/2",
+       "−√3"
+      ],
+      [
+       "135°",
+       "3π/4",
+       "√2/2",
+       "−√2/2",
+       "−1"
+      ],
+      [
+       "150°",
+       "5π/6",
+       "1/2",
+       "−√3/2",
+       "−√3/3"
+      ],
+      [
+       "180°",
+       "π",
+       "0",
+       "−1",
+       "0"
+      ],
+      [
+       "210°",
+       "7π/6",
+       "−1/2",
+       "−√3/2",
+       "√3/3"
+      ],
+      [
+       "225°",
+       "5π/4",
+       "−√2/2",
+       "−√2/2",
+       "1"
+      ],
+      [
+       "240°",
+       "4π/3",
+       "−√3/2",
+       "−1/2",
+       "√3"
+      ],
+      [
+       "270°",
+       "3π/2",
+       "−1",
+       "0",
+       "∄"
+      ],
+      [
+       "300°",
+       "5π/3",
+       "−√3/2",
+       "1/2",
+       "−√3"
+      ],
+      [
+       "315°",
+       "7π/4",
+       "−√2/2",
+       "√2/2",
+       "−1"
+      ],
+      [
+       "330°",
+       "11π/6",
+       "−1/2",
+       "√3/2",
+       "−√3/3"
+      ],
+      [
+       "360°",
+       "2π",
+       "0",
+       "1",
+       "0"
+      ]
+     ],
+     "kind": "trig",
+     "hlines": [
+      4,
+      8,
+      12
+     ],
+     "caption": "Ángulos notables. Truco para 0°, 30°, 45°, 60°, 90°: el seno vale √0/2, √1/2, √2/2, √3/2, √4/2 y el coseno lo mismo al revés. En los otros cuadrantes se repiten los valores con el signo del cuadrante (todas +, seno +, tangente +, coseno +)."
+    },
+    {
+     "type": "geo",
+     "kind": "unitAll"
+    }
+   ]
+  },
+  "solveTriangle": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\text{Datos}",
+       "r": "a=5,\\ b=7,\\ \\hat{C}=60^{\\circ}",
+       "note": "Cada lado es opuesto al ángulo de su misma letra",
+       "boxed": false
+      },
+      {
+       "l": "\\text{Caso}",
+       "r": "\\text{dos lados y el ángulo comprendido (LAL)}",
+       "note": "Teorema del coseno para el lado que falta",
+       "boxed": false
+      },
+      {
+       "l": "c^{2}",
+       "r": "a^{2}+b^{2}-2ab\\cos \\hat{C}=5^{2}+7^{2}-2\\cdot 5\\cdot 7\\cdot\\cos 60^{\\circ}=39",
+       "note": "",
+       "boxed": false
+      },
+      {
+       "l": "c",
+       "r": "\\sqrt{39}\\approx 6.245",
+       "note": "",
+       "boxed": false
+      },
+      {
+       "l": "\\cos \\hat{A}",
+       "r": "\\frac{b^{2}+c^{2}-a^{2}}{2bc}=\\frac{7^{2}+6.245^{2}-5^{2}}{2\\cdot 7\\cdot 6.245}=0.7206",
+       "note": "Teorema del coseno despejando el ángulo",
+       "boxed": false
+      },
+      {
+       "l": "\\hat{A}",
+       "r": "\\arccos\\left(0.7206\\right)\\approx 43.9^{\\circ}",
+       "note": "",
+       "boxed": false
+      },
+      {
+       "l": "\\hat{B}",
+       "r": "180^{\\circ}-60^{\\circ}-43.9^{\\circ}\\approx 76.1^{\\circ}",
+       "note": "Los ángulos suman 180°",
+       "boxed": false
+      },
+      {
+       "l": "\\text{Solución}",
+       "r": "a\\approx 5,\\ b\\approx 7,\\ c\\approx 6.245,\\ \\hat{A}\\approx 43.9^{\\circ},\\ \\hat{B}\\approx 76.1^{\\circ},\\ \\hat{C}\\approx 60^{\\circ}",
+       "note": "Triángulo escaleno y acutángulo",
+       "boxed": true
+      },
+      {
+       "l": "S",
+       "r": "\\frac{1}{2}\\,bc\\,\\operatorname{sen}\\hat{A}=\\frac{1}{2}\\cdot 7\\cdot 6.245\\cdot\\operatorname{sen}43.9^{\\circ}\\approx 15.1554",
+       "note": "Área (también con Herón: √(s(s−a)(s−b)(s−c)))",
+       "boxed": false
+      },
+      {
+       "l": "P",
+       "r": "a+b+c\\approx 18.245",
+       "note": "Perímetro",
+       "boxed": false
+      }
+     ]
+    },
+    {
+     "type": "geo",
+     "kind": "tri",
+     "a": 5,
+     "b": 7,
+     "c": 6.244997998398397,
+     "A": 43.897886248013975,
+     "B": 76.10211375198602,
+     "C": 60,
+     "label": ""
+    }
+   ]
+  },
+  "linesRelative": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "r",
+       "r": "2x+y-3=0",
+       "note": "Explícita: y = -2x+3, pendiente m = -2; vector normal (2, 1)",
+       "boxed": false
+      },
+      {
+       "l": "s",
+       "r": "x-y+1=0",
+       "note": "Explícita: y = x+1, pendiente m = 1; vector normal (1, -1)",
+       "boxed": false
+      },
+      {
+       "l": "\\frac{a_1}{a_2},\\ \\frac{b_1}{b_2},\\ \\frac{c_1}{c_2}",
+       "r": "\\frac{2}{1},\\ \\frac{1}{-1},\\ \\frac{-3}{1}",
+       "note": "Comparamos los coeficientes: si a y b no son proporcionales se cortan; si lo son, paralelas o coincidentes según c",
+       "boxed": false
+      },
+      {
+       "l": "\\text{Posición}",
+       "r": "\\text{secantes}",
+       "note": "a₁b₂ − a₂b₁ = -3 ≠ 0: se cortan en un punto",
+       "boxed": true
+      },
+      {
+       "l": "\\begin{cases}2x+y-3=0\\\\x-y+1=0\\end{cases}",
+       "r": "x=\\frac{2}{3},\\ y=\\frac{5}{3}",
+       "note": "Punto de corte resolviendo el sistema (Cramer: det = -3)",
+       "boxed": false
+      },
+      {
+       "l": "\\cos\\varphi",
+       "r": "\\frac{\\left|a_1a_2+b_1b_2\\right|}{\\sqrt{a_1^{2}+b_1^{2}}\\,\\sqrt{a_2^{2}+b_2^{2}}}=\\frac{1}{\\sqrt{5}\\,\\sqrt{2}}",
+       "note": "Ángulo entre las rectas (el agudo) con sus vectores normales",
+       "boxed": false
+      },
+      {
+       "l": "\\varphi",
+       "r": "\\arccos\\left(0.3162\\right)\\approx 71.57^{\\circ}",
+       "note": "",
+       "boxed": true
+      }
+     ]
+    },
+    {
+     "type": "geo",
+     "kind": "lines",
+     "lines": [
+      {
+       "a": 2,
+       "b": 1,
+       "c": -3,
+       "name": "r",
+       "dash": false
+      },
+      {
+       "a": 1,
+       "b": -1,
+       "c": 1,
+       "name": "s",
+       "dash": false
+      }
+     ],
+     "points": [
+      {
+       "x": 0.6666666666666666,
+       "y": 1.6666666666666667,
+       "name": "P",
+       "kind": "cut"
+      }
+     ]
+    }
+   ]
+  },
+  "transversal": {
+   "ok": [
+    {
+     "type": "deriv",
+     "rows": [
+      {
+       "l": "\\hat{1}",
+       "r": "65^{\\circ}",
+       "note": "Ángulo dado (arriba a la derecha, en la intersección con la primera paralela)",
+       "boxed": false
+      },
+      {
+       "l": "\\hat{3}",
+       "r": "\\hat{1}=65^{\\circ}",
+       "note": "Opuestos por el vértice: son iguales",
+       "boxed": false
+      },
+      {
+       "l": "\\hat{2}=\\hat{4}",
+       "r": "180^{\\circ}-65^{\\circ}=115^{\\circ}",
+       "note": "Adyacentes (suplementarios): suman 180°",
+       "boxed": false
+      },
+      {
+       "l": "\\hat{5}",
+       "r": "\\hat{1}=65^{\\circ}",
+       "note": "Correspondientes: misma posición en cada paralela, son iguales",
+       "boxed": false
+      },
+      {
+       "l": "\\hat{7}",
+       "r": "\\hat{3}=65^{\\circ}",
+       "note": "Alternos externos con 1̂ (y correspondientes con 3̂): iguales",
+       "boxed": false
+      },
+      {
+       "l": "\\hat{6}=\\hat{8}",
+       "r": "115^{\\circ}",
+       "note": "Correspondientes de 2̂ y 4̂",
+       "boxed": false
+      },
+      {
+       "l": "\\hat{4}",
+       "r": "\\hat{6}=115^{\\circ}",
+       "note": "Alternos internos: iguales. 3̂ y 5̂ también son alternos internos",
+       "boxed": false
+      },
+      {
+       "l": "\\hat{3}+\\hat{6}",
+       "r": "180^{\\circ}",
+       "note": "Conjugados internos (mismo lado de la secante, entre las paralelas): suplementarios",
+       "boxed": true
+      }
+     ]
+    },
+    {
+     "type": "table",
+     "head": [
+      "Ángulo",
+      "Medida",
+      "Relación"
+     ],
+     "rows": [
+      [
+       "1̂",
+       "65°",
+       "dado"
+      ],
+      [
+       "2̂",
+       "115°",
+       "adyacente a 1̂ (suplementario)"
+      ],
+      [
+       "3̂",
+       "65°",
+       "opuesto por el vértice a 1̂"
+      ],
+      [
+       "4̂",
+       "115°",
+       "adyacente a 1̂ (suplementario)"
+      ],
+      [
+       "5̂",
+       "65°",
+       "correspondiente de 1̂"
+      ],
+      [
+       "6̂",
+       "115°",
+       "alterno interno de 4̂ · correspondiente de 2̂"
+      ],
+      [
+       "7̂",
+       "65°",
+       "alterno externo de 1̂"
+      ],
+      [
+       "8̂",
+       "115°",
+       "correspondiente de 4̂"
+      ]
+     ],
+     "caption": "Dos paralelas cortadas por una secante: solo hay dos medidas, α = 65° y 180° − α = 115°."
+    },
+    {
+     "type": "geo",
+     "kind": "transv",
+     "deg": 65
+    }
+   ]
+  },
+  "compileFn": {
+   "ok": {
+    "name": "f",
+    "v": "x",
+    "latex": "x^{2}+1",
+    "ys": [
+     5,
+     2,
+     1,
+     1.25,
+     10
+    ]
+   }
+  }
+ },
+ "render": [
+  {
+   "pg": "1 / 19",
+   "blocks": [
+    {
+     "cls": "blk",
+     "math": [
+      "x+1=5"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "x+1",
+      "5",
+      "x",
+      "4"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "x | -1 | 0 | 1 | f(x) | 1 | 0 | 1",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [
+      "f(x)=x^2"
+     ],
+     "text": "−5 | −4 | −3 | −2 | −1 | 1 | 2 | 3 | 4 | 5 | 5 | 10 | 15 | 20 | 25 | 0",
+     "svg": 3,
+     "canvas": 0,
+     "shapes": 22
+    }
+   ]
+  },
+  {
+   "pg": "2 / 19",
+   "blocks": [
+    {
+     "cls": "blk",
+     "math": [
+      "f(x)=x^2"
+     ],
+     "text": "−5 | −4 | −3 | −2 | −1 | 1 | 2 | 3 | 4 | 5 | 5 | 10 | 15 | 20 | 25 | 0",
+     "svg": 3,
+     "canvas": 0,
+     "shapes": 22
+    }
+   ]
+  },
+  {
+   "pg": "3 / 19",
+   "blocks": [
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "f(x)",
+      "x^{3}-3x",
+      "f'(x)",
+      "3x^{2}-3",
+      "3x^{2}-3",
+      "0",
+      "x",
+      "-1,\\quad 1",
+      "f''(x)",
+      "6x",
+      "f''\\left(-1\\right)",
+      "-6<0",
+      "f''\\left(1\\right)",
+      "6>0",
+      "f''(x)",
+      "0\\Rightarrow x=0",
+      "\\lim_{x\\to\\pm\\infty}f(x)",
+      "-\\infty,\\ +\\infty",
+      "\\text{Absolutos}",
+      "\\nexists\\ \\text{máx abs.},\\quad \\nexists\\ \\text{mín abs.}"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "x | (−∞, −1) | −1 | (−1, 1) | 1 | (1, +∞) | f′(x) | + | 0 | − | 0 | + | f(x) | ↗ crece | máx | ↘ decrece | mín | ↗ crece",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [
+      "f(x)=x^3-3x"
+     ],
+     "text": "−2 | −1,5 | −1 | −0,5 | 0,5 | 1 | 1,5 | 2 | −2 | −1,5 | −1 | −0,5 | 0,5 | 1 | 1,5 | 2 | 0 | máx (−1, 2) | mín (1, −2) | infl (0, 0)",
+     "svg": 3,
+     "canvas": 0,
+     "shapes": 26
+    }
+   ]
+  },
+  {
+   "pg": "4 / 19",
+   "blocks": [
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "f(x,y)",
+      "x^{2}-y^{2}",
+      "f_{x}",
+      "2x",
+      "f_{y}",
+      "-2y",
+      "\\nabla f",
+      "0\\Rightarrow\\begin{cases}2x=0\\\\ -2y=0\\end{cases}",
+      "\\text{Puntos críticos}",
+      "P_{1}=\\left(0,\\ 0\\right)",
+      "H(x,y)",
+      "\\begin{pmatrix}2 & 0\\\\ 0 & -2\\end{pmatrix}",
+      "|H(P_{1})|",
+      "\\begin{vmatrix}2 & 0\\\\ 0 & -2\\end{vmatrix}=-4",
+      "\\text{Absolutos}",
+      "\\text{en un recinto cerrado}"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [
+      "z=x^2-y^2"
+     ],
+     "text": "",
+     "svg": 1,
+     "canvas": 1,
+     "shapes": 1
+    }
+   ]
+  },
+  {
+   "pg": "5 / 19",
+   "blocks": [
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "\\text{Datos ordenados}",
+      "2,\\ 3,\\ 5,\\ 5,\\ 7",
+      "\\bar{x}",
+      "\\frac{\\sum x_{i}}{n}=\\frac{22}{5}\\approx 4.4",
+      "Me",
+      "5",
+      "Mo",
+      "5",
+      "\\text{Rango}",
+      "7-2=5",
+      "\\sigma^{2}",
+      "\\frac{\\left(-\\frac{12}{5}\\right)^{2}+\\left(-\\frac{7}{5}\\right)^{2}+\\left(\\frac{3}{5}\\right)^{2}+\\left(\\frac{3}{5}\\right)^{2}+\\left(\\frac{13}{5}\\right)^{2}}{5}=\\frac{\\frac{76}{5}}{5}=\\frac{76}{25}\\approx 3.04",
+      "\\sigma",
+      "\\sqrt{\\frac{76}{25}}=\\frac{2\\sqrt{19}}{5}\\approx 1.7436",
+      "s^{2}",
+      "\\frac{\\frac{76}{5}}{4}=\\frac{19}{5}\\approx 3.8",
+      "s",
+      "\\sqrt{\\frac{19}{5}}=\\frac{\\sqrt{95}}{5}\\approx 1.9494",
+      "Q_{1},\\ Q_{2},\\ Q_{3}",
+      "\\frac{5}{2},\\ 5,\\ 6",
+      "\\text{RIC}",
+      "Q_{3}-Q_{1}=\\frac{7}{2}",
+      "CV",
+      "\\frac{\\sigma}{\\bar{x}}\\approx 0.3963\\ (39.63\\%)"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "2 | 2,5 | 3 | 3,5 | 4 | 4,5 | 5 | 5,5 | 6 | 6,5 | 7 | mín 2 | Q₁ 2,5 | Me 5 | Q₃ 6 | máx 7",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 25
+    }
+   ]
+  },
+  {
+   "pg": "6 / 19",
+   "blocks": [
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "xᵢ | nᵢ | fᵢ | Nᵢ | Fᵢ | % | xᵢ·nᵢ | 1 | 1 | 1/6 ≈ 0,167 | 1 | 1/6 | 16,7 % | 1 | 2 | 2 | 1/3 ≈ 0,333 | 3 | 1/2 | 33,3 % | 4 | 3 | 3 | 1/2 ≈ 0,5 | 6 | 1 | 50 % | 9 | Total | 6 | 1 | | | 100 % | 14",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "0 | 0,5 | 1 | 1,5 | 2 | 2,5 | 3 | 3,5 | 1 | 1 | 2 | 2 | 3 | 3 | nᵢ",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 14
+    }
+   ]
+  },
+  {
+   "pg": "7 / 19",
+   "blocks": [
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "\\text{Modelo}",
+      "X\\sim B(10,\\ 0.5)",
+      "P(X=k)",
+      "\\binom{10}{k}\\,0.5^{k}\\,\\left(0.5\\right)^{10-k}",
+      "P(X=3)",
+      "\\binom{10}{3}\\,0.5^{3}\\,\\left(0.5\\right)^{7}=120\\cdot 0.125\\cdot 0.007813\\approx 0.1172",
+      "E[X]",
+      "np=10\\cdot 0.5=5",
+      "\\operatorname{Var}(X)",
+      "np(1-p)=2.5,\\quad \\sigma=\\sqrt{np(1-p)}\\approx 1.5811"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "0 | 0,05 | 0,1 | 0,15 | 0,2 | 0,25 | 0,3 | 0 | 0,001 | 1 | 0,01 | 2 | 0,044 | 3 | 0,117 | 4 | 0,205 | 5 | 0,246 | 6 | 0,205 | 7 | 0,117 | 8 | 0,044 | 9 | 0,01 | 10 | 0,001 | P(X = k)",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 21
+    }
+   ]
+  },
+  {
+   "pg": "8 / 19",
+   "blocks": [
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "\\text{Modelo}",
+      "X\\sim N(0,\\ 1)",
+      "Z",
+      "\\frac{X-\\mu}{\\sigma}\\sim N(0,1)",
+      "P(X<1)",
+      "P\\left(Z\\le \\frac{1-0}{1}=1\\right)",
+      "",
+      "\\Phi(1)\\approx 0.8413",
+      "\\text{En porcentaje}",
+      "84.13\\%"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "−3 | μ−3σ | −2 | μ−2σ | −1 | μ−σ | 0 | μ | 1 | μ+σ | 2 | μ+2σ | 3 | μ+3σ | 1",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 12
+    }
+   ]
+  },
+  {
+   "pg": "9 / 19",
+   "blocks": [
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "0,3 | 0,1 | D | P(A ∩ D) = 0,03 | 0,9 | D̅ | P(A ∩ D̅) = 0,27 | A | 0,7 | 0,2 | D | P(B ∩ D) = 0,14 | 0,8 | D̅ | P(B ∩ D̅) = 0,56 | B",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 14
+    },
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "P(D)",
+      "P(A)\\,P(D\\mid A)+P(B)\\,P(D\\mid B)",
+      "",
+      "0.3\\cdot 0.1+0.7\\cdot 0.2",
+      "",
+      "0.03+0.14=0.17",
+      "P(A\\mid D)",
+      "\\frac{P(A)\\,P(D\\mid A)}{P(D)}=\\frac{0.03}{0.17}=0.1765",
+      "P(B\\mid D)",
+      "\\frac{P(B)\\,P(D\\mid B)}{P(D)}=\\frac{0.14}{0.17}=0.8235"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    }
+   ]
+  },
+  {
+   "pg": "10 / 19",
+   "blocks": [
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "150^{\\circ}",
+      "150\\cdot\\frac{\\pi}{180}",
+      "",
+      "\\frac{5\\pi}{6}\\ \\text{rad}\\approx 2.618\\ \\text{rad}",
+      "\\text{Posición}",
+      "\\text{cuadrante II}"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "x | y | 1 | −1 | 1 | −1 | I | II | III | IV | θ | tg θ | cos θ | sen θ | P(−0,866, 0,5)",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 12
+    }
+   ]
+  },
+  {
+   "pg": "11 / 19",
+   "blocks": [
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "\\theta",
+      "150^{\\circ}=\\frac{5\\pi}{6}\\ \\text{rad}",
+      "\\text{Posición}",
+      "\\text{cuadrante II}",
+      "\\alpha",
+      "180^{\\circ}-150^{\\circ}=30^{\\circ}",
+      "\\operatorname{sen} 150^{\\circ}",
+      "\\operatorname{sen} 30^{\\circ}=\\frac{1}{2}\\approx 0.5"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "Razón | Definición | Valor | Decimal | sen θ | cateto opuesto / hipotenusa = y/r | 1/2 | 0,5 | cos θ | cateto contiguo / hipotenusa = x/r | −√3/2 | −0,866 | tg θ | sen θ / cos θ = y/x | −√3/3 | −0,5774 | cosec θ | 1 / sen θ | 2 | 2 | sec θ | 1 / cos θ | −2√3/3 | −1,1547 | cotg θ | 1 / tg θ = cos θ / sen θ | −√3 | −1,7321",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "x | y | 1 | −1 | 1 | −1 | I | II | III | IV | θ | tg θ | cos θ | sen θ | P(−0,866, 0,5)",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 12
+    }
+   ]
+  },
+  {
+   "pg": "12 / 19",
+   "blocks": [
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "Grados | Radianes | sen | cos | tg | 0° | 0 | 0 | 1 | 0 | 30° | π/6 | 1/2 | √3/2 | √3/3 | 45° | π/4 | √2/2 | √2/2 | 1 | 60° | π/3 | √3/2 | 1/2 | √3 | 90° | π/2 | 1 | 0 | ∄ | 120° | 2π/3 | √3/2 | −1/2 | −√3 | 135° | 3π/4 | √2/2 | −√2/2 | −1 | 150° | 5π/6 | 1/2 | −√3/2 | −√3/3 | 180° | π | 0 | −1 | 0 | 210° | 7π/6 | −1/2 | −√3/2 | √3/3 | 225° | 5π/4 | −√2/2 | −√2/2 | 1 | 240° | 4π/3 | −√3/2 | −1/2 | √3 | 270° | 3π/2 | −1 | 0 | ∄ | 300° | 5π/3 | −√3/2 | 1/2 | −√3 | 315° | 7π/4 | −√2/2 | √2/2 | −1 | 330° | 11π/6 | −1/2 | √3/2 | −√3/3 | 360° | 2π | 0 | 1 | 0",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "I | II | III | IV | 0° | 0 | 30° | π/6 | 45° | π/4 | 60° | π/3 | 90° | π/2 | 120° | 2π/3 | 135° | 3π/4 | 150° | 5π/6 | 180° | π | 210° | 7π/6 | 225° | 5π/4 | 240° | 4π/3 | 270° | 3π/2 | 300° | 5π/3 | 315° | 7π/4 | 330° | 11π/6",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 36
+    }
+   ]
+  },
+  {
+   "pg": "13 / 19",
+   "blocks": [
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "\\text{Datos}",
+      "a=5,\\ b=7,\\ \\hat{C}=60^{\\circ}",
+      "\\text{Caso}",
+      "\\text{dos lados y el ángulo comprendido (LAL)}",
+      "c^{2}",
+      "a^{2}+b^{2}-2ab\\cos \\hat{C}=5^{2}+7^{2}-2\\cdot 5\\cdot 7\\cdot\\cos 60^{\\circ}=39",
+      "c",
+      "\\sqrt{39}\\approx 6.245",
+      "\\cos \\hat{A}",
+      "\\frac{b^{2}+c^{2}-a^{2}}{2bc}=\\frac{7^{2}+6.245^{2}-5^{2}}{2\\cdot 7\\cdot 6.245}=0.7206",
+      "\\hat{A}",
+      "\\arccos\\left(0.7206\\right)\\approx 43.9^{\\circ}",
+      "\\hat{B}",
+      "180^{\\circ}-60^{\\circ}-43.9^{\\circ}\\approx 76.1^{\\circ}",
+      "\\text{Solución}",
+      "a\\approx 5,\\ b\\approx 7,\\ c\\approx 6.245,\\ \\hat{A}\\approx 43.9^{\\circ},\\ \\hat{B}\\approx 76.1^{\\circ},\\ \\hat{C}\\approx 60^{\\circ}",
+      "S",
+      "\\frac{1}{2}\\,bc\\,\\operatorname{sen}\\hat{A}=\\frac{1}{2}\\cdot 7\\cdot 6.245\\cdot\\operatorname{sen}43.9^{\\circ}\\approx 15.1554",
+      "P",
+      "a+b+c\\approx 18.245"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "43,9° | A | 76,1° | B | 60° | C | a = 5 | b = 7 | c = 6,245",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 5
+    }
+   ]
+  },
+  {
+   "pg": "14 / 19",
+   "blocks": [
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "r",
+      "2x+y-3=0",
+      "s",
+      "x-y+1=0",
+      "\\frac{a_1}{a_2},\\ \\frac{b_1}{b_2},\\ \\frac{c_1}{c_2}",
+      "\\frac{2}{1},\\ \\frac{1}{-1},\\ \\frac{-3}{1}",
+      "\\text{Posición}",
+      "\\text{secantes}",
+      "\\begin{cases}2x+y-3=0\\\\x-y+1=0\\end{cases}",
+      "x=\\frac{2}{3},\\ y=\\frac{5}{3}",
+      "\\cos\\varphi",
+      "\\frac{\\left|a_1a_2+b_1b_2\\right|}{\\sqrt{a_1^{2}+b_1^{2}}\\,\\sqrt{a_2^{2}+b_2^{2}}}=\\frac{1}{\\sqrt{5}\\,\\sqrt{2}}",
+      "\\varphi",
+      "\\arccos\\left(0.3162\\right)\\approx 71.57^{\\circ}"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "−4 | −3 | −2 | −1 | 1 | 2 | 3 | 4 | 5 | −1 | 1 | 2 | 3 | 4 | r | s | P(0,667, 1,667)",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 22
+    }
+   ]
+  },
+  {
+   "pg": "15 / 19",
+   "blocks": [
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "\\hat{1}",
+      "65^{\\circ}",
+      "\\hat{3}",
+      "\\hat{1}=65^{\\circ}",
+      "\\hat{2}=\\hat{4}",
+      "180^{\\circ}-65^{\\circ}=115^{\\circ}",
+      "\\hat{5}",
+      "\\hat{1}=65^{\\circ}",
+      "\\hat{7}",
+      "\\hat{3}=65^{\\circ}",
+      "\\hat{6}=\\hat{8}",
+      "115^{\\circ}",
+      "\\hat{4}",
+      "\\hat{6}=115^{\\circ}",
+      "\\hat{3}+\\hat{6}",
+      "180^{\\circ}"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "Ángulo | Medida | Relación | 1̂ | 65° | dado | 2̂ | 115° | adyacente a 1̂ (suplementario) | 3̂ | 65° | opuesto por el vértice a 1̂ | 4̂ | 115° | adyacente a 1̂ (suplementario) | 5̂ | 65° | correspondiente de 1̂ | 6̂ | 115° | alterno interno de 4̂ · correspondiente de 2̂ | 7̂ | 65° | alterno externo de 1̂ | 8̂ | 115° | correspondiente de 4̂",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "r | s | t | 1: 65° | 2: 115° | 3: 65° | 4: 115° | 5: 65° | 6: 115° | 7: 65° | 8: 115°",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 14
+    }
+   ]
+  },
+  {
+   "pg": "16 / 19",
+   "blocks": [
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "p | q | r | p ∧ q | (p ∧ q) → r | V | V | V | V | V | V | V | F | V | F | V | F | V | F | V | V | F | F | F | V | F | V | V | F | V | F | V | F | F | V | F | F | V | F | V | F | F | F | F | V",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    }
+   ]
+  },
+  {
+   "pg": "17 / 19",
+   "blocks": [
+    {
+     "cls": "blk",
+     "math": [
+      "1"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [
+      "1\\quad 1"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [
+      "1\\quad 2\\quad 1"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [
+      "1\\quad 3\\quad 3\\quad 1"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [
+      "1\\quad 4\\quad 6\\quad 4\\quad 1"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk",
+     "math": [
+      "1\\quad 5\\quad 10\\quad 10\\quad 5\\quad 1"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    }
+   ]
+  },
+  {
+   "pg": "18 / 19",
+   "blocks": [
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "| 1 | 0 | 0 | -1 | 1 | | 1 | 1 | 1 | | 1 | 1 | 1 | 0",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    },
+    {
+     "cls": "blk blk-deriv",
+     "math": [
+      "C(x)",
+      "x^{2}+x+1",
+      "R(x)",
+      "0",
+      "x^{3}-1",
+      "\\left(x-1\\right)\\left(x^{2}+x+1\\right)"
+     ],
+     "text": "",
+     "svg": 0,
+     "canvas": 0,
+     "shapes": 0
+    }
+   ]
+  },
+  {
+   "pg": "19 / 19",
+   "blocks": [
+    {
+     "cls": "blk",
+     "math": [],
+     "text": "U | A | B",
+     "svg": 2,
+     "canvas": 0,
+     "shapes": 10
+    }
+   ]
+  }
+ ],
+ "errors": []
+}
