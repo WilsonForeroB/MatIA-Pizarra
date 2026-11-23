@@ -62,9 +62,31 @@ MatIA.define('engine/ops/common', ['engine/core'], (ME) => {
     return t.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2').replace(/\\sqrt\{([^{}]+)\}/g, '√$1').replace(/\\left|\\right|\\cdot/g, '').replace(/[\\{}]/g, '');
   }
 
-  const dec = (v, k = 4) => { const r = Math.round(v * 10 ** k) / 10 ** k; return (Object.is(r, -0) ? 0 : r).toString(); };
-  const decT = (v, k = 4) => dec(v, k).replace('.', ',').replace(/^-/, '−');
+  /* Decimales redondeados a k cifras: decN da el número en texto con punto (para cálculos), dec en LaTeX con coma decimal «0{,}25»
+     y decT en texto con coma «0,25» y signo «−». Si hay varios números seguidos, sepáralos con «;» (la coma ya es decimal). */
+  const decN = (v, k = 4) => { const r = Math.round(v * 10 ** k) / 10 ** k; return (Object.is(r, -0) ? 0 : r).toString(); };
+  const dec = (v, k = 4) => decN(v, k).replace('.', '{,}');
+  const decT = (v, k = 4) => decN(v, k).replace('.', ',').replace(/^-/, '−');
+  /* LaTeX → texto plano legible para notas: \frac{a}{b} → a/b, \sqrt{x} → √x, \pi → π, e^{3} → e³, 0{,}5 → 0,5. */
+  const SUP = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹', '-': '⁻' };
+  const GREEK_T = { alpha: 'α', beta: 'β', gamma: 'γ', delta: 'δ', lambda: 'λ', mu: 'μ', theta: 'θ', sigma: 'σ', tau: 'τ', phi: 'φ', varphi: 'φ', omega: 'ω', rho: 'ρ', varepsilon: 'ε', epsilon: 'ε', pi: 'π', Delta: 'Δ' };
+  function latexPlain(t) {
+    let s = String(t).replace(/\\left|\\right/g, '').replace(/\\mathrm\{e\}/g, 'e').replace(/\\(?:mathrm|operatorname|text)\{([^{}]*)\}/g, '$1');
+    s = s.replace(/\{,\}/g, ',').replace(/\\(?:cdot|times)\s*/g, '·').replace(/\\[,;:! ]|\\quad/g, ' ');
+    s = s.replace(/\\([A-Za-z]+)\s*/g, (m, w) => (GREEK_T[w] ? GREEK_T[w] : m));
+    const atom = (a) => { a = a.trim(); return /^[\w.,π√θφαβγλμρστωε⁰¹²³⁴⁵⁶⁷⁸⁹⁻·]+$/.test(a) && !/^.+·/.test(a) ? a : '(' + a + ')'; };
+    for (let k = 0; k < 6; k++) {
+      s = s.replace(/\^\{(-?\d+)\}|\^(\d)/g, (m, a, b) => [...(a || b)].map((ch) => SUP[ch]).join(''));
+      s = s.replace(/\\[dt]?frac\{([^{}]*)\}\{([^{}]*)\}/g, (m, a, b, o, all) => { const q = atom(a) + '/' + atom(b); return /^[\w(\\√πθφ]/.test(all.slice(o + m.length)) ? '(' + q + ')' : q; });
+      s = s.replace(/\\sqrt\{([^{}]*)\}/g, (m, a) => '√' + atom(a));
+      s = s.replace(/\^\{([^{}]*)\}/g, (m, a) => '^' + atom(a));
+    }
+    s = s.replace(/\\(sin|cos|tan|cot|sec|csc|arcsin|arccos|arctan|ln|log|exp|sinh|cosh)\b\s*/g, '$1 ');
+    return s.replace(/\\([A-Za-z]+)/g, '$1').replace(/[{}]/g, '').replace(/\s+/g, ' ').trim();
+  }
+  /* Une varias expresiones LaTeX: con «,\ » salvo que alguna lleve coma decimal, y entonces con «;\ ». */
+  const listL = (parts) => parts.join(parts.some((x) => /\{,\}/.test(x)) ? ';\\ ' : ',\\ ');
   const fracOrDec = (q, useDec) => (useDec ? dec(fNum(q)) : fLatex(q));
-
-  return { fr, fNum, isOp, isCmd, fact, fText, squareOf, matrixOf, math, pm, vm, derivBlock, prodTxt, fParen, lastSeg, splitTop, coefI, sqrtLatex, sqrtSimp, topEqIndex, latexText, fracOrDec, dec, decT };
+  
+  return { fr, fNum, isOp, isCmd, fact, fText, squareOf, matrixOf, math, pm, vm, derivBlock, prodTxt, fParen, lastSeg, splitTop, coefI, sqrtLatex, sqrtSimp, topEqIndex, latexText, latexPlain, fracOrDec, dec, decN, decT, listL };
 });

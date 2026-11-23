@@ -74,7 +74,7 @@ MatIA.ejemplo({
               },
               {
                 "l": "s^{2}",
-                "r": "\\frac{20}{17}=\\frac{20}{17}\\approx 1{,}1765",
+                "r": "\\frac{20}{17}\\approx 1{,}1765",
                 "note": "Varianza muestral (cuasivarianza): se divide entre n − 1",
                 "boxed": false
               },
@@ -190,7 +190,7 @@ MatIA.ejemplo({
               },
               {
                 "l": "s",
-                "r": "\\sqrt{10}=\\sqrt{10}\\approx 3{,}1623",
+                "r": "\\sqrt{10}\\approx 3{,}1623",
                 "note": "Desviación típica muestral",
                 "boxed": false
               },
@@ -289,7 +289,7 @@ MatIA.ejemplo({
           },
           {
             "type": "text",
-            "v": "La alumna tiene razón. La media de las dos clases es 6, pero en la clase A casi todos están cerca del 6 (la desviación típica es de solo un punto y la caja del diagrama es estrecha), mientras que en la B las notas están muy dispersas: la desviación típica es tres veces mayor y la caja va del 4 al 10. Además, la mediana de B es 5: la mitad de esa clase no llegó al 6 que sugiere la media. Seis alumnos sacaron un 10 y «subieron» la media, tapando que doce estaban por debajo de 7. La media es muy sensible a los valores extremos; la mediana no."
+            "v": "La alumna tiene razón. La media de las dos clases es 6, pero en la clase A casi todos están cerca del 6 (la desviación típica es de solo un punto y la caja del diagrama es estrecha), mientras que en la B las notas están muy dispersas: la desviación típica es tres veces mayor y la caja va del 4 al 10. Además, la mediana de B es 5: más de la mitad de esa clase (10 de 18) no llegó al 6 que sugiere la media. Seis alumnos sacaron un 10 y «subieron» la media, tapando que los otros doce no pasaron del 6. La media es muy sensible a los valores extremos; la mediana no."
           },
           {
             "type": "text",

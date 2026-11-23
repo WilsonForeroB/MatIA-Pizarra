@@ -5,7 +5,7 @@ MatIA.ejemplo({
   "titulo": "Encuesta en clase: ¿quién usa cada red social?",
   "resumen": "Con tres conjuntos y el principio de inclusión-exclusión contamos cuántos alumnos usan una, dos o tres redes y cuántos ninguna, con su diagrama de Venn.",
   "board": {
-    "title": "Conjuntos: encuesta sobre redes sociales",
+    "title": "Encuesta en clase: ¿quién usa cada red social?",
     "pages": [
       {
         "blocks": [
@@ -81,14 +81,8 @@ MatIA.ejemplo({
             "rows": [
               {
                 "l": "|A\\cup B\\cup C|",
-                "r": "|A|+|B|+|C|",
-                "note": "Fórmula de inclusión-exclusión para tres conjuntos: sumamos los tres cardinales",
-                "boxed": false
-              },
-              {
-                "l": "",
-                "r": "-|A\\cap B|-|A\\cap C|-|B\\cap C|+|A\\cap B\\cap C|",
-                "note": "Restamos las intersecciones dobles y sumamos la triple",
+                "r": "|A|+|B|+|C|-|A\\cap B|-|A\\cap C|-|B\\cap C|+|A\\cap B\\cap C|",
+                "note": "Fórmula de inclusión-exclusión para tres conjuntos: sumamos los tres cardinales, restamos las intersecciones dobles y sumamos la triple",
                 "boxed": false
               },
               {
@@ -112,7 +106,7 @@ MatIA.ejemplo({
           },
           {
             "type": "text",
-            "v": "El motor confirma el 26. Así que 26 de los 30 alumnos usan al menos una red y 4 no usan ninguna."
+            "v": "La operación lo confirma. Así que 26 de los 30 alumnos usan al menos una red y 4 no usan ninguna."
           },
           {
             "type": "text",
@@ -127,14 +121,14 @@ MatIA.ejemplo({
             "rows": [
               {
                 "l": "\\text{Solo A}",
-                "r": "|A|-|A\\cap B|-|A\\cap C|",
-                "note": "Vídeos cortos y nada más: quitamos los que están también en B o en C",
+                "r": "|A|-|A\\cap B|-|A\\cap C|+|A\\cap B\\cap C|",
+                "note": "Vídeos cortos y nada más: quitamos los que están también en B o en C, y sumamos de nuevo los de las tres, que hemos quitado dos veces",
                 "boxed": false
               },
               {
                 "l": "",
-                "r": "+|A\\cap B\\cap C|=16-6-11+4=3",
-                "note": "Sumamos de nuevo los de las tres, que hemos quitado dos veces",
+                "r": "16-6-11+4=3",
+                "note": "Sustituimos los cardinales",
                 "boxed": false
               },
               {
@@ -179,7 +173,7 @@ MatIA.ejemplo({
           },
           {
             "type": "text",
-            "v": "El diagrama sombrea a los que usan solo una red: en cada círculo, la parte que no se solapa con los demás. Los números son los alumnos de cada zona. Fuera de los círculos están los 4 que no usan ninguna (los números 27 a 30, que no se escriben porque la clase completa no cabe en una línea). Los 10 alumnos que usan una sola red son los números 17 a 26."
+            "v": "El diagrama sombrea a los que usan solo una red: en cada círculo, la parte que no se solapa con los demás. Los números son los alumnos de cada zona. Los 4 que no usan ninguna (los números 27 a 30) irían fuera de los círculos, dentro del rectángulo U; no aparecen porque solo hemos escrito los conjuntos A, B y C. Los 10 alumnos que usan una sola red son los números 17 a 26."
           },
           {
             "type": "text",

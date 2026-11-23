@@ -5,13 +5,13 @@ MatIA.ejemplo({
   "titulo": "La ruta más rápida, como hace el GPS",
   "resumen": "Con el algoritmo de Dijkstra buscamos la ruta más rápida en una red de metro y calles, igual que hace un navegador al calcular tu camino.",
   "board": {
-    "title": "Dijkstra: la ruta más rápida",
+    "title": "La ruta más rápida, como hace el GPS",
     "pages": [
       {
         "blocks": [
           {
             "type": "text",
-            "v": "Sales de casa y quieres llegar al cine lo antes posible. La red de metro y calles de tu barrio tiene siete puntos y entre cada dos puntos conectados el trayecto tarda un número distinto de minutos (incluyendo andar o hacer transbordo). Hay muchas rutas posibles: ¿cuál es la más rápida? Es el problema que resuelve el GPS de tu móvil cada vez que le pides una ruta, y se resuelve con un algoritmo que lleva el nombre de su inventor, Dijkstra."
+            "v": "Sales de casa y quieres llegar al cine lo antes posible. La red de metro y calles de tu barrio tiene siete puntos y entre cada dos puntos conectados el trayecto tarda un número distinto de minutos (incluyendo andar o hacer transbordo). Hay muchas rutas posibles: ¿cuál es la más rápida? Es el problema que resuelve la app de mapas de tu móvil cada vez que le pides una ruta, y tiene una solución clásica: el algoritmo de Dijkstra, que el informático neerlandés Edsger Dijkstra ideó en 1956."
           },
           {
             "type": "text",
@@ -283,7 +283,7 @@ MatIA.ejemplo({
           },
           {
             "type": "text",
-            "v": "Ahora tú: 1) Doble clic sobre un peso para cambiarlo: pon E–G (Estadio–Cine) = 12 y repite el algoritmo por tu cuenta, ¿cambia la ruta? 2) Suprime el tramo B–C (Plaza–Mercado, obras): ¿cuál es ahora la ruta más rápida y cuánto tarda?"
+            "v": "Ahora tú: 1) Haz doble clic sobre un peso para cambiarlo: pon E–G (Estadio–Cine) = 12 y repite el algoritmo por tu cuenta. ¿Cambia la ruta? 2) Borra el tramo B–C (Plaza–Mercado, por obras) con el botón «Borrar» del grafo: ¿cuál es ahora la ruta más rápida y cuánto tarda? (Pista: hay empate entre dos rutas.)"
           }
         ],
         "strokes": []

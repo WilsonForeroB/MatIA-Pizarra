@@ -2,10 +2,10 @@
 MatIA.ejemplo({
   "id": "estadistica-tallas-ropa",
   "tema": "estadistica",
-  "titulo": "¿Cuántas camisetas de cada talla debe fabricar una tienda?",
+  "titulo": "¿Cuántas camisetas de cada talla debe pedir una tienda?",
   "resumen": "Con una distribución normal de alturas calculamos qué proporción de clientes lleva cada talla y repartimos un pedido de 1000 camisetas.",
   "board": {
-    "title": "Distribución normal: tallas de camisetas",
+    "title": "¿Cuántas camisetas de cada talla debe pedir una tienda?",
     "pages": [
       {
         "blocks": [
@@ -311,7 +311,7 @@ MatIA.ejemplo({
           },
           {
             "type": "text",
-            "v": "La talla M es la más pedida (unas 372), pero S y L juntas suman más de 480. Las tallas de los extremos, XS y XL, son las menos vendidas: así se ve que las alturas muy bajas o muy altas son raras en una normal. Ten en cuenta que 1000 × 0,0401 ≈ 40 es un valor esperado: en una tienda real saldrán 36 o 45, no exactamente 40."
+            "v": "La talla M es la más pedida (unas 372), pero S y L juntas suman más de 480. Las tallas de los extremos, XS y XL, son las menos vendidas: así se ve que las alturas muy bajas o muy altas son raras en una normal. Ten en cuenta que 1000 × 0,0401 ≈ 40 es un valor esperado: en una tienda real pueden venderse 35 o 45, no exactamente 40."
           },
           {
             "type": "text",
@@ -319,7 +319,7 @@ MatIA.ejemplo({
           },
           {
             "type": "text",
-            "v": "Es un modelo muy simplificado. En la realidad la altura media de los hombres adultos en España está cerca de 175 cm y la de las mujeres cerca de 162 cm, así que una sola campana N(170, 8) mezcla dos grupos; y la talla de una camiseta depende del contorno del pecho más que de la altura. Por eso las tiendas usan datos de sus propias ventas para ajustar el pedido. Aun así, la idea de repartir un pedido con una normal es la que se usa en la práctica."
+            "v": "Es un modelo muy simplificado. En la realidad, la estatura media de los hombres jóvenes en España ronda los 175 cm y la de las mujeres, los 162-163 cm, así que una sola campana N(170, 8) mezcla dos grupos; y la talla de una camiseta depende del contorno del pecho más que de la altura. Por eso las tiendas usan datos de sus propias ventas para ajustar el pedido. Aun así, la idea de fondo, repartir un pedido según un modelo de probabilidad, sí se usa de verdad."
           },
           {
             "type": "text",

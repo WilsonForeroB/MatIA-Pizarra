@@ -70,7 +70,7 @@ MatIA.define('blocks/geo', ['model/board', 'blocks/svg-utils', 'blocks/registry'
         if (Math.abs(s) > 0.12) txt(P[0] + (c >= 0 ? 8 : -8), (cy + P[1]) / 2 + 5, 'sen θ', 'geo-lab sin', c >= 0 ? 'start' : 'end');
         el('circle', { cx: P[0], cy: P[1], r: 6 }, 'geo-pt main');
         const r4 = (v) => fmtNum(Math.round(v * 1e4) / 1e4);
-        txt(P[0] + (c >= 0 ? 12 : -12), P[1] + (s >= 0 ? -12 : 22), 'P(' + r4(c) + ', ' + r4(s) + ')', 'geo-lab', c >= 0 ? 'start' : 'end');
+        txt(P[0] + (c >= 0 ? 12 : -12), P[1] + (s >= 0 ? -12 : 22), 'P(' + r4(c) + (/,/.test(r4(c) + r4(s)) ? '; ' : ', ') + r4(s) + ')', 'geo-lab', c >= 0 ? 'start' : 'end');
         title.textContent = 'Circunferencia goniométrica: θ = ' + (b.label || fmtD(d));
         leg('cos θ (abscisa de P)', 'var(--data-2)'); leg('sen θ (ordenada de P)', 'var(--data-5)'); if (tg != null && Math.abs(tg) < 2.3) leg('tg θ (sobre la recta x = 1)', 'var(--data-3)');
         svg.setAttribute('aria-label', 'Circunferencia de radio 1 con el ángulo ' + (b.label || fmtD(d)) + ': coseno ' + r4(c) + ', seno ' + r4(s));
@@ -109,7 +109,7 @@ MatIA.define('blocks/geo', ['model/board', 'blocks/svg-utils', 'blocks/registry'
         const M = [(P[0] + Q[0]) / 2, (P[1] + Q[1]) / 2], dv = [M[0] - G[0], M[1] - G[1]], dn = Math.hypot(...dv) || 1;
         txt(M[0] + dv[0] / dn * 20, M[1] + dv[1] / dn * 20 + 5, nm + ' = ' + fmtNum(Math.round(len * 1e4) / 1e4), 'geo-side');
       }
-      title.textContent = (b.label ? b.label + ': ' : 'Triángulo: ') + 'a = ' + fmtNum(Math.round(b.a * 1e4) / 1e4) + ', b = ' + fmtNum(Math.round(b.b * 1e4) / 1e4) + ', c = ' + fmtNum(Math.round(b.c * 1e4) / 1e4);
+      title.textContent = (b.label ? b.label + ': ' : 'Triángulo: ') + ['a', 'b', 'c'].map((k) => k + ' = ' + fmtNum(Math.round(b[k] * 1e4) / 1e4)).join('; ');
       svg.setAttribute('aria-label', 'Triángulo de lados a ' + fmtNum(b.a) + ', b ' + fmtNum(b.b) + ', c ' + fmtNum(b.c) + ' y ángulos A ' + fmtD(b.A) + ', B ' + fmtD(b.B) + ', C ' + fmtD(b.C));
     } else if (b.kind === 'lines') {
       const H = 460, L = 0, T0 = 0;
@@ -148,7 +148,7 @@ MatIA.define('blocks/geo', ['model/board', 'blocks/svg-utils', 'blocks/registry'
       for (const p of pts) {
         if (p.x < xmin || p.x > xmax || p.y < ymin || p.y > ymax) continue;
         el('circle', { cx: sx(p.x), cy: sy(p.y), r: p.kind === 'cut' ? 6.5 : 5.5 }, 'geo-pt' + (p.kind === 'cut' ? ' main' : p.kind === 'mid' ? ' mid' : ''));
-        txt(sx(p.x) + 10, sy(p.y) - 10, p.name + '(' + fmtNum(Math.round(p.x * 1000) / 1000) + ', ' + fmtNum(Math.round(p.y * 1000) / 1000) + ')', 'geo-lab', 'start');
+        txt(sx(p.x) + 10, sy(p.y) - 10, p.name + '(' + [p.x, p.y].map(fmtNum).join(/,/.test(fmtNum(p.x) + fmtNum(p.y)) ? '; ' : ', ') + ')', 'geo-lab', 'start');
       }
       title.textContent = lns.length >= 2 && !lns[1].dash ? 'Posición relativa de ' + lns[0].name + ' y ' + lns[1].name : lns.length > 1 ? 'Recta ' + lns[0].name + ', su paralela y su perpendicular por el punto' : 'Recta y puntos';
       svg.setAttribute('aria-label', title.textContent + '. ' + lns.map((l) => l.name).join(', '));

@@ -40,14 +40,14 @@ MatIA.define('engine/ops/aritmetica', ['engine/core', 'engine/ops/common', 'engi
     const maxE = primes.map((p) => [p, Math.max(...fs.map((f) => (f.find(([q]) => q === p) || [p, 0])[1]))]);
     const g = ns.reduce((a, b) => gcd(a, b));
     const l = ns.reduce((a, b) => a / gcd(a, b) * b);
-    const rows = ns.map((n, i) => ({ l: String(n), r: facLatex(fs[i]), note: i === 0 ? 'Descomponemos en factores primos' : '' }));
+    const rows = ns.map((n, i) => ({ l: String(n), r: facLatex(fs[i]), note: i === 0 ? 'Descomponemos en factores primos' : 'Igual con ' + n }));
     rows.push({ l: '\\operatorname{m.c.d.}(' + ns.join(',') + ')', r: (minE.length ? facLatex(minE) + '=' : '') + g, note: 'Factores comunes con el menor exponente', boxed: true });
     rows.push({ l: '\\operatorname{m.c.m.}(' + ns.join(',') + ')', r: facLatex(maxE) + '=' + l, note: 'Factores comunes y no comunes con el mayor exponente', boxed: true });
     const out = [derivBlock(rows)];
     if (ns.length === 2) {
       let [a, b] = ns[0] >= ns[1] ? [ns[0], ns[1]] : [ns[1], ns[0]];
       const er = [];
-      while (b > 0n) { er.push({ l: String(a), r: (a / b) + '\\cdot ' + b + '+' + (a % b), note: er.length ? '' : 'Algoritmo de Euclides: dividimos y seguimos con el resto' }); [a, b] = [b, a % b]; }
+      while (b > 0n) { er.push({ l: String(a), r: (a / b) + '\\cdot ' + b + '+' + (a % b), note: er.length ? 'Dividimos el divisor anterior entre el resto' : 'Algoritmo de Euclides: dividimos y seguimos con el resto' }); [a, b] = [b, a % b]; }
       er.push({ l: '\\operatorname{m.c.d.}', r: String(a), note: 'El último resto distinto de 0', boxed: true });
       out.push(derivBlock(er));
     }
@@ -96,7 +96,7 @@ MatIA.define('engine/ops/aritmetica', ['engine/core', 'engine/ops/common', 'engi
       const rows = [
         { l: lhs, r: exp.map((f, i) => (f.n < 0n ? '-' : i ? '+' : '') + '\\frac{' + abs(f.n) + '}{' + l + '}').join(''), note: 'm.c.m. de los denominadores = ' + l + '; ' + fs.map((f) => 'multiplicamos ' + abs(f.n) + '/' + f.d + ' arriba y abajo por ' + (l / f.d)).filter((s, i) => fs[i].d !== l).join('; ') },
         { r: '\\frac{' + exp.map((f, i) => (f.n < 0n ? '-' : i ? '+' : '') + abs(f.n)).join('') + '}{' + l + '}', note: 'Mismo denominador: sumamos los numeradores' },
-        { r: '\\frac{' + sum + '}{' + l + '}' },
+        { r: '\\frac{' + sum + '}{' + l + '}', note: 'Operamos el numerador' },
       ];
       const res = F(sum, l);
       if (fLatex(res) !== '\\frac{' + sum + '}{' + l + '}') rows.push({ r: fLatex(res), note: 'Simplificamos (m.c.d. = ' + gcd(sum, l) + ')' });
@@ -113,7 +113,7 @@ MatIA.define('engine/ops/aritmetica', ['engine/core', 'engine/ops/common', 'engi
     const nn = parts.map((p) => p.n), dd = parts.map((p) => p.d);
     rows.push({ l: rows.length ? '' : lhs, r: '\\frac{' + nn.map((x) => (x < 0n ? '\\left(' + x + '\\right)' : x)).join('\\cdot ') + '}{' + dd.map((x) => (x < 0n ? '\\left(' + x + '\\right)' : x)).join('\\cdot ') + '}', note: 'Numerador por numerador y denominador por denominador' });
     const N1 = nn.reduce((a, b) => a * b, 1n), D1 = dd.reduce((a, b) => a * b, 1n);
-    rows.push({ r: '\\frac{' + N1 + '}{' + D1 + '}' });
+    rows.push({ r: '\\frac{' + N1 + '}{' + D1 + '}', note: 'Multiplicamos' });
     const res = F(N1, D1);
     if (fLatex(res) !== '\\frac{' + N1 + '}{' + D1 + '}') rows.push({ r: fLatex(res), note: 'Simplificamos (m.c.d. = ' + gcd(N1, D1) + ')' });
     rows[rows.length - 1].boxed = true;

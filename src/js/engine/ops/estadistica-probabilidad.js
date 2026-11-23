@@ -4,7 +4,7 @@ MatIA.define('engine/ops/estadistica-probabilidad', ['engine/core', 'engine/ops/
   const { MErr, F, fLatex } = ME;
   const { div, add, ZERO, isInt, sub, mul, isZ, ONE } = ME.fr;
   const { evalExact, parseExpr, evalNum } = $expr;
-  const { fNum, fracOrDec, dec, fText, sqrtSimp, sqrtLatex, derivBlock, decT, fact, matrixOf, latexText } = $common;
+  const { fNum, fracOrDec, dec, fText, sqrtSimp, sqrtLatex, derivBlock, decT, fact, matrixOf, latexText, latexPlain } = $common;
   /* ====================== 12. Estadística y probabilidad ====================== */
 
   // Lista de datos: «2, 3, 5» o «x = 2; 3,5; 4» (con «;» se admite la coma decimal)
@@ -36,11 +36,16 @@ MatIA.define('engine/ops/estadistica-probabilidad', ['engine/core', 'engine/ops/
     const sum = xs.reduce(add, ZERO);
     const mean = div(sum, F(n));
     const L0 = (q) => fracOrDec(q, useDec);
-    const lst = (arr) => arr.map(L0).join(',\\ ');
-    const rows = [
-      { l: '\\text{Datos ordenados}', r: lst(xs), note: 'n = ' + n + ' datos' },
-      { l: '\\bar{x}', r: '\\frac{\\sum x_{i}}{n}=\\frac{' + L0(sum) + '}{' + n + '}' + (L0(mean) === '\\frac{' + L0(sum) + '}{' + n + '}' ? '' : '=' + L0(mean)) + (useDec || isInt(mean) ? '' : '\\approx ' + dec(fNum(mean))), note: 'Media: suma de los datos entre el número de datos', boxed: true },
-    ];
+    const SEP = useDec ? ';\\ ' : ',\\ '; // con coma decimal, los datos se separan con «;»
+    const lst = (arr) => arr.map(L0).join(SEP);
+    const rows = [];
+    if (n <= 12) rows.push({ l: '\\text{Datos ordenados}', r: lst(xs), note: 'n = ' + n + ' datos' });
+    else for (let i = 0; i < n; i += 10) { // muchos datos: filas de 10 (x₍₁₎…x₍₁₀₎, …) para que no se salgan de la hoja
+      const j = Math.min(n, i + 10);
+      rows.push({ l: 'x_{(' + (i + 1) + ')},\\ldots,x_{(' + j + ')}', r: lst(xs.slice(i, j)), note: i ? 'Siguen los datos ordenados (del ' + (i + 1) + '.º al ' + j + '.º)' : 'n = ' + n + ' datos ordenados de menor a mayor; x₍ᵢ₎ es el que ocupa la posición i' });
+    }
+    rows.push(
+      { l: '\\bar{x}', r: '\\frac{\\sum x_{i}}{n}=\\frac{' + L0(sum) + '}{' + n + '}' + (L0(mean) === '\\frac{' + L0(sum) + '}{' + n + '}' ? '' : '=' + L0(mean)) + (useDec || isInt(mean) ? '' : '\\approx ' + dec(fNum(mean))), note: 'Media: suma de los datos entre el número de datos', boxed: true });
     const med = medianOf(xs);
     rows.push({ l: 'Me', r: L0(med), note: n % 2 ? 'Mediana: el dato central (posición ' + (n + 1) / 2 + ')' : 'Mediana: media de los dos centrales (posiciones ' + n / 2 + ' y ' + (n / 2 + 1) + ')', boxed: true });
     const cnt = new Map();
@@ -65,7 +70,7 @@ MatIA.define('engine/ops/estadistica-probabilidad', ['engine/core', 'engine/ops/
     const lower = xs.slice(0, half), upper = xs.slice(n % 2 ? half + 1 : half);
     if (lower.length && upper.length) {
       const q1 = medianOf(lower), q3 = medianOf(upper);
-      rows.push({ l: 'Q_{1},\\ Q_{2},\\ Q_{3}', r: L0(q1) + ',\\ ' + L0(med) + ',\\ ' + L0(q3), note: 'Cuartiles: Q₁ y Q₃ son las medianas de la mitad inferior y de la superior' });
+      rows.push({ l: 'Q_{1}' + SEP + 'Q_{2}' + SEP + 'Q_{3}', r: L0(q1) + SEP + L0(med) + SEP + L0(q3), note: 'Cuartiles: Q₁ y Q₃ son las medianas de la mitad inferior y de la superior' });
       rows.push({ l: '\\text{RIC}', r: 'Q_{3}-Q_{1}=' + L0(sub(q3, q1)), note: 'Rango intercuartílico' });
       var box = { q1: fNum(q1), q3: fNum(q3) };
     }
@@ -194,12 +199,12 @@ MatIA.define('engine/ops/estadistica-probabilidad', ['engine/core', 'engine/ops/
     const PB = prods.reduce(add, ZERO);
     const rows = [
       { l: 'P(' + E + ')', r: cs.map((c) => 'P(' + nmL(c.name) + ')\\,P(' + E + '\\mid ' + nmL(c.name) + ')').join('+'), note: 'Teorema de la probabilidad total: sumamos las ramas que llegan a ' + evName },
-      { r: cs.map((c) => L0(c.p) + '\\cdot ' + L0(c.l)).join('+') },
-      { r: prods.map(L0).join('+') + '=' + L0(PB) + (useDec || isInt(PB) ? '' : '\\approx ' + dec(fNum(PB))), boxed: true },
+      { r: cs.map((c) => L0(c.p) + '\\cdot ' + L0(c.l)).join('+'), note: 'Sustituimos las probabilidades de cada rama' },
+      { r: prods.map(L0).join('+') + '=' + L0(PB) + (useDec || isInt(PB) ? '' : '\\approx ' + dec(fNum(PB))), note: 'Multiplicamos a lo largo de cada rama y sumamos', boxed: true },
     ];
     if (!isZ(PB)) cs.forEach((c, i) => {
       const post = div(prods[i], PB);
-      rows.push({ l: 'P(' + nmL(c.name) + '\\mid ' + E + ')', r: '\\frac{P(' + nmL(c.name) + ')\\,P(' + E + '\\mid ' + nmL(c.name) + ')}{P(' + E + ')}=\\frac{' + L0(prods[i]) + '}{' + L0(PB) + '}=' + L0(post) + (useDec || isInt(post) ? '' : '\\approx ' + dec(fNum(post))), note: i === 0 ? 'Teorema de Bayes: probabilidad de cada causa sabiendo que ha ocurrido ' + evName : '', boxed: true });
+      rows.push({ l: 'P(' + nmL(c.name) + '\\mid ' + E + ')', r: '\\frac{P(' + nmL(c.name) + ')\\,P(' + E + '\\mid ' + nmL(c.name) + ')}{P(' + E + ')}=\\frac{' + L0(prods[i]) + '}{' + L0(PB) + '}=' + L0(post) + (useDec || isInt(post) ? '' : '\\approx ' + dec(fNum(post))), note: i === 0 ? 'Teorema de Bayes: probabilidad de cada causa sabiendo que ha ocurrido ' + evName : 'Igual para ' + c.name + ' (las probabilidades a posteriori suman 1)', boxed: true });
     });
     const tree = { type: 'ptree', ev: evName, causes: cs.map((c, i) => ({ name: c.name, p: useDec ? decT(fNum(c.p)) : fText(c.p), l: useDec ? decT(fNum(c.l)) : fText(c.l), nl: useDec ? decT(1 - fNum(c.l)) : fText(sub(ONE, c.l)), prod: useDec ? decT(fNum(prods[i])) : fText(prods[i]), nprod: useDec ? decT(fNum(mul(c.p, sub(ONE, c.l)))) : fText(mul(c.p, sub(ONE, c.l))) })) };
     return [tree, derivBlock(rows)];
@@ -240,7 +245,7 @@ MatIA.define('engine/ops/estadistica-probabilidad', ['engine/core', 'engine/ops/
     const C = (k) => Number(fact(BigInt(n)) / (fact(BigInt(k)) * fact(BigInt(n - k))));
     const pmf = (k) => C(k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
     const q = probQuery(latex);
-    const rows = [{ l: '\\text{Modelo}', r: 'X\\sim B(' + n + ',\\ ' + pL + ')', note: 'Binomial: número de éxitos en ' + n + ' pruebas independientes con probabilidad de éxito p = ' + latexText(pL) }];
+    const rows = [{ l: '\\text{Modelo}', r: 'X\\sim B(' + n + (/\{,\}/.test(pL) ? ';\\ ' : ',\\ ') + pL + ')', note: 'Binomial: número de éxitos en ' + n + ' pruebas independientes con probabilidad de éxito p = ' + latexPlain(pL) }];
     const pP = /frac/.test(pL) ? '\\left(' + pL + '\\right)' : pL;
     rows.push({ l: 'P(X=k)', r: '\\binom{' + n + '}{k}\\,' + pP + '^{k}\\,\\left(' + qL + '\\right)^{' + n + '-k}', note: 'Fórmula de la binomial' });
     const ks = [];
@@ -260,18 +265,18 @@ MatIA.define('engine/ops/estadistica-probabilidad', ['engine/core', 'engine/ops/
         if (comp) {
           const rest = []; for (let k = 0; k <= n; k++) if (!ks.includes(k)) rest.push(k);
           rows.push({ l: lab, r: '1-\\left(' + rest.map((k) => 'P(X=' + k + ')').join('+') + '\\right)', note: 'Es más corto restar del 1 los casos que no entran' });
-          rows.push({ r: '1-\\left(' + rest.map((k) => dec(pmf(k))).join('+') + '\\right)\\approx ' + dec(total), boxed: true });
+          rows.push({ r: '1-\\left(' + rest.map((k) => dec(pmf(k))).join('+') + '\\right)\\approx ' + dec(total), note: 'Calculamos cada término con la fórmula (redondeados)', boxed: true });
         } else {
           rows.push({ l: lab, r: ks.map((k) => 'P(X=' + k + ')').join('+'), note: 'Sumamos los valores de k que cumplen la condición' });
-          rows.push({ r: ks.map((k) => dec(pmf(k))).join('+') + '\\approx ' + dec(total), boxed: true });
+          rows.push({ r: ks.map((k) => dec(pmf(k))).join('+') + '\\approx ' + dec(total), note: 'Calculamos cada término con la fórmula (redondeados)', boxed: true });
         }
       } else rows.push({ l: lab, r: '0', note: 'Ningún valor de k cumple la condición', boxed: true });
     }
     rows.push({ l: 'E[X]', r: 'np=' + n + '\\cdot ' + pL + '=' + dec(n * p), note: 'Media (esperanza)' });
-    rows.push({ l: '\\operatorname{Var}(X)', r: 'np(1-p)=' + dec(n * p * (1 - p)) + ',\\quad \\sigma=\\sqrt{np(1-p)}\\approx ' + dec(Math.sqrt(n * p * (1 - p))), note: 'Varianza y desviación típica' });
+    rows.push({ l: '\\operatorname{Var}(X)', r: 'np(1-p)=' + dec(n * p * (1 - p)) + ';\\quad \\sigma=\\sqrt{np(1-p)}\\approx ' + dec(Math.sqrt(n * p * (1 - p))), note: 'Varianza y desviación típica' });
     const labels = [], values = [];
     for (let k = 0; k <= n; k++) { labels.push(String(k)); values.push(pmf(k)); }
-    return [derivBlock(rows), { type: 'chart', kind: 'bars', title: 'Distribución B(' + n + ', ' + decT(p) + ')' + (q ? ': en color los valores de k que suman ' + latexText(lab.replace(/\\le\s?/g, '≤').replace(/\\ge\s?/g, '≥')) : ''), labels, values, hi: ks, ylabel: 'P(X = k)' }];
+    return [derivBlock(rows), { type: 'chart', kind: 'bars', title: 'Distribución B(' + n + (Number.isInteger(p) ? ', ' : '; ') + decT(p) + ')' + (q ? ': en color los valores de k que suman ' + latexText(lab.replace(/\\le\s?/g, '≤').replace(/\\ge\s?/g, '≥')) : ''), labels, values, hi: ks, ylabel: 'P(X = k)' }];
   }
   function normal(latex) {
     const pr = distParams(latex, 'N');
@@ -279,7 +284,7 @@ MatIA.define('engine/ops/estadistica-probabilidad', ['engine/core', 'engine/ops/
     const mu = evalNum(parseExpr(pr[0]), {}), sg = evalNum(parseExpr(pr[1]), {});
     if (!(sg > 0)) throw new MErr('σ debe ser positiva.');
     const q = probQuery(latex);
-    const rows = [{ l: '\\text{Modelo}', r: 'X\\sim N(' + dec(mu) + ',\\ ' + dec(sg) + ')', note: 'Normal de media μ = ' + decT(mu) + ' y desviación típica σ = ' + decT(sg) }];
+    const rows = [{ l: '\\text{Modelo}', r: 'X\\sim N(' + dec(mu) + (Number.isInteger(mu) && Number.isInteger(sg) ? ',\\ ' : ';\\ ') + dec(sg) + ')', note: 'Normal de media μ = ' + decT(mu) + ' y desviación típica σ = ' + decT(sg) }];
     rows.push({ l: 'Z', r: '\\frac{X-\\mu}{\\sigma}\\sim N(0,1)', note: 'Tipificamos para usar la normal estándar' });
     let a = null, b = null, val = null, lab = '';
     const zf = (x) => (x - mu) / sg;
@@ -287,11 +292,11 @@ MatIA.define('engine/ops/estadistica-probabilidad', ['engine/core', 'engine/ops/
     if (q) {
       if (q.op === '=') { rows.push({ l: 'P(X=' + dec(q.a) + ')', r: '0', note: 'En una variable continua la probabilidad de un valor concreto es 0', boxed: true }); a = b = q.a; }
       else if (q.op === '≤' || q.op === '<') { b = q.a; const z = zf(b); val = Phi(z); lab = 'P(X' + (q.op === '≤' ? '\\le ' : '<') + dec(b) + ')'; rows.push({ l: lab, r: 'P\\left(Z\\le ' + zL(b) + '\\right)', note: 'Tipificamos' }); rows.push({ r: '\\Phi(' + dec(z, 2) + ')\\approx ' + dec(val), note: z < 0 ? 'Con tablas: Φ(−z) = 1 − Φ(z)' : 'Valor de la tabla de la normal N(0, 1)', boxed: true }); }
-      else if (q.op === '≥' || q.op === '>') { a = q.a; const z = zf(a); val = 1 - Phi(z); lab = 'P(X' + (q.op === '≥' ? '\\ge ' : '>') + dec(a) + ')'; rows.push({ l: lab, r: '1-P\\left(Z\\le ' + zL(a) + '\\right)', note: 'Complementario: 1 menos la cola izquierda' }); rows.push({ r: '1-\\Phi(' + dec(z, 2) + ')=1-' + dec(Phi(z)) + '\\approx ' + dec(val), boxed: true }); }
-      else if (q.op === 'between') { a = q.a; b = q.b; const za = zf(a), zb = zf(b); val = Phi(zb) - Phi(za); lab = 'P(' + dec(a) + '\\le X\\le ' + dec(b) + ')'; rows.push({ l: lab, r: 'P\\left(' + dec(za, 2) + '\\le Z\\le ' + dec(zb, 2) + '\\right)', note: 'Tipificamos los dos extremos: z = (x − μ)/σ' }); rows.push({ r: '\\Phi(' + dec(zb, 2) + ')-\\Phi(' + dec(za, 2) + ')=' + dec(Phi(zb)) + '-' + dec(Phi(za)) + '\\approx ' + dec(val), boxed: true }); }
+      else if (q.op === '≥' || q.op === '>') { a = q.a; const z = zf(a); val = 1 - Phi(z); lab = 'P(X' + (q.op === '≥' ? '\\ge ' : '>') + dec(a) + ')'; rows.push({ l: lab, r: '1-P\\left(Z\\le ' + zL(a) + '\\right)', note: 'Complementario: 1 menos la cola izquierda' }); rows.push({ r: '1-\\Phi(' + dec(z, 2) + ')=1-' + dec(Phi(z)) + '\\approx ' + dec(val), note: 'Valor de la tabla de la normal N(0, 1)', boxed: true }); }
+      else if (q.op === 'between') { a = q.a; b = q.b; const za = zf(a), zb = zf(b); val = Phi(zb) - Phi(za); lab = 'P(' + dec(a) + '\\le X\\le ' + dec(b) + ')'; rows.push({ l: lab, r: 'P\\left(' + dec(za, 2) + '\\le Z\\le ' + dec(zb, 2) + '\\right)', note: 'Tipificamos los dos extremos: z = (x − μ)/σ' }); rows.push({ r: '\\Phi(' + dec(zb, 2) + ')-\\Phi(' + dec(za, 2) + ')', note: 'Área entre los dos valores: restamos las colas izquierdas' + (za < 0 ? ' (Φ(−z) = 1 − Φ(z))' : '') }); rows.push({ r: dec(Phi(zb)) + '-' + dec(Phi(za)) + '\\approx ' + dec(val), note: 'Valores de la tabla de la normal N(0, 1)', boxed: true }); }
     }
     if (val != null) rows.push({ l: '\\text{En porcentaje}', r: dec(100 * val, 2) + '\\%', note: 'Aproximadamente' });
-    return [derivBlock(rows), { type: 'chart', kind: 'normal', title: 'N(' + decT(mu) + ', ' + decT(sg) + ')' + (val != null ? ': área sombreada ≈ ' + decT(val) : ''), mu, sigma: sg, a, b }];
+    return [derivBlock(rows), { type: 'chart', kind: 'normal', title: 'N(' + decT(mu) + (Number.isInteger(mu) && Number.isInteger(sg) ? ', ' : '; ') + decT(sg) + ')' + (val != null ? ': área sombreada ≈ ' + decT(val) : ''), mu, sigma: sg, a, b }];
   }
 
   return { statsSummary, freqTable, sampleSpace, contingency, bayes, binomial, normal, Phi };

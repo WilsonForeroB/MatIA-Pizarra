@@ -213,6 +213,8 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
   }
   const isNice = (v) => { for (let q = 1; q <= 12; q++) { if (Math.abs(Math.round(v * q) / q - v) < 1e-9) return true; const p0 = Math.round(v / Math.PI * q); if (p0 !== 0 && Math.abs(p0 * Math.PI / q - v) < 1e-9) return true; } return false; };
   const numT = (v) => latexText(numL(v)).replace(/pi\s*/g, 'π').replace('.', ',').replace(/^-/, '−');
+  // punto (x, y) en texto: con «;» si alguna coordenada lleva coma decimal
+  const ptT = (a, b) => '(' + a + (/,/.test(a + b) ? '; ' : ', ') + b + ')';
   function rootsNumeric(fn, a, b) {
     const n = 4000, out = [];
     let px = a, py = fn(a);
@@ -310,21 +312,21 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
       let kind, note;
       if (Number.isFinite(s2) && Math.abs(s2) > 1e-9) {
         kind = s2 > 0 ? 'min' : 'max';
-        rows.push({ l: fpp(c.latex), r: numL(s2) + (s2 > 0 ? '>0' : '<0'), note: (kind === 'min' ? 'Mínimo relativo' : 'Máximo relativo') + ' en (' + (c.approx ? '≈' : '') + numT(c.x) + ', ' + (isNice(y) ? '' : '≈') + numT(y) + ')' });
+        rows.push({ l: fpp(c.latex), r: numL(s2) + (s2 > 0 ? '>0' : '<0'), note: (kind === 'min' ? 'Mínimo relativo' : 'Máximo relativo') + ' en ' + ptT((c.approx || !isNice(c.x) ? '≈' : '') + numT(c.x), (isNice(y) ? '' : '≈') + numT(y)) });
       } else {
         const h = 1e-4 * Math.max(1, Math.abs(c.x)), a1 = f1(c.x - h), b1 = f1(c.x + h);
         kind = a1 > 0 && b1 < 0 ? 'max' : a1 < 0 && b1 > 0 ? 'min' : 'flat';
-        rows.push({ l: fpp(c.latex), r: '0', note: 'f″ = 0: miramos el signo de f′ a los lados (' + (a1 > 0 ? '+' : '−') + ' | ' + (b1 > 0 ? '+' : '−') + '): ' + (kind === 'max' ? 'máximo relativo' : kind === 'min' ? 'mínimo relativo' : 'no es extremo (punto de inflexión con tangente horizontal)') });
+        rows.push({ l: fpp(c.latex), r: '0', note: nm + '″ = 0: miramos el signo de ' + nm + '′ a los lados (' + (a1 > 0 ? '+' : '−') + ' | ' + (b1 > 0 ? '+' : '−') + '): ' + (kind === 'max' ? 'máximo relativo' : kind === 'min' ? 'mínimo relativo' : 'no es extremo (punto de inflexión con tangente horizontal)') });
       }
       ext.push({ x: c.x, y, kind, xL: c.latex, yL, pL });
-      marks.push({ x: c.x, y, kind: kind === 'flat' ? 'infl' : kind, label: (kind === 'max' ? 'máx' : kind === 'min' ? 'mín' : 'infl') + ' (' + numT(c.x) + ', ' + numT(y) + ')' });
+      marks.push({ x: c.x, y, kind: kind === 'flat' ? 'infl' : kind, label: (kind === 'max' ? 'máx' : kind === 'min' ? 'mín' : 'infl') + ' ' + ptT(numT(c.x), numT(y)) });
     }
     // puntos de inflexión (cambio de concavidad)
     const infl = zerosOf(d2, v, A, B).pts.filter((c) => inside(c.x) && Number.isFinite(f(c.x)) && !cps.some((q) => Math.abs(q.x - c.x) < 1e-7));
     const realInfl = infl.filter((c) => { const h = 1e-4 * Math.max(1, Math.abs(c.x)); return f2(c.x - h) * f2(c.x + h) < 0; });
     if (realInfl.length) {
-      rows.push({ l: nm + "''(" + v + ')', r: '0\\Rightarrow ' + realInfl.map((c) => v + (c.approx ? '\\approx ' : '=') + c.latex).join(',\\ '), note: 'Puntos de inflexión: f″ cambia de signo (cambia la concavidad)' });
-      for (const c of realInfl) { const { y } = yAt(c); marks.push({ x: c.x, y, kind: 'infl', label: 'infl (' + numT(c.x) + ', ' + numT(y) + ')' }); }
+      rows.push({ l: nm + "''(" + v + ')', r: '0\\Rightarrow ' + realInfl.map((c) => v + (c.approx ? '\\approx ' : '=') + c.latex).join(',\\ '), note: 'Puntos de inflexión: ' + nm + '″ cambia de signo (cambia la concavidad)' });
+      for (const c of realInfl) { const { y } = yAt(c); marks.push({ x: c.x, y, kind: 'infl', label: 'infl ' + ptT(numT(c.x), numT(y)) }); }
     }
     // extremos absolutos
     if (iv) {
@@ -360,7 +362,8 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
         const limBest = [lp, lm].every((L0) => !better(L0, best.y) && L0 !== best.y) ? true : [lp, lm].every((L0) => !better(L0, best.y));
         if (!limBest) return { t: 'No tiene ' + word + ' absoluto: la función se acerca a un valor mejor en el infinito' };
         marks.push({ x: best.x, y: best.y, kind: word === 'máximo' ? 'absmax' : 'absmin', label: word === 'máximo' ? 'máx abs' : 'mín abs' });
-        return { t: word.charAt(0).toUpperCase() + word.slice(1) + ' absoluto en (' + numT(best.x) + ', ' + (isNice(best.y) ? '' : '≈') + numT(best.y) + ')', ok: '\\left(' + numL(best.x) + ',\\ ' + numL(best.y) + '\\right)' };
+        const bxL = numL(best.x), byL = numL(best.y);
+        return { t: word.charAt(0).toUpperCase() + word.slice(1) + ' absoluto en ' + ptT(numT(best.x), (isNice(best.y) ? '' : '≈') + numT(best.y)), ok: '\\left(' + bxL + (/\{,\}/.test(bxL + byL) ? ';\\ ' : ',\\ ') + byL + '\\right)' };
       };
       const nAbs = decide(maxs, (a1, b1) => a1 > b1, Infinity, 'máximo') + '. ' + decide(mins, (a1, b1) => a1 < b1, -Infinity, 'mínimo') + '.';
       rows.push({ l: '\\text{Absolutos}', r: absL.join(',\\quad '), note: nAbs, boxed: absL.some((t) => !/nexists/.test(t)) });
@@ -435,7 +438,7 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
       { l: '\\nabla f', r: '0\\Rightarrow\\begin{cases}' + L(fx) + '=0\\\\ ' + L(fy) + '=0\\end{cases}', note: 'Puntos críticos: anulamos el gradiente' },
     ];
     if (!sols.length) rows.push({ l: '\\text{Puntos críticos}', r: '\\emptyset', note: 'No hay puntos críticos en la zona estudiada (|x|, |y| ≤ 6 como punto de partida)' });
-    else rows.push({ l: '\\text{Puntos críticos}', r: sols.map((q, i) => 'P_{' + (i + 1) + '}=' + (approx && (!isNice(q.x) || !isNice(q.y)) ? '\\approx ' : '') + '\\left(' + numL(q.x) + ',\\ ' + numL(q.y) + '\\right)').join(',\\quad '), note: approx ? 'Soluciones aproximadas (método de Newton)' : 'Soluciones del sistema' });
+    else rows.push({ l: '\\text{Puntos críticos}', r: sols.map((q, i) => 'P_{' + (i + 1) + '}=' + (approx && (!isNice(q.x) || !isNice(q.y)) ? '\\approx ' : '') + '\\left(' + numL(q.x) + (/\{,\}/.test(numL(q.x) + numL(q.y)) ? ';\\ ' : ',\\ ') + numL(q.y) + '\\right)').join(',\\quad '), note: approx ? 'Soluciones aproximadas (método de Newton)' : 'Soluciones del sistema' });
     rows.push({ l: 'H(x,y)', r: '\\begin{pmatrix}' + L(fxx) + ' & ' + L(fxy) + '\\\\ ' + L(fxy) + ' & ' + L(fyy) + '\\end{pmatrix}', note: 'Matriz hessiana: f_xx, f_xy / f_yx, f_yy' });
     const marks = [];
     sols.forEach((q, i) => {

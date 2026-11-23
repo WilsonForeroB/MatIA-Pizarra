@@ -5,13 +5,13 @@ MatIA.ejemplo({
   "titulo": "Has dado positivo: ¿estás enfermo?",
   "resumen": "Un test fiable da positivo y, aun así, es muy probable que estés sano: con el teorema de Bayes vemos por qué y por qué se repiten las pruebas.",
   "board": {
-    "title": "Bayes: ¿qué significa dar positivo?",
+    "title": "Has dado positivo: ¿estás enfermo?",
     "pages": [
       {
         "blocks": [
           {
             "type": "text",
-            "v": "Imagina un test que detecta una enfermedad con bastante fiabilidad: da positivo en el 90 % de las personas enfermas y solo se equivoca con el 5 % de las sanas (da un falso positivo). Esa enfermedad es poco frecuente: la tiene 1 de cada 100 personas. Te haces el test en una revisión y sale positivo. «Un test que acierta tanto… ¡estoy enfermo!», piensas. Pero ¿cuál es la probabilidad real de que lo estés? La respuesta sorprende a mucha gente, incluidos médicos, y se calcula con el teorema de Bayes. (Es un caso inventado para practicar; las cifras de las pruebas reales dependen de cada enfermedad.)"
+            "v": "Imagina un test que detecta una enfermedad con bastante fiabilidad: da positivo en el 90 % de las personas enfermas y solo se equivoca con el 5 % de las sanas (da un falso positivo). Esa enfermedad es poco frecuente: la tiene 1 de cada 100 personas. Te haces el test en una revisión y sale positivo. «Un test que acierta tanto… ¡estoy enfermo!», piensas. Pero ¿cuál es la probabilidad real de que lo estés? La respuesta sorprende a mucha gente, incluso a muchos profesionales sanitarios, y se calcula con el teorema de Bayes. (Es un caso inventado para practicar: las cifras de las pruebas reales dependen de cada enfermedad y de cada test, y quien interpreta un resultado de verdad es el personal sanitario.)"
           },
           {
             "type": "text",
@@ -129,7 +129,7 @@ MatIA.ejemplo({
           },
           {
             "type": "text",
-            "v": "Tras el primer positivo ya no partes del 1 %, sino del 15,38 %. Repetimos Bayes con ese nuevo punto de partida (segundo test, también positivo):"
+            "v": "Tras el primer positivo ya no partes del 1 %, sino del 15,38 %. Repetimos Bayes con ese nuevo punto de partida (segundo test, también positivo). Suponemos que los errores de un test y del otro son independientes; en la realidad no siempre lo son, y por eso a menudo se confirma con una prueba distinta:"
           },
           {
             "type": "math",
@@ -255,7 +255,7 @@ MatIA.ejemplo({
           },
           {
             "type": "text",
-            "v": "Por eso, cuando un cribado da positivo, lo normal es repetir la prueba o hacer otra distinta y más precisa: cada resultado actualiza la probabilidad. En la vida real también se pone el test solo a personas con síntomas o con riesgo, porque así la prevalencia de partida es mucho mayor."
+            "v": "Por eso, cuando un cribado da positivo, lo normal es repetir la prueba o hacer otra distinta y más precisa: cada resultado actualiza la probabilidad. También por eso muchas pruebas se reservan para personas con síntomas o con más riesgo: así la probabilidad de partida es mayor y un positivo es más fiable. Si alguna vez te ocurre algo parecido, no saques conclusiones por tu cuenta: consulta con tu médico, que conoce la prueba y tu caso."
           },
           {
             "type": "text",

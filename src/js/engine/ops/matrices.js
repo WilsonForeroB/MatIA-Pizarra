@@ -31,8 +31,8 @@ MatIA.define('engine/ops/matrices', ['engine/core', 'engine/ops/common', 'engine
       const p1 = mul(a[0][0], a[1][1]), p2 = mul(a[0][1], a[1][0]);
       return [derivBlock([
         { l: vm(a), r: prodTxt([a[0][0], a[1][1]]) + '-' + prodTxt([a[0][1], a[1][0]]), note: 'Diagonal principal menos diagonal secundaria' },
-        { r: fParen(p1) + '-' + fParen(p2) },
-        { r: fLatex(sub(p1, p2)), boxed: true },
+        { r: fParen(p1) + '-' + fParen(p2), note: 'Multiplicamos' },
+        { r: fLatex(sub(p1, p2)), boxed: true, note: 'Restamos' },
       ])];
     }
     if (m.r !== 3) return detCofactor(latex, env);
@@ -46,7 +46,7 @@ MatIA.define('engine/ops/matrices', ['engine/core', 'engine/ops/common', 'engine
       { l: vm(a), r: pos.map((q) => prodTxt(pr(q))).join('+') + '-\\left(' + negs.map((q) => prodTxt(pr(q))).join('+') + '\\right)', note: 'Regla de Sarrus: diagonales hacia la derecha menos diagonales hacia la izquierda' },
       { r: '\\left(' + P1.map(fParen).join('+') + '\\right)-\\left(' + N1.map(fParen).join('+') + '\\right)', note: 'Multiplicamos' },
       { r: fParen(sp) + '-' + fParen(sn), note: 'Sumamos cada paréntesis' },
-      { r: fLatex(sub(sp, sn)), boxed: true },
+      { r: fLatex(sub(sp, sn)), boxed: true, note: 'Restamos: valor del determinante' },
     ])];
   }
   function minor(a, i, j) { return a.filter((_, r) => r !== i).map((row) => row.filter((_, c) => c !== j)); }
@@ -75,13 +75,13 @@ MatIA.define('engine/ops/matrices', ['engine/core', 'engine/ops/common', 'engine
     return [derivBlock([
       { l: vm(a), r: r1, note: 'Desarrollamos por ' + where + ' (la que tiene más ceros); signo (−1)^(i+j)' },
       { r: r2, note: 'Calculamos cada menor' },
-      { r: fLatex(total), boxed: true },
+      { r: fLatex(total), boxed: true, note: 'Operamos: valor del determinante' },
     ])];
   }
   function detGauss(latex, env) {
     const m = squareOf(matrixOf(latex, env), 'El determinante');
     const a = m.a.map((r) => r.slice()), n = m.r;
-    const rows = [{ l: vm(a), r: '', note: 'Triangulamos con F_i − k·F_j (no cambia el determinante); cada intercambio cambia el signo' }];
+    const rows = [{ l: vm(a), r: '', note: 'Triangulamos con Fᵢ − k·Fⱼ (no cambia el determinante); cada intercambio cambia el signo' }];
     let sign = 1;
     const Fn = (i) => 'F_{' + (i + 1) + '}';
     for (let c = 0; c < n; c++) {
@@ -101,7 +101,7 @@ MatIA.define('engine/ops/matrices', ['engine/core', 'engine/ops/common', 'engine
     const diag = a.map((r, i) => r[i]);
     const prod = diag.reduce(mul, ONE);
     rows.push({ r: (sign < 0 ? '-' : '') + diag.map(fParen).join('\\cdot '), note: 'Matriz triangular: producto de la diagonal' });
-    rows.push({ r: fLatex(sign < 0 ? neg(prod) : prod), boxed: true });
+    rows.push({ r: fLatex(sign < 0 ? neg(prod) : prod), boxed: true, note: 'Multiplicamos: valor del determinante' });
     return [derivBlock(fixFirst(rows))];
   }
   // En los desarrollos la primera fila lleva lado izquierdo y derecho
@@ -124,7 +124,7 @@ MatIA.define('engine/ops/matrices', ['engine/core', 'engine/ops/common', 'engine
       rows.push({ l: '\\Delta_{' + v + '}', r: vm(Aj) + '=' + fLatex(Dj), note: 'Cambiamos la columna de ' + v.replace(/[\\{}_]/g, '') + ' por los términos independientes' });
       sols.push({ v, Dj, val: div(Dj, D) });
     });
-    for (const x of sols) rows.push({ l: x.v, r: '\\frac{\\Delta_{' + x.v + '}}{\\Delta}=\\frac{' + fLatex(x.Dj) + '}{' + fLatex(D) + '}=' + fLatex(x.val), boxed: true });
+    for (const x of sols) rows.push({ l: x.v, r: '\\frac{\\Delta_{' + x.v + '}}{\\Delta}=\\frac{' + fLatex(x.Dj) + '}{' + fLatex(D) + '}=' + fLatex(x.val), boxed: true, note: 'Regla de Cramer: ' + x.v.replace(/[\\{}_]/g, '') + ' = Δ' + x.v.replace(/[\\{}_]/g, '') + ' / Δ' });
     return [derivBlock(rows)];
   }
   function productDeveloped(latex, env) {
@@ -145,10 +145,27 @@ MatIA.define('engine/ops/matrices', ['engine/core', 'engine/ops/common', 'engine
       }
     }
     const lhs = latex.replace(/=\s*$/, '');
-    return [derivBlock([
-      { l: lhs, r: '\\begin{pmatrix}' + cells.map((r) => r.join(' & ')).join('\\\\ ') + '\\end{pmatrix}', note: 'Cada elemento c_ij = fila i de la primera · columna j de la segunda' },
-      { r: pm(vals), boxed: true },
-    ])];
+    const HOW = 'Cada elemento cᵢⱼ = fila i de la primera · columna j de la segunda';
+    const DONE = 'Resultado: matriz ' + X.r + '×' + Y.c;
+    // ancho aproximado en caracteres (· cuenta 1; las celdas de una fila se separan con 2 espacios)
+    const width = (t) => t.replace(/\\(left|right)/g, '').replace(/\\cdot\s*/g, '·').replace(/\\[a-z]+/gi, 'x').replace(/[{}\s]/g, '').length;
+    const rowW = (arr) => arr.reduce((acc, t) => acc + width(t), 0) + 2 * (arr.length - 1);
+    const maxW = Math.max(...cells.map(rowW));
+    const lhsW = /pmatrix/.test(lhs) ? [X, Y].reduce((acc, M) => acc + Math.max(...M.a.map((r) => rowW(r.map(fLatex)))), 3) : width(lhs);
+    if (lhsW + maxW <= 36)
+      return [derivBlock([
+        { l: lhs, r: '\\begin{pmatrix}' + cells.map((r) => r.join(' & ')).join('\\\\ ') + '\\end{pmatrix}', note: HOW },
+        { r: pm(vals), boxed: true, note: DONE },
+      ])];
+    // matrices grandes: una fila del resultado por paso (o un elemento por paso si la fila tampoco cabe) para no salirse de la hoja
+    const rows = [];
+    const byRow = cells.every((r, i) => rowW(r) + rowW(vals[i].map(fLatex)) + 8 <= 44);
+    for (let i = 0; i < X.r; i++) {
+      if (byRow) rows.push({ l: '\\text{fila } ' + (i + 1), r: '\\begin{pmatrix}' + cells[i].join(' & ') + '\\end{pmatrix}=\\begin{pmatrix}' + vals[i].map(fLatex).join(' & ') + '\\end{pmatrix}', note: i ? 'Fila ' + (i + 1) + ' de la primera por cada columna de la segunda' : HOW });
+      else for (let j = 0; j < Y.c; j++) rows.push({ l: 'c_{' + (i + 1) + (j + 1) + '}', r: cells[i][j] + '=' + fLatex(vals[i][j]), note: i + j ? 'Fila ' + (i + 1) + ' · columna ' + (j + 1) : HOW });
+    }
+    rows.push({ l: lhs, r: pm(vals), boxed: true, note: DONE });
+    return [derivBlock(rows)];
   }
 
   /* --- Matrices con un parámetro (polinomios) --- */

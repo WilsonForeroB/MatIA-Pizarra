@@ -11,7 +11,7 @@ MatIA.ejemplo({
       {"type":"text","v":"Vas a diseñar un vaso para una cafetería: 10 cm de alto, 5 cm de diámetro en el fondo y 7 cm en la boca, un poco abierto para que se apile. El cliente quiere que quepa un refresco de 250 ml con algo de margen. ¿Cuánto cabe en tu diseño? Un vaso es una figura de revolución: sale al girar su perfil alrededor de un eje, y su volumen se calcula con una integral."},
       {"type":"text","v":"1. Planteamiento: del dibujo del vaso a una función"},
       {"type":"deriv","rows":[{"l":"x","r":"\\text{altura desde el fondo (cm)},\\ x\\in[0,10]","note":"Tumbamos el vaso: el eje X es su eje de giro, del fondo (x = 0) a la boca (x = 10)","boxed":false},{"l":"f(x)","r":"\\frac{5}{2}+\\frac{x}{10}","note":"Perfil: el radio pasa de 2,5 cm en el fondo a 3,5 cm en la boca, creciendo en línea recta","boxed":false},{"l":"dV","r":"\\pi\\,f(x)^{2}\\,dx","note":"Cortamos el vaso en discos finísimos de radio f(x) y grosor dx (área del círculo × grosor)","boxed":false},{"l":"V","r":"\\pi\\int_{0}^{10}\\left(\\frac{5}{2}+\\frac{x}{10}\\right)^{2}dx","note":"Sumamos todos los discos: volumen de revolución","boxed":true}]},
-      {"type":"solid","fn":"f(x)=2.5+0.1x","a":0,"b":10,"axis":"x","k":0,"az":-0.8,"el":0.45,"zoom":1,"align":"center"},
+      {"type":"solid","fn":"f(x)=2{,}5+0{,}1x","a":0,"b":10,"axis":"x","k":0,"az":-0.8,"el":0.45,"zoom":1,"align":"center"},
       {"type":"text","v":"Este es tu vaso, tumbado: el sólido que sale al girar el perfil f(x) alrededor del eje X entre 0 y 10. Arrástralo para verlo desde otro ángulo."},
       {"type":"text","v":"2. Calculamos el volumen (Operaciones ▸ Integral paso a paso)"},
       {"type":"math","v":"V=\\int_0^{10}\\pi\\left(\\frac{5}{2}+\\frac{x}{10}\\right)^2dx"},

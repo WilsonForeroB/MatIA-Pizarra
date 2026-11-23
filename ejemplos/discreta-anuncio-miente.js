@@ -5,7 +5,7 @@ MatIA.ejemplo({
   "titulo": "¿Miente este anuncio?",
   "resumen": "Traducimos frases de publicidad a lógica y con tablas de verdad vemos qué conclusiones son válidas y cuáles son falacias.",
   "board": {
-    "title": "Tablas de verdad: anuncios y falacias",
+    "title": "¿Miente este anuncio?",
     "pages": [
       {
         "blocks": [
@@ -175,7 +175,7 @@ MatIA.ejemplo({
           },
           {
             "type": "text",
-            "v": "Contingencia: ¬p ⇒ ¬q no equivale a p ⇒ q (filas 2 y 3). El anuncio dice que sin comprar hoy no hay descuento, pero no promete que comprar hoy garantice nada más (por ejemplo, que el descuento sea del 50 %). Confundir una frase con la otra se llama falacia de negar el antecedente."
+            "v": "Contingencia: ¬p ⇒ ¬q no equivale a p ⇒ q (las filas 2 y 3 dan resultados distintos). El anuncio dice que sin comprar hoy no hay descuento, pero no promete que comprar hoy te lo dé: en la fila 2 compras hoy, no hay descuento y el anuncio no ha mentido. Pensar «como compro hoy, tendré descuento» es la falacia de negar el antecedente: el antecedente del anuncio es «no compras hoy», y negarlo no garantiza nada."
           },
           {
             "type": "text",
@@ -183,7 +183,7 @@ MatIA.ejemplo({
           },
           {
             "type": "text",
-            "v": "Ahora p = «usas la crema» y q = «tienes una piel radiante». El anuncio dice p ⇒ q. El influencer razona: «tengo piel radiante (q), luego uso la crema (p)». Es decir, [(p ⇒ q) ∧ q] ⇒ p. ¿Es válido?"
+            "v": "Ahora p = «usas la crema» y q = «tienes una piel radiante». Supongamos incluso que la crema funciona: p ⇒ q. Al ver al influencer con la piel radiante (q), mucha gente concluye que es gracias a la crema (p). Es decir, [(p ⇒ q) ∧ q] ⇒ p. ¿Es válido?"
           },
           {
             "type": "math",
@@ -296,7 +296,7 @@ MatIA.ejemplo({
             ],
             "vbar": 2,
             "kind": "truth",
-            "caption": "Tautología: siempre verdadero. Si p ⇒ q y no se cumple q, entonces no se cumple p",
+            "caption": "Tautología: siempre verdadera. Si p ⇒ q y no se cumple q, entonces no se cumple p",
             "lastBold": true
           },
           {
@@ -333,7 +333,7 @@ MatIA.ejemplo({
           },
           {
             "type": "text",
-            "v": "Un anuncio de la forma «si haces X, consigues Y» no dice que Y solo se consiga haciendo X. Y que alguien tenga Y no demuestra que haya hecho X. Con la lógica puedes decidir en segundos si te están diciendo la verdad o una verdad a medias. Estos anuncios son inventados; en la publicidad real, muchas frases son deliberadamente ambiguas."
+            "v": "Un anuncio de la forma «si haces X, consigues Y» no dice que Y solo se consiga haciendo X. Y que alguien tenga Y no demuestra que haya hecho X. Con la lógica puedes distinguir en poco tiempo lo que un anuncio dice de verdad de lo que solo insinúa. Estos anuncios son inventados; en la publicidad real, muchas frases son deliberadamente ambiguas."
           },
           {
             "type": "text",

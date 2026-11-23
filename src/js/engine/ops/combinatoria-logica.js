@@ -20,12 +20,12 @@ MatIA.define('engine/ops/combinatoria-logica', ['engine/core', 'engine/ops/commo
       return [derivBlock([
         { l: '\\binom{' + n + '}{' + k + '}', r: '\\frac{' + n + '!}{' + k + '!\\,' + (n - k) + '!}', note: 'Combinaciones: importa qué, no el orden' },
         { r: kk === 0n ? '1' : '\\frac{' + dots(top) + '}{' + dots(bottom) + '}', note: 'Simplificamos ' + (n - kk) + '!' },
-        { r: String(val), boxed: true },
+        { r: String(val), boxed: true, note: 'Operamos' },
       ])];
     }
     if ((m = /VR_\{([^{},]+),([^{},]+)\}/.exec(L)) || (m = /VR_\{([^{}]+)\}\^\{([^{}]+)\}/.exec(L))) {
       const n = num(m[1]), k = num(m[2]);
-      return [derivBlock([{ l: 'VR_{' + n + ',' + k + '}', r: n + '^{' + k + '}', note: 'Variaciones con repetición: nᵏ' }, { r: String(n ** k), boxed: true }])];
+      return [derivBlock([{ l: 'VR_{' + n + ',' + k + '}', r: n + '^{' + k + '}', note: 'Variaciones con repetición: nᵏ' }, { r: String(n ** k), boxed: true, note: 'Operamos' }])];
     }
     if ((m = /V_\{([^{},]+),([^{},]+)\}/.exec(L)) || (m = /V_\{([^{}]+)\}\^\{([^{}]+)\}/.exec(L))) {
       const n = num(m[1]), k = num(m[2]);
@@ -33,17 +33,17 @@ MatIA.define('engine/ops/combinatoria-logica', ['engine/core', 'engine/ops/commo
       return [derivBlock([
         { l: 'V_{' + n + ',' + k + '}', r: '\\frac{' + n + '!}{' + (n - k) + '!}', note: 'Variaciones: importa el orden' },
         { r: dots(chain(n, n - k)) || '1', note: k + ' factores desde ' + n },
-        { r: String(fact(n) / fact(n - k)), boxed: true },
+        { r: String(fact(n) / fact(n - k)), boxed: true, note: 'Operamos' },
       ])];
     }
     if ((m = /P_\{?([0-9]+)\}?/.exec(L))) {
       const n = num(m[1]);
-      return [derivBlock([{ l: 'P_{' + n + '}', r: n + '!', note: 'Permutaciones: ordenar ' + n + ' elementos' }, { r: dots(chain(n, 0n)) || '1' }, { r: String(fact(n)), boxed: true }])];
+      return [derivBlock([{ l: 'P_{' + n + '}', r: n + '!', note: 'Permutaciones: ordenar ' + n + ' elementos' }, { r: dots(chain(n, 0n)) || '1', note: 'Pₙ = n!: producto de 1 a ' + n }, { r: String(fact(n)), boxed: true, note: 'Operamos' }])];
     }
     if ((m = /\{?([0-9]+)\}?!/.exec(L))) {
       const n = num(m[1]);
       if (n > 3000n) throw new MErr('Número demasiado grande.');
-      return [derivBlock([{ l: n + '!', r: dots(chain(n, 0n)) || '1', note: 'Factorial: producto de 1 a ' + n }, { r: String(fact(n)), boxed: true }])];
+      return [derivBlock([{ l: n + '!', r: dots(chain(n, 0n)) || '1', note: 'Factorial: producto de 1 a ' + n }, { r: String(fact(n)), boxed: true, note: 'Operamos' }])];
     }
     throw new MErr('Escribe n!, \\binom{n}{k}, C_{n,k}, V_{n,k}, VR_{n,k} o P_{n}.');
   }
