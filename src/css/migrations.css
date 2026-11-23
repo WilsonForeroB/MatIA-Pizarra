@@ -1,0 +1,24 @@
+/* Ventana «Migraciones» (js/ui/migrations.js): exportar e importar todo el historial entre servidores. */
+#migr{max-width:min(920px,calc(100vw - 32px))}
+.mg-body{padding:var(--space-4) var(--space-5) var(--space-5);display:flex;flex-direction:column;gap:var(--space-4);overflow-y:auto;max-height:calc(100vh - 140px)}
+.mg-lead{margin:0;font:400 14px/22px var(--font-sans);color:var(--ink-muted);max-width:80ch}
+.mg-lead b{color:var(--ink)}
+.mg-body code{font:400 .9em var(--font-mono);background:var(--surface-sunken);padding:1px 5px;border-radius:var(--radius-sm)}
+.mg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--space-4)}
+.mg-card{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-3);padding:var(--space-4);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);background:var(--surface)}
+.mg-card h3{display:flex;align-items:center;gap:var(--space-2);margin:0;font:600 16px/24px var(--font-sans);color:var(--ink)}
+.mg-step{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--brand-soft);color:var(--brand);font:600 13px/1 var(--font-sans)}
+.mg-folder{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);font:600 13px/20px var(--font-mono);color:var(--ink)}
+.mg-opts{margin:0;padding:0;border:0;display:flex;flex-direction:column;gap:var(--space-2)}
+.mg-opts .mi-check{align-items:flex-start}
+.mg-opts .mi-check input{margin-top:2px;flex:none}
+.mg-opts small{color:var(--ink-muted);font:400 13px/20px var(--font-sans)}
+.mg-opts .mi-check:has(input:disabled){opacity:.6}
+.mg-hint,.mg-meta,.mg-note{margin:0;font:400 13.5px/21px var(--font-sans);color:var(--ink-muted)}
+.mg-meta{color:var(--ink);overflow-wrap:anywhere}
+.mg-note{color:var(--warning)}
+.mg-pkg{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-3);width:100%;padding-top:var(--space-3);border-top:var(--border-width-thin) solid var(--border)}
+.mg-prog{margin:0;min-height:20px;font:400 13px/20px var(--font-mono);color:var(--ink-muted)}
+.mg-prog:empty{display:none}
+.mg-report{margin:0;padding:var(--space-3) var(--space-4) var(--space-3) var(--space-6);border-radius:var(--radius-md);background:var(--accent-soft);font:400 14px/22px var(--font-sans);color:var(--ink);overflow-wrap:anywhere}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}

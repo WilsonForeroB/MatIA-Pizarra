@@ -8,6 +8,7 @@
      remove(name): Promise<void>          // solo si writable
      readFile(ruta): Promise<Blob>        // ruta relativa con subcarpetas, p. ej. 'imagenes/ab12.png'
      writeFile(ruta, blob): Promise<void> // crea las subcarpetas; solo si writable
+     listDir(sub): Promise<Array<{ ruta, name, date, size, blob(): Promise<Blob> }>>  // archivos de una subcarpeta (vacío si no existe)
    }
 
    - fromHandle(handle): Chrome y Edge (File System Access API), lectura y escritura.
@@ -55,6 +56,16 @@ MatIA.define('storage/folders', [], () => {
         await w.write(blob);
         await w.close();
       },
+      async listDir(sub) {
+        const p = parts(sub); let d = handle;
+        try { for (const x of p) d = await d.getDirectoryHandle(x); } catch (e) { return []; }
+        const out = [], base = p.join('/') + '/';
+        for await (const h of d.values()) {
+          if (h.kind !== 'file') continue;
+          try { const f = await h.getFile(); out.push({ ruta: base + h.name, name: h.name, date: f.lastModified, size: f.size, blob: async () => f }); } catch (e) { /* ilegible: se omite */ }
+        }
+        return out;
+      },
     };
   }
 
@@ -76,6 +87,11 @@ MatIA.define('storage/folders', [], () => {
         return f;
       },
       writeFile: ro,
+      async listDir(sub) {
+        const base = parts(sub).join('/') + '/';
+        return all.filter((f) => { const r = rel(f); return r.startsWith(base) && !r.slice(base.length).includes('/'); })
+          .map((f) => ({ ruta: rel(f), name: f.name, date: f.lastModified, size: f.size, blob: async () => f }));
+      },
     };
   }
 

@@ -64,7 +64,7 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
       const emptyMsg = (t) => { const d = document.createElement('div'); d.className = 'hist-empty'; d.appendChild(pio.badge('lectura', 'pio-lg', 'Pío leyendo')); const sp = document.createElement('span'); sp.textContent = t; d.appendChild(sp); list.appendChild(d); };
       if (!folder) { emptyMsg(pending ? 'Pulsa «Reconectar» para volver a abrir la carpeta «' + pending + '».' : 'Conecta una carpeta para ver las clases guardadas.'); return; }
       let items;
-      try { items = (await folder.list()).sort((a, b) => b.name.localeCompare(a.name)); }
+      try { items = (await folder.list()).filter((it) => !/^matia-migracion_/i.test(it.name)).sort((a, b) => b.name.localeCompare(a.name)); }
       catch (e) { emptyMsg('No se puede leer la carpeta. Pulsa «Cambiar carpeta» o vuelve a elegirla.'); return; }
       if (!items.length) { emptyMsg('Todavía no hay clases guardadas en esta carpeta. Pulsa «' + $('#histSave').textContent + '».'); return; }
       for (const it of items) {

@@ -30,6 +30,7 @@
 <link rel="stylesheet" href="src/css/text.css">
 <link rel="stylesheet" href="src/css/image.css">
 <link rel="stylesheet" href="src/css/examples.css">
+<link rel="stylesheet" href="src/css/migrations.css">
 <link rel="stylesheet" href="src/css/print.css">
 <link rel="stylesheet" href="src/css/responsive.css">
 <script defer src="src/vendor/mathlive/mathlive.min.js"></script>
@@ -270,6 +271,7 @@
     <button type="button" class="mi-btn mi-btn--sm" id="viewBtn" role="menuitem" aria-haspopup="true" aria-expanded="false">Tamaño de página, letra y tema…</button>
     <button type="button" class="mi-btn mi-btn--sm" id="fsBtn" role="menuitem" title="Pantalla completa (F)">Pantalla completa <kbd>F</kbd></button>
     <hr>
+    <button type="button" class="mi-btn mi-btn--sm" id="migrBtn" role="menuitem" aria-haspopup="dialog" title="Exportar o importar todo el historial para llevarlo a otro servidor">Migraciones…</button>
     <button type="button" class="mi-btn mi-btn--sm" id="helpBtn" role="menuitem" title="Atajos y ayuda (?)">Atajos y ayuda <kbd>?</kbd></button>
     <button type="button" class="mi-btn mi-btn--sm" id="aboutBtn" role="menuitem">Acerca de y derechos</button>
   </div>
@@ -518,6 +520,8 @@
 <script src="src/js/storage/assets.js"></script>
 <script src="src/js/storage/dirty.js"></script>
 <script src="src/js/storage/file.js"></script>
+<script src="src/js/storage/migration.js"></script>
+<script src="src/js/ui/migrations.js"></script>
 <script src="src/js/ui/examples.js"></script>
 <script src="src/js/ui/print.js"></script>
 <script src="src/js/ui/drawing.js"></script>
