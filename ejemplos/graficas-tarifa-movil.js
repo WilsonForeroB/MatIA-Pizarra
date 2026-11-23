@@ -1,0 +1,35 @@
+/* Banco de ejemplos · graficas (los cálculos los genera el motor de la app: engine/ops). */
+MatIA.ejemplo({
+  id: "graficas-tarifa-movil",
+  tema: "graficas",
+  titulo: "¿Qué tarifa de móvil me conviene?",
+  resumen: "Comparamos tres tarifas como funciones del consumo, buscamos dónde se cortan y descubrimos a partir de cuántos GB conviene cada una.",
+  board: {
+    title: "¿Qué tarifa de móvil me conviene?",
+    pages: [
+    { blocks: [
+      {"type":"text","v":"Te ofrecen tres tarifas de móvil. La A es «paga lo que usas»: cuota baja pero cada gigabyte sale caro. La B tiene una cuota intermedia y el gigabyte más barato. La C es de datos ilimitados, con precio fijo. No sabes cuántos GB gastas al mes, pero sí que cambia mucho de unos meses a otros. ¿Qué tarifa te conviene según tu consumo? Cada tarifa es una función del consumo, y las funciones se comparan dibujándolas juntas."},
+      {"type":"text","v":"1. Planteamiento: una función por tarifa"},
+      {"type":"deriv","rows":[{"l":"A(x)","r":"5+2x","note":"Tarifa A: 5 € de cuota fija + 2 € por cada GB. x son los GB al mes y A(x) el precio en euros","boxed":false},{"l":"B(x)","r":"11+0{,}5x","note":"Tarifa B: 11 € de cuota fija + 0,50 € por cada GB","boxed":false},{"l":"C(x)","r":"20","note":"Tarifa C: 20 € al mes, gastes lo que gastes","boxed":true}]},
+      {"type":"text","v":"Los precios son inventados, pero parecidos a los de la realidad: cuota baja y GB caro frente a cuota alta y GB barato."},
+      {"type":"text","v":"2. Las tres a la vez en una gráfica"},
+      {"type":"graph","fns":["A(x)=5+2x","B(x)=11+0.5x","C(x)=20"],"xmin":0,"xmax":25,"ymin":0,"ymax":45},
+      {"type":"text","v":"Se ve que A empieza más abajo pero sube muy rápido, B empieza más arriba y sube despacio y C es una recta horizontal. Se cruzan en los puntos (4, 13) y (18, 20). En cada tramo, la mejor tarifa es la que va por debajo de las demás."},
+      {"type":"text","v":"3. ¿Dónde se cortan? Resolvemos las ecuaciones (Operaciones ▸ Resolver paso a paso)"},
+      {"type":"text","v":"Las rectas A y B valen lo mismo cuando A(x) = B(x):"},
+      {"type":"math","v":"5+2x=11+0.5x"},
+      {"type":"deriv","rows":[{"l":"5+2x","r":"11+0.5x","note":"Ecuación","boxed":false},{"l":"10+4x","r":"22+x","note":"Multiplicamos los dos lados por 2 (m.c.m. de los denominadores)","boxed":false},{"l":"4x-x","r":"22-10","note":"El +10 pasa restando a la derecha; el +x pasa restando a la izquierda","boxed":false},{"l":"3x","r":"12","note":"Agrupamos términos semejantes","boxed":false},{"l":"x","r":"\\frac{12}{3}","note":"El 3 que multiplica a x pasa dividiendo","boxed":false},{"l":"x","r":"4","note":"Simplificamos","boxed":true}]},
+      {"type":"text","v":"Con 4 GB las dos cuestan 5 + 2·4 = 13 € (y también 11 + 0,5·4 = 13 €). Ahora B y C:"},
+      {"type":"math","v":"11+0.5x=20"},
+      {"type":"deriv","rows":[{"l":"11+0.5x","r":"20","note":"Ecuación","boxed":false},{"l":"22+x","r":"40","note":"Multiplicamos los dos lados por 2 (m.c.m. de los denominadores)","boxed":false},{"l":"x","r":"40-22","note":"El +22 pasa restando a la derecha","boxed":false},{"l":"x","r":"18","note":"Operamos","boxed":true}]},
+      {"type":"text","v":"Con 18 GB, B cuesta 11 + 0,5·18 = 20 €, lo mismo que C. (A y C se cortan en 7,5 GB, pero ahí B ya es más barata que las dos: no importa.)"},
+      {"type":"table","head":["GB al mes","A (€)","B (€)","C (€)","Más barata"],"rows":[["2","9","12","20","A"],["4","13","13","20","A = B"],["10","25","16","20","B"],["18","41","20","20","B = C"],["25","55","23,5","20","C"]],"kind":"mono","vbar":1,"caption":"Precio de cada tarifa según el consumo"},
+      {"type":"text","v":"4. La conclusión"},
+      {"type":"deriv","rows":[{"l":"0\\le x<4","r":"\\text{conviene la A}","note":"Con poco consumo, la cuota baja de A pesa más que su GB caro","boxed":false},{"l":"4<x<18","r":"\\text{conviene la B}","note":"Ahí compensa pagar más cuota a cambio de GB barato","boxed":false},{"l":"x>18","r":"\\text{conviene la C}","note":"Con mucho consumo, el precio fijo gana a todas","boxed":true}]},
+      {"type":"text","v":"Hasta 4 GB conviene la A, de 4 a 18 GB conviene la B y a partir de 18 GB conviene la C. En 4 GB y en 18 GB hay empate, así que da igual cuál elijas."},
+      {"type":"text","v":"¿Y en la vida real? Las tarifas reales tienen más letra pequeña: velocidad que baja al pasar cierto límite, permanencia, minutos y llamadas aparte... Aun así, el método es el mismo: escribir cada oferta como función, dibujarlas y buscar los puntos de corte. Y antes de decidir, mira cuánto gastas de verdad en los ajustes del móvil."},
+      {"type":"text","v":"Ahora tú: 1) Aparece una tarifa D de 8 € de cuota y 0,25 € por GB, D(x) = 8 + 0,25x. Añádela a la gráfica y calcula con «Resolver paso a paso» dónde corta a A (5 + 2x = 8 + 0,25x: sale x ≈ 1,71 GB). ¿Sigue teniendo sentido la B? 2) Mira cuántos GB gastaste el último mes y decide qué tarifa te habría convenido."},
+    ], strokes: [] },
+    ],
+  },
+});
