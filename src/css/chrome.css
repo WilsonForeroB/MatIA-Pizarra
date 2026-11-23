@@ -1,0 +1,72 @@
+/* Cabecera, barra lateral de herramientas y barrita flotante de la línea activa (diseño «C»). Se carga tras layout.css. */
+/* ---- Cabecera ---- */
+.top{gap:6px;padding:8px 16px;overflow:visible}
+.top .brand{margin-right:10px}
+.hb{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 10px;border:0;border-radius:var(--radius-md);background:transparent;color:var(--ink);font:500 13.5px/1 var(--font-sans);cursor:pointer;white-space:nowrap;flex:none;
+  transition:background-color var(--duration-fast) var(--ease-standard)}
+.hb:hover{background:var(--surface-sunken)}
+.hb:focus-visible,.rb:focus-visible,.mode-seg button:focus-visible{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:2px}
+.hb.ico{width:34px;padding:0}
+.hb:disabled{opacity:.4;cursor:default}
+.hb[aria-pressed="true"]{background:var(--brand-soft);color:var(--brand)}
+.ic{flex:none}
+.gl{display:inline-grid;place-items:center;font:500 20px/1 var(--font-serif)}
+.hb-save{height:34px;gap:6px;padding:0 14px}
+.mode-seg{display:inline-flex;padding:3px;gap:2px;border-radius:var(--radius-pill);background:var(--surface-sunken);flex:none}
+.mode-seg button{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border:0;border-radius:var(--radius-pill);background:transparent;color:var(--ink-muted);font:500 13px var(--font-sans);cursor:pointer}
+.mode-seg button[aria-pressed="true"]{background:var(--surface-raised);color:var(--brand);box-shadow:0 1px 2px rgba(0,0,0,.14)}
+.top .pages{gap:2px;padding:2px;border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-pill)}
+.top .pages .hb{height:28px;width:28px;border-radius:var(--radius-pill)}
+.top .pages output{font:600 13px var(--font-sans);min-width:0;padding:0 6px 0 3px}
+.pg-lbl{font:500 13px var(--font-sans);color:var(--ink-muted);padding-left:6px}
+#filePop .menu-list h4{margin:4px 10px 2px}
+#filePop .menu-list kbd{margin-left:auto;font-size:11px}
+#filePop{min-width:250px}
+@media (max-width:1180px){
+  .top .brand>span:not(.pio-badge){display:none}
+  .top .hb .hb-t{display:none}
+  .top #exBtn,.top #histBtn,.top #presBtn{width:34px;padding:0}
+  .pg-lbl{display:none}
+}
+
+/* ---- Fila principal: barra lateral + hoja ---- */
+.app-row{flex:1 1 auto;display:flex;min-height:0}
+.app-row>.wrap{flex:1 1 auto;min-width:0}
+.toolbar.rail{flex:none;width:84px;display:flex;flex-direction:column;flex-wrap:nowrap;align-items:center;gap:0;padding:8px 6px;border-bottom:0;border-right:var(--border-width-thin) solid var(--border);background:var(--surface-raised);overflow-y:auto;scrollbar-width:thin}
+.rgrp{display:flex;flex-direction:column;align-items:center;gap:1px;width:100%;padding:4px 0}
+.rgrp+.rgrp{border-top:var(--border-width-thin) solid var(--border);margin-top:4px;padding-top:8px}
+.rb{display:flex;flex-direction:column;align-items:center;gap:3px;width:72px;padding:6px 2px;border:0;border-radius:var(--radius-md);background:transparent;color:var(--ink);font:500 11.5px/1.15 var(--font-sans);cursor:pointer;text-align:center;
+  transition:background-color var(--duration-fast) var(--ease-standard)}
+.rb .ic{width:20px;height:20px}
+.rb:hover{background:var(--surface-sunken)}
+.rb[aria-pressed="true"],.rb[aria-expanded="true"]{background:var(--brand-soft);color:var(--brand)}
+.rb-pri{background:var(--accent);color:var(--on-accent);font-weight:600}
+.rb-pri:hover{background:var(--accent);filter:brightness(1.1)}
+.rb:active{transform:translateY(1px)}
+.rail-colors{display:grid;grid-template-columns:repeat(2,26px);gap:6px;margin-top:auto;padding-top:10px}
+.rail-colors .sw{width:26px;height:26px}
+.rail-colors .sw::before{width:16px;height:16px}
+.rail-width{display:flex;flex-direction:column;align-items:center;gap:4px;width:72px;font:500 11.5px var(--font-sans);color:var(--ink);padding:6px 0}
+.rail-width output{font:600 11px var(--font-mono);color:var(--ink-muted)}
+.rail-width input{width:64px}
+body[data-mode="draw"] .rail .rgrp.only-draw:first-of-type{border-top:0}
+
+/* ---- Barrita flotante de la línea activa ---- */
+.line-bar{position:absolute;z-index:30;display:flex;align-items:center;gap:2px;padding:3px;background:var(--surface-raised);border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-pill);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.line-bar .hb{height:28px;padding:0 9px;border-radius:var(--radius-pill);font-size:12.5px}
+.line-bar .hb.ico{width:28px;padding:0}
+.line-bar .lb-seg{display:inline-flex;gap:1px}
+.line-bar .lb-sep{width:1px;height:18px;background:var(--border);margin:0 3px}
+#boxBtn[aria-pressed="true"]{background:var(--brand-soft);color:var(--brand)}
+body.presenting .line-bar,body.chrome-off .line-bar,body[data-mode="draw"] .line-bar{display:none!important}
+
+/* ---- Pantallas estrechas: barra lateral solo con iconos ---- */
+@media (max-width:640px){
+  .toolbar.rail{width:56px;padding:6px 4px}
+  .rb{width:46px;font-size:0;gap:0;padding:8px 0}
+  .rail-colors{grid-template-columns:26px}
+  .top{gap:4px;padding:8px}
+  .top .brand b,.top .hb-t{display:none}
+  .mode-seg button{padding:0 9px}
+  .hb-save{padding:0 10px}
+}

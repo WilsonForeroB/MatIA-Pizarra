@@ -147,6 +147,7 @@ Animaciones: `mi-rise` (98), `mi-pop` (99). Dentro de la pizarra se definen tamb
 | Base, reset y `kbd` | 103-109 | `box-sizing`, `[hidden]`, `body` en flex |
 | Cabecera (`.top`, marca, Pío, páginas) | 110-126 | `.top .mi-field` en 124 |
 | Barra de herramientas (`.toolbar`, `.grp`, `.tb-btn`, `.sw`) | 127-142 | `body[data-mode]` oculta `.only-draw` / `.only-write` (142) |
+| Cabecera y barra lateral (diseño «C»): `.hb`, `.mode-seg`, `.app-row`, `.toolbar.rail`, `.rgrp`, `.rb`, `.rb-pri`, `.rail-colors`, `.line-bar` | `css/chrome.css` | Se carga tras `layout.css` y sobrescribe `.top`/`.toolbar`. La barrita `.line-bar` la coloca `js/ui/line-bar.js` sobre la línea activa; las ventanas abiertas desde la barra lateral salen a su derecha (`ui/popovers`). |
 | Hoja y páginas (`.wrap`, `.sheet.paper`, `.page-end`, `.paper-sel`) | 143-151 | `#viewPop` y `#presBtn` en 150-151 |
 | Modo presentación | 152-164 | `body.presenting`, `.pres-bar` |
 | Hoja y lienzo de dibujo (`.sheet`, `#ink`, `#blocks`) | 165-170 | Dibujo: 166-168 |

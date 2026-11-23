@@ -48,7 +48,7 @@ js/
     svg-utils.js        · ayudas SVG comunes
   ui/                   ← interfaz
     state.js            · estado de interfaz compartido (línea activa, celda activa, …)
-    toast.js · dialogs.js · popovers.js · toolbar.js · templates.js · calc.js · ops-menu.js
+    toast.js · dialogs.js · popovers.js · toolbar.js · line-bar.js · templates.js · calc.js · ops-menu.js
     view.js · mode-pages.js · print.js (PDF e impresión) · drawing.js · shortcuts.js
     text-format.js · barra flotante de formato del texto · image-insert.js · botón Imagen, pegar y arrastrar
     examples.js         · ventana «Ejemplos» (temas, buscador, abrir copia, añadir páginas)
