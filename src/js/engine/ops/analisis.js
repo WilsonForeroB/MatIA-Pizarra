@@ -144,6 +144,17 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
   function polish(a, v) {
     try { const p = toPoly(a, v); return { t: 'raw', s: P.latex(p, v) }; } catch (e) { /* no es polinomio */ }
     if (a.t === 'div') { try { const p = toPoly(a.a, v); return { t: 'raw', s: '\\frac{' + P.latex(p, v) + '}{' + L(a.b) + '}' }; } catch (e) { /* */ } }
+    // fuera de los polinomios: simplificador de cálculo vectorial (4rπ + (−660)/r² → 4πr − 660/r²), solo si coincide numéricamente
+    try {
+      const c = MatIA.require('engine/ops/vectorial').canon(a);
+      const pts = [0.37, 1.3, 2.71, -1.9, 4.2];
+      const ok = pts.every((x) => { let p0, q0; try { p0 = evalNum(a, { [v]: x }); q0 = evalNum(c, { [v]: x }); } catch (e) { return true; } return !Number.isFinite(p0) ? !Number.isFinite(q0) : Math.abs(p0 - q0) <= 1e-9 * Math.max(1, Math.abs(p0)); });
+      // si solo cambia el orden de los sumandos, nos quedamos con el original (no añade un paso «Simplificamos» vacío)
+      const sum = (x, sg, out) => { if (x.t === 'add') { sum(x.a, sg, out); sum(x.b, sg, out); } else if (x.t === 'sub') { sum(x.a, sg, out); sum(x.b, -sg, out); } else if (x.t === 'neg') sum(x.a, -sg, out); else out.push((sg < 0 ? '-' : '+') + L(x)); return out; };
+      const key = (x) => sum(x, 1, []).sort().join('|');
+      if (ok && key(c) === key(a)) return a;
+      if (ok) return c;
+    } catch (e) { /* sin cálculo vectorial cargado */ }
     return a;
   }
   const RULE_TXT = { constante: 'constante', potencia: 'potencia', suma: 'suma', 'constante por función': 'constante por función', producto: 'producto', cociente: 'cociente', cadena: 'cadena', exponencial: 'exponencial', logaritmo: 'logaritmo', 'trigonométricas': 'trigonométricas', 'trigonométricas inversas': 'trigonométricas inversas', 'derivación logarítmica': 'derivación logarítmica', 'valor absoluto': 'valor absoluto' };
@@ -198,7 +209,7 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
         return r.d === 1n ? sg + (n === 1n ? '' : n) + '\\pi ' : sg + '\\frac{' + (n === 1n ? '' : n) + '\\pi}{' + r.d + '}';
       }
     }
-    return (Math.round(v * 1e4) / 1e4).toString();
+    return (Math.round(v * 1e4) / 1e4).toString().replace('.', '{,}'); // coma decimal, como en el resto de la pizarra
   }
   const isNice = (v) => { for (let q = 1; q <= 12; q++) { if (Math.abs(Math.round(v * q) / q - v) < 1e-9) return true; const p0 = Math.round(v / Math.PI * q); if (p0 !== 0 && Math.abs(p0 * Math.PI / q - v) < 1e-9) return true; } return false; };
   const numT = (v) => latexText(numL(v)).replace(/pi\s*/g, 'π').replace('.', ',').replace(/^-/, '−');
@@ -287,7 +298,7 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
     if (!cps.length) rows.push({ l: L(polish(d1, v)), r: '0', note: 'No tiene solución' + (iv ? ' dentro del intervalo' : '') + ': no hay puntos críticos' });
     else {
       rows.push({ l: L(polish(d1, v)), r: '0', note: 'Puntos críticos: anulamos la derivada' + (cps.some((c) => c.approx) ? ' (soluciones aproximadas)' : '') });
-      rows.push({ l: v, r: cps.map((c) => (c.approx ? '\\approx ' : '') + c.latex).join(',\\quad '), note: cps.length === 1 ? 'Un punto crítico' : cps.length + ' puntos críticos' });
+      rows.push({ l: v, r: cps.map((c) => c.latex + (c.approx ? '\\ldots' : '')).join(',\\quad '), note: cps.length === 1 ? 'Un punto crítico' : cps.length + ' puntos críticos' });
       rows.push({ l: nm + "''(" + v + ')', r: L(polish(d2, v)), note: 'Segunda derivada para clasificarlos' });
     }
     const marks = [];
@@ -321,7 +332,7 @@ MatIA.define('engine/ops/analisis', ['engine/core', 'engine/ops/expr', 'engine/o
       const ok = cand.filter((c) => Number.isFinite(c.y));
       if (ok.length) {
         const mx = ok.reduce((p0, q) => (q.y > p0.y ? q : p0)), mn = ok.reduce((p0, q) => (q.y < p0.y ? q : p0));
-        rows.push({ l: nm + '(' + numL(A) + '),\\ ' + nm + '(' + numL(B) + ')', r: numL(f(A)) + ',\\ ' + numL(f(B)), note: 'Valores en los extremos del intervalo' });
+        rows.push({ l: nm + '(' + numL(A) + '),\\ ' + nm + '(' + numL(B) + ')', r: numL(f(A)) + ';\\ ' + numL(f(B)), note: 'Valores en los extremos del intervalo' });
         const tie = (t) => ok.filter((c) => Math.abs(c.y - t.y) < 1e-9 * Math.max(1, Math.abs(t.y)));
         const mxs = tie(mx), mns = tie(mn);
         rows.push({ l: '\\text{Máx. absoluto}', r: nm + '=' + numL(mx.y) + '\\ \\text{en}\\ ' + mxs.map((c) => v + '=' + c.xL).join(',\\ '), note: 'El mayor valor entre puntos críticos y extremos del intervalo' + (mxs.length > 1 ? ' (se alcanza en varios puntos)' : ''), boxed: true });
