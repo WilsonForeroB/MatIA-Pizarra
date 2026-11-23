@@ -3,7 +3,7 @@
 #examples[open]{display:flex;flex-direction:column}
 .ex-layout{flex:1 1 auto;min-height:0;display:flex}
 /* Columna lateral */
-.ex-side{flex:none;width:244px;display:flex;flex-direction:column;gap:4px;padding:var(--space-3);border-right:var(--border-width-thin) solid var(--border);background:var(--surface-raised);overflow-y:auto}
+.ex-side{flex:none;width:clamp(190px,24vw,244px);display:flex;flex-direction:column;gap:4px;padding:var(--space-3);border-right:var(--border-width-thin) solid var(--border);background:var(--surface-raised);overflow-y:auto}
 .ex-searchbox{display:flex;align-items:center;gap:8px;height:38px;padding:0 10px;border:var(--border-width-thin) solid var(--border-strong);border-radius:var(--radius-md);background:var(--surface);color:var(--ink-muted);margin-bottom:var(--space-2)}
 .ex-searchbox:focus-within{outline:var(--border-width-medium) solid var(--focus-ring);outline-offset:1px;border-color:var(--accent)}
 .ex-search{flex:1;min-width:0;border:0;background:transparent;outline:0;font:400 14px var(--font-sans);color:var(--ink);padding:0}
@@ -42,7 +42,7 @@
 .ex-empty{grid-column:1 / -1;padding:var(--space-4)}
 .empty-pio-ex{margin-top:var(--space-2)}
 /* Estrecho: los temas pasan arriba en una fila deslizable */
-@media (max-width:760px){
+@media (max-width:560px){
   .ex-layout{flex-direction:column}
   .ex-side{width:auto;border-right:0;border-bottom:var(--border-width-thin) solid var(--border);overflow:visible}
   .ex-side-h{display:none}
