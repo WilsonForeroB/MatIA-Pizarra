@@ -32,7 +32,7 @@ MatIA.define('ui/mode-pages', ['core/dom', 'model/board', 'model/schema', 'ui/st
     updatePres();
     presIdle();
     requestAnimationFrame(() => { R('ui/drawing').sizeCanvas(); wrap.scrollTop = 0; });
-    if (S.board.paper === 'free') toast('Consejo: elige Vista ▾ → Tamaño de página → Diapositiva 16:9 para que cada página quepa entera en la pantalla.');
+    if (S.board.paper === 'free') toast('Consejo: abre el menú ⋯ → Tamaño de página, letra y tema → elige → Diapositiva 16:9 para que cada página quepa entera en la pantalla.');
   }
   function endPresent() {
     if (!body.classList.contains('presenting')) return;

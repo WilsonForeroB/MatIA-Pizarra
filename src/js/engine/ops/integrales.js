@@ -4,7 +4,7 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
   const { F, MErr, fLatex } = ME;
   const fr = ME.fr;
   const { N, varsOf, simpAll, isNum, parseExpr, toPoly, L, evalNum, evalExact } = $expr;
-  const { derivBlock, topEqIndex, dec } = $common;
+  const { derivBlock, topEqIndex, dec, latexPlain } = $common;
   const { D, normalizeFn } = $analisis;
 
   const NO_SE = 'No sé integrar esta función de forma exacta.';
@@ -109,6 +109,11 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
           }
         }
         if (e.d === 1n && e.n > 1n && e.n <= 40n) { const r = polyInt(a); if (r) return r; }
+        // (u + w)ⁿ con n pequeño (p. ej. (√x + 1)²): desarrollamos la potencia y se integra término a término
+        if (e.d === 1n && e.n > 1n && e.n <= 6n && (B.t === 'add' || B.t === 'sub')) {
+          const ex = expandPow(B, Number(e.n));
+          if (ex) { R.add('desarrollamos la potencia'); return I(ex); }
+        }
         throw new MErr(NO_SE);
       }
       if (!dep(B)) {
@@ -181,6 +186,44 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
     return simpAll(fin(I(simpAll(ast))));
   }
 
+  // (t₁ ± t₂ ± …)ⁿ → suma de productos simplificada (null si sale demasiado grande)
+  function expandPow(B, n) {
+    const terms = (a, sg, out) => { if (a.t === 'add') { terms(a.a, sg, out); terms(a.b, sg, out); } else if (a.t === 'sub') { terms(a.a, sg, out); terms(a.b, -sg, out); } else if (a.t === 'neg') terms(a.a, -sg, out); else out.push({ a, sg }); return out; };
+    const base = terms(B, 1, []);
+    let acc = [{ a: N.num(ONE), sg: 1 }];
+    for (let k = 0; k < n; k++) {
+      const nx = [];
+      for (const p of acc) for (const q of base) nx.push({ a: N.mul(p.a, q.a), sg: p.sg * q.sg });
+      acc = nx;
+      if (acc.length > 400) return null;
+    }
+    // agrupamos términos semejantes: 2·√x·1 y 1·√x → 2√x
+    const groups = new Map();
+    for (const t of acc) {
+      let x = simpAll(t.a), k = F(t.sg);
+      if (x.t === 'neg') { x = x.a; k = fr.neg(k); }
+      if (x.t === 'num') { k = fr.mul(k, x.v); x = N.num(ONE); }
+      else if (x.t === 'mul' && x.a.t === 'num') { k = fr.mul(k, x.a.v); x = x.b; }
+      const key = L(x), g = groups.get(key);
+      if (g) g.k = fr.add(g.k, k); else groups.set(key, { x, k });
+    }
+    let sum = null;
+    for (const { x, k } of groups.values()) {
+      if (fr.isZ(k)) continue;
+      const neg = k.n < 0n, term = isNum(x, 1) ? N.num(neg ? fr.neg(k) : k) : frac(neg ? fr.neg(k) : k, x);
+      sum = sum ? (neg ? N.sub(sum, term) : N.add(sum, term)) : (neg ? N.neg(term) : term);
+    }
+    return simpAll(sum || N.num(fr.ZERO));
+  }
+  // sustituye la variable v por el árbol w
+  function subst(a, v, w) {
+    if (!a || typeof a !== 'object') return a;
+    if (a.t === 'var' && a.n === v) return w;
+    const o = Object.assign({}, a);
+    for (const k of ['a', 'b']) if (o[k] && typeof o[k] === 'object' && o[k].t) o[k] = subst(o[k], v, w);
+    return o;
+  }
+
   // primitiva por tabla + comprobación numérica por derivación
   function integrate(ast, v, rules, iv) {
     const R = new Set();
@@ -225,6 +268,8 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
     if (!m) throw new MErr('No entiendo los límites de la integral.');
     return { t: m[1], end: i + m[0].length };
   }
+  // letras griegas que pueden ser variable de integración (d\theta, d\varphi…)
+  const DIFF_GREEK = 'theta|varphi|phi|rho|alpha|beta|gamma|lambda|mu|tau|omega|sigma';
   function readIntegral(latex) {
     let s = String(latex).trim(), prefix = '';
     const i = topEqIndex(s);
@@ -248,11 +293,12 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
     }
     if ((lo === null) !== (hi === null)) throw new MErr('Faltan los dos límites de la integral.');
     let body = s.slice(p), v;
-    const fr0 = /\\frac\{\s*(?:\\mathrm\{d\}|\\operatorname\{d\}|\\text\{d\}|d)\s*([a-zA-Z])\s*\}\{([^{}]*)\}/.exec(body);
+    const VAR = '([a-zA-Z]|\\\\(?:' + DIFF_GREEK + ')(?![A-Za-z]))';
+    const fr0 = new RegExp('\\\\frac\\{\\s*(?:\\\\mathrm\\{d\\}|\\\\operatorname\\{d\\}|\\\\text\\{d\\}|d)\\s*' + VAR + '\\s*\\}\\{([^{}]*)\\}').exec(body);
     if (fr0) { v = fr0[1]; body = body.replace(fr0[0], '\\frac{1}{' + fr0[2] + '}'); }
     else {
-      const m = /(?:\\[,;:!]|\s)*(?:\\mathrm\{d\}|\\operatorname\{d\}|\\text\{d\}|d)\s*([a-zA-Z])\s*$/.exec(body);
-      if (!m) throw new MErr('Falta la diferencial (dx) al final de la integral.');
+      const m = new RegExp('(?:\\\\[,;:!]|\\s)*(?:\\\\mathrm\\{d\\}|\\\\operatorname\\{d\\}|\\\\text\\{d\\}|d)\\s*' + VAR + '\\s*$').exec(body);
+      if (!m) throw new MErr('Falta la diferencial (dx, dt, d\\theta…) al final de la integral.');
       v = m[1]; body = body.slice(0, m.index);
     }
     if (!body.trim()) body = '1';
@@ -263,12 +309,12 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
 
   /* ---------------- Cálculo ---------------- */
   const pretty = (a) => L(a).replace(/\\ln\\left\(\\left\|((?:(?!\\right\|).)*)\\right\|\\right\)/g, '\\ln\\left|$1\\right|');
-  const decL = (x) => dec(x, 4).replace('.', '{,}');
+  const decL = (x) => dec(x, 4);
   function niceL(x) {
     if (!Number.isFinite(x)) return null;
     if (Math.abs(x) < 1e-12) return '0';
     for (let q = 1; q <= 24; q++) { const p = Math.round(x * q); if (Math.abs(p / q - x) < 1e-9) return fLatex(F(p, q)); }
-    for (let q = 1; q <= 12; q++) {
+    for (let q = 1; q <= 36; q++) {
       const p = Math.round(x / Math.PI * q);
       if (p !== 0 && Math.abs(p * Math.PI / q - x) < 1e-9) {
         const r = F(p, q), n = r.n < 0n ? -r.n : r.n, sg = r.n < 0n ? '-' : '';
@@ -328,7 +374,9 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
   function analyse(latex) {
     const it = readIntegral(latex);
     const { v, ast } = it;
-    const head = '\\int' + (it.lo ? '_{' + L(it.lo).trim() + '}^{' + L(it.hi).trim() + '}' : '') + ' ' + pretty(ast) + '\\,d' + v;
+    // una suma o resta va entre paréntesis delante de la diferencial: ∫(25 − 5t) dt
+    const body = ast.t === 'add' || ast.t === 'sub' ? '\\left(' + pretty(ast) + '\\right)' : pretty(ast);
+    const head = '\\int' + (it.lo ? '_{' + L(it.lo).trim() + '}^{' + L(it.hi).trim() + '}' : '') + ' ' + body + '\\,d' + v;
     const rules = new Set();
     let Fp = null, err = null;
     let iv = null;
@@ -343,10 +391,13 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
       try {
         if (A.ex && B.ex) { const Fb = evalExact(Fp, { [v]: B.ex }), Fa = evalExact(Fp, { [v]: A.ex }); out.Fb = fLatex(Fb); out.Fa = fLatex(Fa); out.value = fLatex(fr.sub(Fb, Fa)); return out; }
       } catch (e) { /* no exacto */ }
-      const val = evalNum(Fp, { [v]: B.x }) - evalNum(Fp, { [v]: A.x });
+      const fb = evalNum(Fp, { [v]: B.x }), fa = evalNum(Fp, { [v]: A.x }), val = fb - fa;
       if (Number.isFinite(val)) {
         const nl = niceL(val);
         out.value = nl !== null ? nl : '\\approx ' + decL(val);
+        // F(b) y F(a) aunque no sean racionales (π, e, ln…): valor exacto si es corto, si no decimal
+        const at = (lim0, x) => { const nx = niceL(x); if (nx !== null) return nx; try { const t = pretty(simpAll(subst(Fp, v, lim0))); if (t.length <= 36 && !/\\approx/.test(t)) return t; } catch (e) { /* sin forma exacta */ } return decL(x); };
+        out.Fb = at(it.hi, fb); out.Fa = at(it.lo, fa);
         return out;
       }
     }
@@ -372,13 +423,21 @@ MatIA.define('engine/ops/integrales', ['engine/core', 'engine/ops/expr', 'engine
     if (!r.definite) {
       rows.push({ l: r.head, r: pretty(r.Fp) + '+C', note: 'Reglas: ' + rules, boxed: true });
     } else if (r.simpson) {
-      rows.push({ l: r.head, r: r.value, note: 'No tiene primitiva elemental: la aproximamos con la regla de Simpson (n = 1000)', boxed: true });
+      // el valor aproximado va detrás de la fórmula de Simpson: la fila no puede empezar por «≈» (el desarrollo ya pone «=»)
+      rows.push({ l: r.head, r: '\\frac{h}{3}\\left[f(' + r.v + '_{0})+4f(' + r.v + '_{1})+2f(' + r.v + '_{2})+\\cdots+f(' + r.v + '_{n})\\right]' + r.value, note: 'No tiene primitiva elemental: la aproximamos con la regla de Simpson (n = 1000 subintervalos, h = (b − a)/n)', boxed: true });
     } else {
       const Ft = pretty(r.Fp), a = L(r.it.lo).trim(), b = L(r.it.hi).trim();
       // la integral definida es un número: no se escribe «= F(x) + C»; la primitiva va en la nota
-      rows.push({ l: r.head, r: '\\left[' + Ft + '\\right]_{' + a + '}^{' + b + '}', note: 'Primitiva F(x) = ' + plain(Ft) + ' (reglas: ' + rules + '). Regla de Barrow: F(b) − F(a)' });
-      if (r.Fb !== undefined) rows.push({ l: '', r: paren(r.Fb) + '-' + paren(r.Fa), note: 'F(' + plain(b) + ') − F(' + plain(a) + ')' });
-      rows.push({ l: '', r: r.value.replace(/^\\approx /, '\\approx '), note: 'Resultado', boxed: true });
+      const Vt = latexPlain(r.v);
+      rows.push({ l: r.head, r: '\\left[' + Ft + '\\right]_{' + a + '}^{' + b + '}', note: 'Primitiva F(' + Vt + ') = ' + latexPlain(Ft) + ' (reglas: ' + rules + '). Regla de Barrow: F(b) − F(a)' });
+      const approx = /^\\approx/.test(r.value);
+      if (r.Fb !== undefined) {
+        const diff = paren(r.Fb) + '-' + paren(r.Fa);
+        // si el resultado es aproximado se escribe detrás de la resta: «F(b) − F(a) ≈ valor» (nunca una fila que empiece por «≈»)
+        rows.push({ l: '', r: diff + (approx ? r.value : ''), note: 'F(' + latexPlain(b) + ') − F(' + latexPlain(a) + ')' + (approx ? ': valor aproximado' : ''), boxed: approx });
+        if (!approx && r.value !== diff) rows.push({ l: '', r: r.value, note: 'Resultado', boxed: true });
+        else if (!approx) rows[rows.length - 1].boxed = true;
+      } else rows.push({ l: '', r: r.value.replace(/^\\approx\s*/, '\\ldots\\approx '), note: 'Resultado', boxed: true });
     }
     return [derivBlock(rows)];
   }

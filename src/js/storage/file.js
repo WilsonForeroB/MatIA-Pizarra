@@ -48,7 +48,6 @@ MatIA.define('storage/file', ['core/dom', 'model/board', 'model/schema', 'ui/toa
     R('blocks/editor').renderPage();
     S.save();
   });
-  $('#pgDel').addEventListener('click', () => $('#delPage').click());
   $('#delPage').addEventListener('click', async () => {
     R('ui/popovers').closePop();
     if (S.board.pages.length === 1) { toast('Es la única página: en lugar de eliminarla, la vaciamos.'); $('#clearPage').click(); return; }
@@ -80,8 +79,7 @@ MatIA.define('storage/file', ['core/dom', 'model/board', 'model/schema', 'ui/toa
     S.save();
   });
   $('#printBtn').addEventListener('click', () => { R('ui/popovers').closePop(); R('ui/print').printAll(); });
-  $('#pdfFile').addEventListener('click', () => { R('ui/popovers').closePop(); R('ui/print').savePdf(); });
-  $('#pdfBtn').addEventListener('click', () => R('ui/print').savePdf());
+  $('#pdfBtn').addEventListener('click', () => { R('ui/popovers').closePop(); R('ui/print').savePdf(); });
   $('#fileBtn').addEventListener('click', (e) => { if (R('ui/state').openPop && R('ui/state').openPop.p.id === 'filePop') R('ui/popovers').closePop(); else R('ui/popovers').showPop('filePop', e.currentTarget); });
   return { aboutDlg };
 });

@@ -3,7 +3,7 @@ MatIA.define('engine/ops/geometria', ['engine/core', 'engine/ops/common', 'engin
   'use strict';
   const { MErr, F, fLatex } = ME;
   const { ZERO, isZ, mul, fromDec, ONE, add, sub, div, abs, gcd, neg } = ME.fr;
-  const { dec, decT, fParen, fText, derivBlock, latexText, sqrtSimp, fNum, sqrtLatex } = $common;
+  const { dec, decT, listL, latexPlain, fParen, fText, derivBlock, latexText, sqrtSimp, fNum, sqrtLatex } = $common;
   const { termL } = $poly;
   /* ====================== 14. Trigonometría y geometría ====================== */
   // LaTeX → texto sencillo: 150°, 35°20′15″, (5π)/(6), sqrt(3), α…
@@ -176,7 +176,7 @@ MatIA.define('engine/ops/geometria', ['engine/core', 'engine/ops/common', 'engin
     if (a.unit === 'rad') {
       const rl = a.piQ ? piLatex(a.piQ) : dec(a.rad, 4);
       rows.push({ l: rl + '\\ \\text{rad}', r: rl + '\\cdot\\frac{180^{\\circ}}{\\pi}', note: 'De radianes a grados: multiplicamos por 180°/π' });
-      rows.push({ r: degL(deg), boxed: true, note: a.piQ ? 'π rad = 180°, así que π se cancela' : '' });
+      rows.push({ r: degL(deg), boxed: true, note: a.piQ ? 'π rad = 180°, así que π se cancela' : 'Operamos con π ≈ 3,1416' });
       if (!ratNear(deg, 60)) rows.push({ r: dmsL(deg), note: 'En grados, minutos y segundos: la parte decimal · 60 da los minutos y la de estos · 60 los segundos' });
     } else {
       if (a.dms) {
@@ -190,8 +190,8 @@ MatIA.define('engine/ops/geometria', ['engine/core', 'engine/ops/common', 'engin
       const q = degExact(deg);
       rows.push({ l: dl, r: (q && q.d === 1n ? fParen(q) : dec(deg, 4)) + '\\cdot\\frac{\\pi}{180}', note: (a.bare ? 'Sin unidad lo tomo en grados (escribe rad para radianes). ' : '') + 'De grados a radianes: multiplicamos por π/180' });
       const rl = radLatexOf(deg);
-      if (/pi/.test(rl)) rows.push({ r: rl + '\\ \\text{rad}\\approx ' + dec(deg * Math.PI / 180, 4) + '\\ \\text{rad}', boxed: true, note: q && q.d === 1n ? 'Simplificamos la fracción ' + fText(q) + '/180' : '' });
-      else rows.push({ r: rl + '\\ \\text{rad}', boxed: true });
+      if (/pi/.test(rl)) rows.push({ r: rl + '\\ \\text{rad}\\approx ' + dec(deg * Math.PI / 180, 4) + '\\ \\text{rad}', boxed: true, note: q && q.d === 1n ? 'Simplificamos la fracción ' + fText(q) + '/180' : 'Simplificamos y damos también el valor decimal' });
+      else rows.push({ r: rl + '\\ \\text{rad}', boxed: true, note: 'Operamos con π ≈ 3,1416' });
     }
     if (deg >= 360 || deg < 0) {
       const k = Math.floor(deg / 360 + 1e-12), r = mod360(deg);
@@ -310,7 +310,7 @@ MatIA.define('engine/ops/geometria', ['engine/core', 'engine/ops/common', 'engin
     const approxL = (v) => (Math.abs(v - Math.round(v)) < 1e-9 ? '=' + Math.round(v) : '\\approx ' + dec(v, 4));
     const sv = (v) => dec(v, 4), av = (v) => dec(v, 2) + '^{\\circ}';
     const rows = [];
-    rows.push({ l: '\\text{Datos}', r: [...['a', 'b', 'c'].filter((k) => sides[k] != null).map((k) => k + '=' + sv(sides[k])), ...['A', 'B', 'C'].filter((k) => angs[k] != null).map((k) => AL(k) + '=' + av(angs[k]))].join(',\\ '), note: 'Cada lado es opuesto al ángulo de su misma letra' });
+    rows.push({ l: '\\text{Datos}', r: listL([...['a', 'b', 'c'].filter((k) => sides[k] != null).map((k) => k + '=' + sv(sides[k])), ...['A', 'B', 'C'].filter((k) => angs[k] != null).map((k) => AL(k) + '=' + av(angs[k]))]), note: 'Cada lado es opuesto al ángulo de su misma letra' });
     const sols = [];
     const lawCosAngle = (S, s) => { // ángulo opuesto a s conociendo los tres lados
       const o = ['a', 'b', 'c'].filter((k) => k !== lo(S));
@@ -319,7 +319,7 @@ MatIA.define('engine/ops/geometria', ['engine/core', 'engine/ops/common', 'engin
       const ang = Math.acos(Math.max(-1, Math.min(1, cv))) / R;
       const cvq = ratNear(cv, 2000);
       rows.push({ l: '\\cos ' + AL(S), r: '\\frac{' + o[0] + '^{2}+' + o[1] + '^{2}-' + lo(S) + '^{2}}{2' + o[0] + o[1] + '}=\\frac{' + sv(p) + '^{2}+' + sv(q) + '^{2}-' + sv(r) + '^{2}}{2\\cdot ' + sv(p) + '\\cdot ' + sv(q) + '}=' + (cvq && cvq.d <= 2000n && cvq.d !== 1n ? fLatex(cvq) + '\\approx ' : '') + sv(cv), note: 'Teorema del coseno despejando el ángulo' });
-      rows.push({ l: AL(S), r: '\\arccos\\left(' + sv(cv) + '\\right)\\approx ' + av(ang), note: '' });
+      rows.push({ l: AL(S), r: '\\arccos\\left(' + sv(cv) + '\\right)\\approx ' + av(ang), note: 'El ángulo cuyo coseno es ese valor (arccos con la calculadora)' });
       return ang;
     };
     if (ns === 3) {
@@ -337,8 +337,8 @@ MatIA.define('engine/ops/geometria', ['engine/core', 'engine/ops/common', 'engin
         rows.push({ l: '\\text{Caso}', r: '\\text{dos lados y el ángulo comprendido (LAL)}', note: 'Teorema del coseno para el lado que falta' });
         const r2 = P0 * P0 + Q0 * Q0 - 2 * P0 * Q0 * cosD(incl);
         const rr = Math.sqrt(r2);
-        rows.push({ l: miss + '^{2}', r: p + '^{2}+' + q + '^{2}-2' + p + q + '\\cos ' + AL(up(miss)) + '=' + sv(P0) + '^{2}+' + sv(Q0) + '^{2}-2\\cdot ' + sv(P0) + '\\cdot ' + sv(Q0) + '\\cdot\\cos ' + av(incl) + approxL(r2) });
-        rows.push({ l: miss, r: '\\sqrt{' + sv(r2) + '}' + approxL(rr) });
+        rows.push({ l: miss + '^{2}', r: p + '^{2}+' + q + '^{2}-2' + p + q + '\\cos ' + AL(up(miss)) + '=' + sv(P0) + '^{2}+' + sv(Q0) + '^{2}-2\\cdot ' + sv(P0) + '\\cdot ' + sv(Q0) + '\\cdot\\cos ' + av(incl) + approxL(r2), note: 'Teorema del coseno: sustituimos los dos lados y el ángulo que forman' });
+        rows.push({ l: miss, r: '\\sqrt{' + sv(r2) + '}' + approxL(rr), note: 'Raíz cuadrada positiva: es una longitud' });
         const s = Object.assign({}, sides, { [miss]: rr });
         const X = lawCosAngle(up(p), s);
         const Y = 180 - incl - X;
@@ -380,7 +380,7 @@ MatIA.define('engine/ops/geometria', ['engine/core', 'engine/ops/common', 'engin
       const s = Object.assign({}, sides);
       for (const o of ['a', 'b', 'c'].filter((x) => x !== k)) {
         s[o] = ratio * sinD(angs[up(o)]);
-        rows.push({ l: o, r: '\\frac{' + k + '\\cdot\\operatorname{sen}' + AL(up(o)) + '}{\\operatorname{sen}' + AL(up(k)) + '}\\approx ' + sv(ratio) + '\\cdot\\operatorname{sen}' + av(angs[up(o)]) + '\\approx ' + sv(s[o]) });
+        rows.push({ l: o, r: '\\frac{' + k + '\\cdot\\operatorname{sen}' + AL(up(o)) + '}{\\operatorname{sen}' + AL(up(k)) + '}\\approx ' + sv(ratio) + '\\cdot\\operatorname{sen}' + av(angs[up(o)]) + '\\approx ' + sv(s[o]), note: 'Teorema del seno: ' + o + ' = (' + k + ' / sen ' + up(k) + ') · sen ' + up(o) });
       }
       sols.push(Object.assign(s, angs));
     }
@@ -388,7 +388,7 @@ MatIA.define('engine/ops/geometria', ['engine/core', 'engine/ops/common', 'engin
     sols.forEach((t, i) => {
       const tag = sols.length > 1 ? '_{' + (i + 1) + '}' : '';
       const area = 0.5 * t.b * t.c * sinD(t.A), per = t.a + t.b + t.c;
-      rows.push({ l: '\\text{Solución}' + tag, r: 'a\\approx ' + sv(t.a) + ',\\ b\\approx ' + sv(t.b) + ',\\ c\\approx ' + sv(t.c) + ',\\ \\hat{A}\\approx ' + av(t.A) + ',\\ \\hat{B}\\approx ' + av(t.B) + ',\\ \\hat{C}\\approx ' + av(t.C), boxed: true, note: triKind(t) });
+      rows.push({ l: '\\text{Solución}' + tag, r: listL(['a\\approx ' + sv(t.a), 'b\\approx ' + sv(t.b), 'c\\approx ' + sv(t.c), '\\hat{A}\\approx ' + av(t.A), '\\hat{B}\\approx ' + av(t.B), '\\hat{C}\\approx ' + av(t.C)]), boxed: true, note: triKind(t) });
       rows.push({ l: 'S' + tag, r: '\\frac{1}{2}\\,bc\\,\\operatorname{sen}\\hat{A}=\\frac{1}{2}\\cdot ' + sv(t.b) + '\\cdot ' + sv(t.c) + '\\cdot\\operatorname{sen}' + av(t.A) + '\\approx ' + sv(area), note: 'Área (también con Herón: √(s(s−a)(s−b)(s−c)))' });
       rows.push({ l: 'P' + tag, r: 'a+b+c\\approx ' + sv(per), note: 'Perímetro' });
       out.push({ type: 'geo', kind: 'tri', a: t.a, b: t.b, c: t.c, A: t.A, B: t.B, C: t.C, label: sols.length > 1 ? 'Triángulo ' + (i + 1) : '' });
@@ -510,7 +510,7 @@ MatIA.define('engine/ops/geometria', ['engine/core', 'engine/ops/common', 'engin
         const cv = Math.abs(fNum(dotN)) / Math.sqrt(fNum(n2));
         const ang = Math.acos(Math.min(1, cv)) * 180 / Math.PI;
         rows.push({ l: '\\cos\\varphi', r: '\\frac{\\left|a_1a_2+b_1b_2\\right|}{\\sqrt{a_1^{2}+b_1^{2}}\\,\\sqrt{a_2^{2}+b_2^{2}}}=\\frac{' + fLatex(F(abs(dotN.n), dotN.d)) + '}{\\sqrt{' + fLatex(add(sqF(r.a), sqF(r.b))) + '}\\,\\sqrt{' + fLatex(add(sqF(s.a), sqF(s.b))) + '}}', note: 'Ángulo entre las rectas (el agudo) con sus vectores normales' });
-        rows.push({ l: '\\varphi', r: (perp ? '90^{\\circ}' : '\\arccos\\left(' + dec(cv, 4) + '\\right)\\approx ' + dec(ang, 2) + '^{\\circ}'), boxed: true });
+        rows.push({ l: '\\varphi', r: (perp ? '90^{\\circ}' : '\\arccos\\left(' + dec(cv, 4) + '\\right)\\approx ' + dec(ang, 2) + '^{\\circ}'), note: perp ? 'Rectas perpendiculares: forman un ángulo recto' : 'cos φ ≈ ' + decT(cv, 4) + ': el ángulo con arccos (calculadora)', boxed: true });
         geo.points.push({ x: fNum(x), y: fNum(y), name: 'P', kind: 'cut' });
       } else {
         const coinc = isZ(sub(mul(r.a, s.c), mul(s.a, r.c))) && isZ(sub(mul(r.b, s.c), mul(s.b, r.c)));

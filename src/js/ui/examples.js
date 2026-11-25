@@ -28,15 +28,20 @@ MatIA.define('ui/examples', ['core/dom', 'model/board', 'model/schema', 'ui/toas
   const dlg = document.createElement('dialog');
   dlg.id = 'examples';
   dlg.setAttribute('aria-labelledby', 'exTitle');
+  const SEARCH_IC = '<svg class="ic" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5l3.5 3.5"/></svg>';
   dlg.innerHTML = '<div class="dlg-head"><h2 id="exTitle" class="pio-title">Ejemplos para inspirarte</h2>'
     + '<button type="button" class="mi-btn mi-btn--sm" id="exClose">Cerrar</button></div>'
-    + '<div class="ex-body">'
-    + '<p class="ex-lead">Abre un ejemplo para ver lo que puede hacer la pizarra y <b>cámbialo a tu gusto</b>: se abre una copia, el original no se estropea. '
+    + '<div class="ex-layout">'
+    + '<aside class="ex-side">'
+    + '<label class="ex-searchbox">' + SEARCH_IC + '<input type="search" class="ex-search" placeholder="Buscar ejemplos…" aria-label="Buscar ejemplos"></label>'
+    + '<span class="ex-side-h">Temas</span>'
+    + '<div class="ex-tabs" role="tablist" aria-orientation="vertical" aria-label="Temas"></div>'
+    + '</aside>'
+    + '<section class="ex-main">'
+    + '<p class="ex-lead">Abre un ejemplo y <b>cámbialo a tu gusto</b>: se abre una copia y el original no se estropea. '
     + 'Con «Añadir páginas» lo sumas a tu clase actual.</p>'
-    + '<div class="ex-tools"><div class="ex-tabs" role="tablist" aria-label="Temas"></div>'
-    + '<input type="search" class="ex-search" placeholder="Buscar: derivada, Gauss, normal…" aria-label="Buscar ejemplos"></div>'
     + '<div class="ex-grid" role="list"></div>'
-    + '</div>';
+    + '</section></div>';
   document.body.appendChild(dlg);
   dlg.querySelector('#exTitle').prepend(pio.badge('idea', '', 'Pío con una idea'));
   const tabs = dlg.querySelector('.ex-tabs'), grid = dlg.querySelector('.ex-grid'), search = dlg.querySelector('.ex-search');
@@ -45,17 +50,18 @@ MatIA.define('ui/examples', ['core/dom', 'model/board', 'model/schema', 'ui/toas
   function renderTabs() {
     tabs.textContent = '';
     const list = all();
-    const mk = (id, label, n) => {
+    const mk = (id, label, n, icon, tip) => {
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'ex-tab'; b.setAttribute('role', 'tab'); b.dataset.tema = id;
       b.setAttribute('aria-selected', String(id === tema));
-      b.innerHTML = '<span></span><small></small>';
-      b.firstChild.textContent = label; b.lastChild.textContent = n;
+      if (tip) b.title = tip;
+      b.innerHTML = '<i aria-hidden="true"></i><span></span><small></small>';
+      b.children[0].textContent = icon; b.children[1].textContent = label; b.children[2].textContent = n;
       b.addEventListener('click', () => { tema = id; renderTabs(); renderGrid(); });
       tabs.appendChild(b);
     };
-    mk('todos', 'Todos', list.length);
-    for (const t of TEMAS) { const n = list.filter((e) => e.tema === t.id).length; if (n) mk(t.id, t.name, n); }
+    mk('todos', 'Todos', list.length, '★', 'Todos los ejemplos, agrupados por tema');
+    for (const t of TEMAS) { const n = list.filter((e) => e.tema === t.id).length; if (n) mk(t.id, t.name, n, t.icon, t.tip); }
   }
 
   function card(e) {

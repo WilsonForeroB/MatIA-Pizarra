@@ -1,0 +1,33 @@
+/* Banco de ejemplos · geometria (los cálculos los genera el motor de la app: engine/ops). */
+MatIA.ejemplo({
+  id: "geometria-rutas-cruzan",
+  tema: "geometria",
+  titulo: "¿Se cruzarán los dos barcos?",
+  resumen: "Dos rutas como rectas en el plano: punto de corte, tiempos de llegada y distancia de una isla a la ruta, en kilómetros.",
+  board: {
+    title: "¿Se cruzarán los dos barcos?",
+    pages: [
+    { blocks: [
+      {"type":"text","v":"Dos barcos salen a la vez de dos puertos distintos. Se pueden representar en un mapa con coordenadas en kilómetros. El barco 1 sale del puerto (0, 0) y navega en línea recta hacia el punto (6, 8) y más allá, a 20 km/h. El barco 2 sale del puerto (10, 0), pasa por (0, 20) y navega a 15 km/h. Las dos rutas parecen cruzarse, pero ¿lo hacen? ¿Dónde? ¿Chocarán? Con la geometría analítica podemos responder antes de que los capitanes se vean."},
+      {"type":"text","v":"1. Planteamiento: cada ruta es una recta"},
+      {"type":"deriv","rows":[{"l":"\\text{Ruta 1}","r":"\\text{pasa por }(0,0)\\text{ y }(6,8):\\ m=\\frac{8}{6}=\\frac{4}{3}","note":"La pendiente es lo que sube dividido entre lo que avanza","boxed":false},{"l":"y","r":"\\frac{4}{3}x\\ \\Rightarrow\\ 4x-3y=0","note":"Ecuación general de la ruta 1","boxed":true},{"l":"\\text{Ruta 2}","r":"\\text{pasa por }(10,0)\\text{ y }(0,20):\\ m=\\frac{20}{-10}=-2","note":"Va hacia arriba y hacia la izquierda: pendiente negativa","boxed":false},{"l":"y","r":"-2(x-10)\\ \\Rightarrow\\ 2x+y-20=0","note":"Ecuación general de la ruta 2","boxed":true}]},
+      {"type":"text","v":"2. ¿Dónde se cruzan? (Operaciones ▸ Rectas: posición, paralelas y distancias)"},
+      {"type":"math","v":"4x-3y=0,\\ 2x+y-20=0"},
+      {"type":"deriv","rows":[{"l":"r","r":"4x-3y=0","note":"Ruta del barco 1. Explícita: y = 4/3x, pendiente m = 4/3; vector normal (4, -3)","boxed":false},{"l":"s","r":"2x+y-20=0","note":"Ruta del barco 2. Explícita: y = -2x+20, pendiente m = -2; vector normal (2, 1)","boxed":false},{"l":"\\frac{a_1}{a_2},\\ \\frac{b_1}{b_2},\\ \\frac{c_1}{c_2}","r":"\\frac{4}{2},\\ \\frac{-3}{1},\\ \\frac{0}{-20}","note":"Comparamos los coeficientes: si a y b no son proporcionales se cortan; si lo son, paralelas o coincidentes según c","boxed":false},{"l":"\\text{Posición}","r":"\\text{secantes}","note":"a₁b₂ − a₂b₁ = 10 ≠ 0: se cortan en un punto","boxed":true},{"l":"\\begin{cases}4x-3y=0\\\\2x+y-20=0\\end{cases}","r":"x=6,\\ y=8","note":"Punto de corte resolviendo el sistema (Cramer: det = 10)","boxed":false},{"l":"\\cos\\varphi","r":"\\frac{\\left|a_1a_2+b_1b_2\\right|}{\\sqrt{a_1^{2}+b_1^{2}}\\,\\sqrt{a_2^{2}+b_2^{2}}}=\\frac{5}{\\sqrt{25}\\,\\sqrt{5}}","note":"Ángulo entre las rectas (el agudo) con sus vectores normales","boxed":false},{"l":"\\varphi","r":"\\arccos\\left(0{,}4472\\right)\\approx 63{,}43^{\\circ}","note":"Ángulo agudo con el que se cruzan las dos rutas","boxed":true}]},
+      {"type":"geo","kind":"lines","lines":[{"a":4,"b":-3,"c":0,"name":"ruta 1","dash":false},{"a":2,"b":1,"c":-20,"name":"ruta 2","dash":false}],"points":[{"x":6,"y":8,"name":"cruce","kind":"cut"},{"x":0,"y":0,"name":"puerto 1","kind":""},{"x":10,"y":0,"name":"puerto 2","kind":""}]},
+      {"type":"text","v":"Las rutas se cortan en el punto (6, 8). Para el barco 1 está a √(6² + 8²) = 10 km de su puerto; para el barco 2 está a √((10 − 6)² + 8²) = √80 ≈ 8,94 km de su puerto."},
+      {"type":"text","v":"3. Que las rutas se crucen no significa que los barcos choquen"},
+      {"type":"deriv","rows":[{"l":"t_{1}","r":"\\frac{10}{20}=0{,}5\\ \\text{h}=30\\ \\text{min}","note":"El barco 1 llega al cruce a los 30 minutos","boxed":false},{"l":"t_{2}","r":"\\frac{\\sqrt{80}}{15}\\approx 0{,}596\\ \\text{h}\\approx 35{,}8\\ \\text{min}","note":"El barco 2 tarda casi 6 minutos más","boxed":false},{"l":"d","r":"\\sqrt{80}-15\\cdot 0{,}5\\approx 1{,}44\\ \\text{km}","note":"Cuando el barco 1 está en el cruce (a los 30 min), el barco 2 ha recorrido 15 · 0,5 = 7,5 km y le faltan 1,44 km","boxed":true}]},
+      {"type":"text","v":"Los barcos no chocan, pero pasan muy cerca: la distancia mínima entre ellos es de unos 1,4 km (hacia los 31,5 minutos), una distancia demasiado pequeña para fiarse a simple vista con niebla. Si el barco 2 hubiera ido un poco más rápido, habrían coincidido en el cruce (a √80 / 0,5 ≈ 17,9 km/h)."},
+      {"type":"text","v":"4. ¿Y la isla? Distancia de un punto a una recta"},
+      {"type":"text","v":"Hay una isla con una reserva marina en el punto F = (8, 2). Los barcos no deben acercarse a menos de 6 km. ¿Cumple el barco 1? Calculamos la distancia del punto a la recta de su ruta con la misma operación:"},
+      {"type":"math","v":"4x-3y=0,\\ F=(8,2)"},
+      {"type":"deriv","rows":[{"l":"r","r":"4x-3y=0","note":"Ruta del barco 1. Explícita: y = 4/3x, pendiente m = 4/3; vector normal (4, -3)","boxed":false},{"l":"d(F,r)","r":"\\frac{\\left|ax_0+by_0+c\\right|}{\\sqrt{a^{2}+b^{2}}}=\\frac{\\left|4\\cdot 8-3\\cdot 2+0\\right|}{\\sqrt{25}}=\\frac{26}{5}","note":"Distancia de un punto a una recta","boxed":true},{"l":"r''\\perp r","r":"3x+4y-32=0","note":"Perpendicular por F: intercambiamos a y b y cambiamos un signo (bx − ay + c = 0)","boxed":false},{"l":"H","r":"\\left(\\frac{96}{25},\\ \\frac{128}{25}\\right)","note":"Pie de la perpendicular (proyección de F sobre r)","boxed":false}]},
+      {"type":"geo","kind":"lines","lines":[{"a":4,"b":-3,"c":0,"name":"ruta 1","dash":false},{"a":3,"b":4,"c":-32,"name":"perp.","dash":true}],"points":[{"x":8,"y":2,"name":"isla"},{"x":3.84,"y":5.12,"name":"H","kind":"mid"}]},
+      {"type":"text","v":"La distancia de la isla a la ruta del barco 1 es 26/5 = 5,2 km, y el punto más cercano de la ruta es H = (3,84; 5,12). Como 5,2 < 6, la ruta entra en la reserva. Hay que desviarla: en el tramo cercano a H, el barco navegaría unos 6 km dentro de los 6 km de la zona (2·√(6² − 5,2²) ≈ 6,0 km)."},
+      {"type":"text","v":"¿Y en la vida real? Los barcos y los aviones usan sistemas parecidos: el ordenador de a bordo calcula continuamente el punto de cruce y la distancia mínima entre rutas, y avisa antes de que haya peligro. Además, los barcos reales no navegan a velocidad constante ni en línea recta, pero este modelo sirve para el primer aviso."},
+      {"type":"text","v":"Ahora tú: 1) Cambia la velocidad del barco 2 a 20 km/h y calcula cuándo llega al cruce (√80/20 ≈ 0,447 h ≈ 26,8 min) y compáralo con los 30 minutos del barco 1: ¿cuál llega primero y con cuánta ventaja? 2) Cambia la isla a F = (2, 9): ¿a qué distancia queda de la ruta 1 (4x − 3y = 0)? Usa la misma operación con una recta y un punto (debe salir 3,8 km)."},
+    ], strokes: [] },
+    ],
+  },
+});

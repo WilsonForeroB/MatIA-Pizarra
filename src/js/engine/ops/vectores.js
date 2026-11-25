@@ -28,8 +28,8 @@ MatIA.define('engine/ops/vectores', ['engine/core', 'engine/ops/common', 'engine
     const d = dot(u, v);
     return [derivBlock([
       { l: 'u\\cdot v', r: u.map((x, i) => fParen(x) + '\\cdot ' + fParen(v[i])).join('+'), note: 'Multiplicamos coordenada a coordenada y sumamos' },
-      { r: u.map((x, i) => fParen(mul(x, v[i]))).join('+') },
-      { r: fLatex(d), boxed: true, note: isZ(d) ? 'Producto escalar 0: los vectores son perpendiculares' : '' },
+      { r: u.map((x, i) => fParen(mul(x, v[i]))).join('+'), note: 'Productos de cada coordenada' },
+      { r: fLatex(d), boxed: true, note: isZ(d) ? 'Producto escalar 0: los vectores son perpendiculares' : 'Sumamos: el producto escalar es un número' },
     ])];
   }
   function vecCross(latex, env) {
@@ -40,8 +40,8 @@ MatIA.define('engine/ops/vectores', ['engine/core', 'engine/ops/common', 'engine
     return [derivBlock([
       { l: 'u\\times v', r: '\\begin{vmatrix}\\vec{i} & \\vec{j} & \\vec{k}\\\\ ' + u.map(fLatex).join(' & ') + '\\\\ ' + v.map(fLatex).join(' & ') + '\\end{vmatrix}', note: 'Determinante simbólico con i, j, k en la primera fila' },
       { r: m2(u[1], u[2], v[1], v[2]) + '\\vec{i}-' + m2(u[0], u[2], v[0], v[2]) + '\\vec{j}+' + m2(u[0], u[1], v[0], v[1]) + '\\vec{k}', note: 'Desarrollamos por la primera fila' },
-      { r: termL(c1, '\\vec{i}', true) + termL(neg(c2), '\\vec{j}', isZ(c1)) + termL(c3, '\\vec{k}', isZ(c1) && isZ(c2)) || '0' },
-      { r: tup([c1, neg(c2), c3]), boxed: true },
+      { r: termL(c1, '\\vec{i}', true) + termL(neg(c2), '\\vec{j}', isZ(c1)) + termL(c3, '\\vec{k}', isZ(c1) && isZ(c2)) || '0', note: 'Calculamos los tres determinantes 2×2' },
+      { r: tup([c1, neg(c2), c3]), boxed: true, note: 'En coordenadas: es perpendicular a u y a v' },
     ])];
   }
   function vecNorm(latex, env) {
@@ -49,8 +49,8 @@ MatIA.define('engine/ops/vectores', ['engine/core', 'engine/ops/common', 'engine
     const s = dot(u, u);
     return [derivBlock([
       { l: '\\left\\lVert u\\right\\rVert', r: '\\sqrt{' + u.map((x) => fParen(x) + '^{2}').join('+') + '}', note: 'Raíz de la suma de los cuadrados' },
-      { r: '\\sqrt{' + fLatex(s) + '}' },
-      { r: sqrtLatex(s), boxed: true, note: sqrtSimp(s).m === 1n ? '' : '≈ ' + Math.sqrt(fNum(s)).toFixed(4).replace('.', ',') },
+      { r: '\\sqrt{' + fLatex(s) + '}', note: 'Sumamos los cuadrados' },
+      { r: sqrtLatex(s), boxed: true, note: sqrtSimp(s).m === 1n ? 'Raíz exacta' : 'Sacamos factores de la raíz; ≈ ' + Math.sqrt(fNum(s)).toFixed(4).replace('.', ',') },
     ].filter((r, i) => !(i === 2 && sqrtLatex(s) === '\\sqrt{' + fLatex(s) + '}'))) ];
   }
   function vecAngle(latex, env) {
@@ -66,8 +66,8 @@ MatIA.define('engine/ops/vectores', ['engine/core', 'engine/ops/common', 'engine
     return [derivBlock([
       { l: '\\cos\\alpha', r: '\\frac{u\\cdot v}{\\left\\lVert u\\right\\rVert\\,\\left\\lVert v\\right\\rVert}', note: 'Fórmula del ángulo entre dos vectores' },
       { r: '\\frac{' + fLatex(d) + '}{\\sqrt{' + fLatex(nu) + '}\\cdot\\sqrt{' + fLatex(nv) + '}}', note: 'u·v = ' + fText(d) + ', ‖u‖² = ' + fText(nu) + ', ‖v‖² = ' + fText(nv) },
-      { r: exact + '\\approx ' + cosv.toFixed(4) },
-      { l: '\\alpha', r: '\\arccos\\left(' + exact + '\\right)\\approx ' + deg.toFixed(2) + '^{\\circ}', boxed: true },
+      { r: exact + '\\approx ' + cosv.toFixed(4).replace('.', '{,}'), note: 'Simplificamos y damos el valor decimal' },
+      { l: '\\alpha', r: '\\arccos\\left(' + exact + '\\right)\\approx ' + deg.toFixed(2).replace('.', '{,}') + '^{\\circ}', boxed: true, note: Math.abs(cosv) < 1e-12 ? 'Coseno 0: los vectores son perpendiculares' : 'El ángulo cuyo coseno es ese valor (arccos con la calculadora)' },
     ])];
   }
   function vecProj(latex, env) {
@@ -77,8 +77,8 @@ MatIA.define('engine/ops/vectores', ['engine/core', 'engine/ops/common', 'engine
     const k = div(d, nv);
     return [derivBlock([
       { l: '\\operatorname{proy}_{v}u', r: '\\frac{u\\cdot v}{\\left\\lVert v\\right\\rVert^{2}}\\,v', note: 'Proyección ortogonal de u sobre v' },
-      { r: '\\frac{' + fLatex(d) + '}{' + fLatex(nv) + '}' + tup(v) },
-      { r: tup(v.map((x) => mul(k, x))), boxed: true },
+      { r: '\\frac{' + fLatex(d) + '}{' + fLatex(nv) + '}' + tup(v), note: 'u·v = ' + fText(d) + ' y ‖v‖² = ' + fText(nv) },
+      { r: tup(v.map((x) => mul(k, x))), boxed: true, note: 'Multiplicamos cada coordenada de v por ' + fText(k) },
     ])];
   }
 

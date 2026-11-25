@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="src/css/tokens.css">
 <link rel="stylesheet" href="src/css/components/matia.css">
 <link rel="stylesheet" href="src/css/layout.css">
+<link rel="stylesheet" href="src/css/chrome.css">
 <link rel="stylesheet" href="src/css/blocks.css">
 <link rel="stylesheet" href="src/css/fit.css">
 <link rel="stylesheet" href="src/css/components/popovers.css">
@@ -29,6 +30,7 @@
 <link rel="stylesheet" href="src/css/text.css">
 <link rel="stylesheet" href="src/css/image.css">
 <link rel="stylesheet" href="src/css/examples.css">
+<link rel="stylesheet" href="src/css/migrations.css">
 <link rel="stylesheet" href="src/css/print.css">
 <link rel="stylesheet" href="src/css/responsive.css">
 <script defer src="src/vendor/mathlive/mathlive.min.js"></script>
@@ -38,57 +40,58 @@
 
 <header class="top" id="top">
   <div class="brand" data-pio="logo" data-pio-cls="pio-logo" data-pio-alt="Pío, la mascota de MatIA"><b>MatIA</b><span>Pizarra</span></div>
-  <div class="mi-seg" role="group" aria-label="Modo">
-    <button type="button" data-mode="write" aria-pressed="true" title="Escribir fórmulas (Alt+D alterna)">Escribir</button>
-    <button type="button" data-mode="draw" aria-pressed="false" title="Dibujar a mano alzada (Alt+D alterna)">Dibujar</button>
-  </div>
-  <div class="pages" role="group" aria-label="Páginas">
-    <button type="button" class="mi-btn mi-btn--ghost icon-btn" id="pgPrev" aria-label="Página anterior" title="Página anterior (Alt+RePág)">◀</button>
-    <output id="pgOut" aria-live="polite">1 / 1</output>
-    <button type="button" class="mi-btn mi-btn--ghost icon-btn" id="pgNext" aria-label="Página siguiente" title="Página siguiente (Alt+AvPág)">▶</button>
-    <button type="button" class="mi-btn mi-btn--sm" id="pgAdd" title="Añadir una página en blanco detrás de esta">+ Página</button>
-    <button type="button" class="mi-btn mi-btn--sm" id="pgDel" title="Eliminar esta página (si es la única, la vacía)">− Página</button>
+  <div class="mode-seg" role="group" aria-label="Modo">
+    <button type="button" data-mode="write" aria-pressed="true" title="Escribir fórmulas (Alt+D alterna)" aria-label="Escribir"><svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 13.5h11"/><path d="M4 10.5l2.5-7h1l2.5 7M5 8h4"/></svg><span class="hb-t">Escribir</span></button>
+    <button type="button" data-mode="draw" aria-pressed="false" title="Dibujar a mano alzada (Alt+D alterna)" aria-label="Dibujar"><svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.5l3 3-8 8H2.5v-3z"/></svg><span class="hb-t">Dibujar</span></button>
   </div>
   <div class="spacer"></div>
-  <button type="button" class="mi-btn mi-btn--sm" id="pdfBtn" title="Guardar la clase como PDF: una página o diapositiva por hoja">PDF</button>
-  <button type="button" class="mi-btn mi-btn--sm" id="presBtn" title="Modo presentación: cada página como una diapositiva a pantalla completa"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1L11 6L2 11Z" fill="currentColor"/></svg>Presentar</button>
-  <button type="button" class="mi-btn mi-btn--sm icon-btn" id="fsBtn" title="Pantalla completa (F)" aria-label="Pantalla completa"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg></button>
-  <button type="button" class="mi-btn mi-btn--sm" id="viewBtn" aria-haspopup="true" aria-expanded="false">Vista <span aria-hidden="true">▾</span></button>
-  <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="saveBtn" title="Guardar la clase en tu carpeta de clases (Ctrl+S)"><span class="save-dot" aria-hidden="true"></span>Guardar</button>
-  <button type="button" class="mi-btn mi-btn--sm" id="histBtn" title="Guardar y abrir clases de la carpeta que elijas">Historial</button>
-  <button type="button" class="mi-btn mi-btn--sm" id="exBtn" title="Ejemplos de lo que puede hacer la pizarra, por temas">Ejemplos</button>
-  <button type="button" class="mi-btn mi-btn--sm" id="fileBtn" aria-haspopup="true" aria-expanded="false">Archivo <span aria-hidden="true">▾</span></button>
-  <button type="button" class="mi-btn mi-btn--sm icon-btn" id="helpBtn" title="Atajos y ayuda (?)" aria-label="Atajos y ayuda">?</button>
+  <div class="pages" role="group" aria-label="Páginas">
+    <button type="button" class="hb ico" id="pgPrev" aria-label="Página anterior" title="Página anterior (Alt+RePág)"><svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5L5.5 8l4.5 4.5"/></svg></button>
+    <span class="pg-lbl">Página</span><output id="pgOut" aria-live="polite">1 / 1</output>
+    <button type="button" class="hb ico" id="pgNext" aria-label="Página siguiente" title="Página siguiente (Alt+AvPág)"><svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5L10.5 8 6 12.5"/></svg></button>
+    <button type="button" class="hb ico" id="pgAdd" aria-label="Añadir página" title="Añadir una página en blanco detrás de esta"><svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg></button>
+  </div>
+  <div class="spacer"></div>
+  <button type="button" class="hb" id="exBtn" title="Ejemplos de lo que puede hacer la pizarra, por temas"><svg class="ic" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12.5h4M6.5 14.5h3M8 1.5a4.2 4.2 0 0 0-2.5 7.6c.6.5.9 1.1.9 1.9h3.2c0-.8.3-1.4.9-1.9A4.2 4.2 0 0 0 8 1.5z"/></svg><span class="hb-t">Ejemplos</span></button>
+  <button type="button" class="hb" id="histBtn" title="Guardar y abrir clases de la carpeta que elijas"><svg class="ic" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M8 4.5V8l2.5 1.5"/></svg><span class="hb-t">Historial</span></button>
+  <button type="button" class="hb" id="presBtn" title="Modo presentación: cada página como una diapositiva a pantalla completa"><svg class="ic" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2.5l9 5.5-9 5.5z" fill="currentColor" stroke="none"/></svg><span class="hb-t">Presentar</span></button>
+  <button type="button" class="mi-btn mi-btn--primary mi-btn--sm hb-save" id="saveBtn" title="Guardar la clase en tu carpeta de clases (Ctrl+S)"><span class="save-dot" aria-hidden="true"></span><svg class="ic" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2.5h8l2.5 2.5v8.5h-10.5z"/><path d="M5 2.5v3.5h5V2.5M5 13.5v-4h6v4"/></svg><span class="hb-t">Guardar</span></button>
+  <button type="button" class="hb ico" id="fileBtn" aria-haspopup="true" aria-expanded="false" aria-label="Más: archivo, PDF, vista y ayuda" title="Archivo, PDF, vista, pantalla completa y ayuda"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="3.5" cy="8" r=".9" fill="currentColor"/><circle cx="8" cy="8" r=".9" fill="currentColor"/><circle cx="12.5" cy="8" r=".9" fill="currentColor"/></svg></button>
 </header>
 
-<div class="toolbar" id="toolbar" role="toolbar" aria-label="Herramientas">
-  <div class="grp only-write">
-    <button type="button" class="tb-btn txt" data-pop="matPop" title="Insertar matriz (Alt+M)">Matriz <span class="caret">▾</span></button>
-    <button type="button" class="tb-btn txt" data-pop="sysPop" title="Insertar sistema de ecuaciones (Alt+S)">Sistema <span class="caret">▾</span></button>
-    <button type="button" class="tb-btn txt" id="newLineBtn" title="Nueva línea debajo de la activa (Intro al final de una línea)">+ Nueva línea</button>
-    <button type="button" class="tb-btn txt" id="derivBtn" title="Desarrollo paso a paso alineado por el = con explicación a la derecha (Alt+L). Convierte la línea de fórmula activa (tenga o no =) o crea uno nuevo.">Desarrollo</button>
-    <button type="button" class="tb-btn txt" data-cmd="addRowAfter" title="Añadir fila a la matriz o al sistema (Mayús+Intro)">+ Fila</button>
-    <button type="button" class="tb-btn txt" data-cmd="addColumnAfter" title="Añadir columna a la matriz (Ctrl+Intro)">+ Columna</button>
+<div class="app-row">
+<aside class="toolbar rail" id="toolbar" role="toolbar" aria-orientation="vertical" aria-label="Herramientas">
+  <div class="rgrp only-write" aria-label="Calcular">
+    <button type="button" class="rb" data-pop="opsPop" aria-haspopup="true" title="Operaciones paso a paso: matrices, vectores, ecuaciones, fracciones, polinomios, combinatoria, lógica, conjuntos, derivadas y gráficas"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h7M2.5 8h11M2.5 12h5"/><path d="M11 10.5l1.5 1.5 2.5-3"/></svg><span>Operaciones</span></button>
+    <button type="button" class="rb rb-pri" id="calcBtn" title="Calcular la línea activa (Ctrl+=)"><span class="ic gl" aria-hidden="true">=</span><span>Calcular</span></button>
   </div>
-  <div class="grp only-write" aria-label="Símbolos">
-    <button type="button" class="tb-btn txt" data-pop="symPop" title="Todos los símbolos: potencias, fracciones, raíces, lógica, conjuntos, relaciones, flechas, griegas…">Símbolos <span class="caret">▾</span></button>
-    <button type="button" class="tb-btn txt" data-pop="calcPop" title="Derivadas, integrales y límites">Cálculo <span class="caret">▾</span></button>
-    <button type="button" class="tb-btn txt" data-pop="grafPop" title="Gráficas 2D, superficies 3D y grafos (con asistente de red neuronal)">Gráficos <span class="caret">▾</span></button>
+  <div class="rgrp only-write" aria-label="Insertar">
+    <button type="button" class="rb" id="newLineBtn" title="Nueva línea debajo de la activa (Intro al final de una línea)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg><span>Línea</span></button>
+    <button type="button" class="rb" id="textBtn" title="Añadir una línea de texto normal (Alt+T)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4V3h10v1M8 3v10M6 13h4"/></svg><span>Texto</span></button>
+    <button type="button" class="rb" id="derivBtn" title="Desarrollo paso a paso alineado por el = con explicación a la derecha (Alt+L). Convierte la línea de fórmula activa (tenga o no =) o crea uno nuevo."><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h4M9 3.2h4.5M9 4.8h4.5M2.5 8h4M9 7.2h4.5M9 8.8h4.5M2.5 12h4M9 11.2h4.5M9 12.8h4.5"/></svg><span>Desarrollo</span></button>
+    <button type="button" class="rb" data-pop="matPop" title="Insertar matriz (Alt+M)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2.5H3.5v11H5M11 2.5h1.5v11H11"/><circle cx="6.5" cy="6" r=".6"/><circle cx="9.5" cy="6" r=".6"/><circle cx="6.5" cy="10" r=".6"/><circle cx="9.5" cy="10" r=".6"/></svg><span>Matriz</span></button>
+    <button type="button" class="rb" data-pop="sysPop" title="Insertar sistema de ecuaciones (Alt+S)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 2.5c-1.5 0-1.5 1-1.5 2.5S3 7.5 2.5 8c.5.5 1.5 1 1.5 3s0 2.5 1.5 2.5M7.5 5.5h6M7.5 10.5h6"/></svg><span>Sistema</span></button>
   </div>
-
-  <div class="grp only-draw" aria-label="Herramienta de dibujo">
-    <div class="mi-seg" role="group" aria-label="Herramienta" id="toolSeg">
-      <button type="button" data-tool="pen" aria-pressed="true" title="Lápiz (P)">Lápiz</button>
-      <button type="button" data-tool="hl" aria-pressed="false" title="Rotulador fluorescente (R)">Rotulador</button>
-      <button type="button" data-tool="arrow" aria-pressed="false" title="Flecha recta (A)">Flecha</button>
-      <button type="button" data-tool="eraser" aria-pressed="false" title="Goma: borra trazos completos (E)">Goma</button>
-    </div>
+  <div class="rgrp only-write" aria-label="Símbolos y gráficos">
+    <button type="button" class="rb" data-pop="symPop" title="Todos los símbolos: potencias, fracciones, raíces, lógica, conjuntos, relaciones, flechas, griegas…"><span class="ic gl" aria-hidden="true">∑</span><span>Símbolos</span></button>
+    <button type="button" class="rb" data-pop="calcPop" title="Derivadas, integrales y límites"><span class="ic gl" aria-hidden="true">∫</span><span>Cálculo</span></button>
+    <button type="button" class="rb" data-pop="grafPop" title="Gráficas 2D, superficies 3D y grafos (con asistente de red neuronal)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 2.5v11h11"/><path d="M4.5 11c2-6 4-6 5-3s2.5 2 3.5-3"/></svg><span>Gráficos</span></button>
+    <button type="button" class="rb" id="imgBtn" title="Insertar una imagen (también puedes pegarla con Ctrl+V o arrastrarla a la hoja). Se guarda en la carpeta de clases, en «imagenes/»."><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="12" height="10" rx="1.5"/><circle cx="6" cy="6.5" r="1.2"/><path d="M2.5 12l3.5-3.5 2.5 2.5 2-2 3 3"/></svg><span>Imagen</span></button>
+    <input type="file" id="imgIn" accept="image/*" hidden>
+    <button type="button" class="rb" id="kbdBtn" title="Mostrar u ocultar el teclado matemático en pantalla"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="4" width="13" height="8" rx="1.5"/><path d="M4 7h.01M6.5 7h.01M9 7h.01M11.5 7h.01M5 9.8h6"/></svg><span>Teclado</span></button>
   </div>
-  <div class="grp only-draw">
-    <label class="mi-field" style="width:130px">Grosor <output id="widthOut">3 px</output><input type="range" id="penWidth" min="1" max="12" step="1" value="3" aria-label="Grosor del trazo"></label>
+  <div class="rgrp only-draw" id="toolSeg" role="group" aria-label="Herramienta de dibujo">
+    <button type="button" class="rb" data-tool="pen" aria-pressed="true" title="Lápiz (P)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.5l3 3-8 8H2.5v-3z"/></svg><span>Lápiz</span></button>
+    <button type="button" class="rb" data-tool="hl" aria-pressed="false" title="Rotulador fluorescente (R)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5l4 4-5 5-4-4z"/><path d="M4.5 7.5l-2 4.5 1.5 1.5 4.5-2"/></svg><span>Rotulador</span></button>
+    <button type="button" class="rb" data-tool="arrow" aria-pressed="false" title="Flecha recta (A)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13L13 3M7 3h6v6"/></svg><span>Flecha</span></button>
+    <button type="button" class="rb" data-tool="eraser" aria-pressed="false" title="Goma: borra trazos completos (E)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5l4.5 4.5-6.5 6.5H4L2.5 12z"/><path d="M6 5.5l4.5 4.5M7 13.5h6.5"/></svg><span>Goma</span></button>
   </div>
-
-  <div class="grp" aria-label="Color" id="swatches">
+  <div class="rgrp only-draw">
+    <label class="rail-width">Grosor <output id="widthOut">3 px</output><input type="range" id="penWidth" min="1" max="12" step="1" value="3" aria-label="Grosor del trazo"></label>
+    <button type="button" class="rb" id="undoBtn" title="Deshacer el último trazo (Ctrl+Z)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6.5H10a3 3 0 0 1 0 6H6"/><path d="M7 4L4.5 6.5 7 9"/></svg><span>Deshacer</span></button>
+    <button type="button" class="rb" id="clearInkBtn" title="Borrar todos los trazos de esta página"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 13.5h11"/><path d="M4 10c2-5 4-6 8-7"/><path d="M10 7l3 3M13 7l-3 3"/></svg><span>Borrar dibujo</span></button>
+  </div>
+  <div class="rail-colors" aria-label="Color" id="swatches">
     <button type="button" class="sw" data-color="ink" style="--sw:var(--ink)" aria-pressed="true" aria-label="Tinta" title="Tinta (Alt+1)"></button>
     <button type="button" class="sw" data-color="data-1" style="--sw:var(--data-1)" aria-pressed="false" aria-label="Verde" title="Verde (Alt+2)"></button>
     <button type="button" class="sw" data-color="data-2" style="--sw:var(--data-2)" aria-pressed="false" aria-label="Azul" title="Azul (Alt+3)"></button>
@@ -96,33 +99,7 @@
     <button type="button" class="sw" data-color="data-4" style="--sw:var(--data-4)" aria-pressed="false" aria-label="Rosa" title="Rosa (Alt+5)"></button>
     <button type="button" class="sw" data-color="data-5" style="--sw:var(--data-5)" aria-pressed="false" aria-label="Bermellón" title="Bermellón (Alt+6)"></button>
   </div>
-
-  <div class="grp only-write" aria-label="Línea">
-    <div class="mi-seg" role="group" aria-label="Alineación de la línea" id="alignSeg">
-      <button type="button" data-align="left" aria-pressed="true" title="Alinear a la izquierda">Izq.</button>
-      <button type="button" data-align="center" aria-pressed="false" title="Centrar">Centro</button>
-      <button type="button" data-align="right" aria-pressed="false" title="Alinear a la derecha">Der.</button>
-    </div>
-    <button type="button" class="tb-btn txt" id="boxBtn" title="Recuadrar la línea (resultado final)">Recuadrar</button>
-    <button type="button" class="tb-btn txt" id="textBtn" title="Añadir una línea de texto normal (Alt+T)">Texto</button>
-    <button type="button" class="tb-btn txt" id="imgBtn" title="Insertar una imagen (también puedes pegarla con Ctrl+V o arrastrarla a la hoja). Se guarda en la carpeta de clases, en «imagenes/».">Imagen</button>
-    <input type="file" id="imgIn" accept="image/*" hidden>
-    <button type="button" class="tb-btn txt" id="kbdBtn" title="Mostrar u ocultar el teclado matemático en pantalla">Teclado</button>
-    <button type="button" class="tb-btn txt" id="dupBtn" title="Duplicar la línea o el paso activo (Ctrl+D)">Duplicar</button>
-    <button type="button" class="tb-btn txt" id="delBtn" title="Borrar la línea o el paso activo (Alt+Supr)">Borrar línea</button>
-    <button type="button" class="tb-btn txt" id="delDerivBtn" title="Borrar el desarrollo completo" hidden>Borrar desarrollo</button>
-  </div>
-
-  <div class="grp only-draw">
-    <button type="button" class="mi-btn mi-btn--sm" id="undoBtn" title="Deshacer el último trazo (Ctrl+Z)">Deshacer</button>
-    <button type="button" class="mi-btn mi-btn--sm" id="clearInkBtn" title="Borrar todos los trazos de esta página">Borrar dibujo</button>
-  </div>
-
-  <div class="grp grp-push only-write" aria-label="Calcular">
-    <button type="button" class="mi-btn mi-btn--sm" data-pop="opsPop" aria-haspopup="true" title="Operaciones paso a paso: matrices, vectores, ecuaciones, fracciones, polinomios, combinatoria, lógica, conjuntos, derivadas y gráficas">Operaciones <span aria-hidden="true">▾</span></button>
-    <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="calcBtn" title="Calcular la línea activa (Ctrl+=)">Calcular</button>
-  </div>
-</div>
+</aside>
 
 <main class="wrap" id="wrap">
   <div class="sheet" id="sheet">
@@ -130,7 +107,22 @@
     <div id="blocks"></div>
     <button type="button" class="add-line" id="addLineEnd" title="Añadir una línea al final de la página">+ Nueva línea</button>
   </div>
+  <div class="line-bar" id="lineBar" role="toolbar" aria-label="Línea activa" hidden>
+    <div class="lb-seg" role="group" aria-label="Alineación de la línea" id="alignSeg">
+      <button type="button" class="hb ico" data-align="left" aria-pressed="true" aria-label="Alinear a la izquierda" title="Alinear a la izquierda"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M2.5 8h7M2.5 12h9"/></svg></button>
+      <button type="button" class="hb ico" data-align="center" aria-pressed="false" aria-label="Centrar" title="Centrar"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M4.5 8h7M3.5 12h9"/></svg></button>
+      <button type="button" class="hb ico" data-align="right" aria-pressed="false" aria-label="Alinear a la derecha" title="Alinear a la derecha"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6.5 8h7M4.5 12h9"/></svg></button>
+    </div>
+    <span class="lb-sep" aria-hidden="true"></span>
+    <button type="button" class="hb lb-mat" data-cmd="addRowAfter" title="Añadir fila a la matriz o al sistema (Mayús+Intro)"><svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>Fila</button>
+    <button type="button" class="hb lb-mat" data-cmd="addColumnAfter" title="Añadir columna a la matriz (Ctrl+Intro)"><svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>Columna</button>
+    <button type="button" class="hb" id="boxBtn" title="Recuadrar la línea (resultado final)"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="12" height="8" rx="1"/><path d="M5 8h6"/></svg>Recuadrar</button>
+    <button type="button" class="hb ico" id="dupBtn" aria-label="Duplicar" title="Duplicar la línea o el paso activo (Ctrl+D)"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="1.2"/><path d="M3 11V3.5c0-.5.4-1 1-1h7"/></svg></button>
+    <button type="button" class="hb" id="delBtn" title="Borrar la línea o el paso activo (Alt+Supr)">Borrar línea</button>
+    <button type="button" class="hb" id="delDerivBtn" title="Borrar el desarrollo completo" hidden>Borrar desarrollo</button>
+  </div>
 </main>
+</div>
 
 <button type="button" class="mi-btn mi-btn--sm show-chrome" id="showChrome" title="Mostrar las barras (H)">Mostrar barras</button>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -262,17 +254,25 @@
   </div>
 </div>
 
-<div class="pop" id="filePop" hidden role="menu" aria-label="Archivo">
+<div class="pop" id="filePop" hidden role="menu" aria-label="Archivo, vista y ayuda">
   <div class="menu-list">
+    <h4>Clase</h4>
     <button type="button" class="mi-btn mi-btn--sm" id="saveFile" role="menuitem">Guardar archivo (.json)</button>
     <button type="button" class="mi-btn mi-btn--sm" id="openFile" role="menuitem">Abrir archivo…</button>
-    <button type="button" class="mi-btn mi-btn--sm" id="pdfFile" role="menuitem">Guardar como PDF</button>
+    <button type="button" class="mi-btn mi-btn--sm" id="pdfBtn" role="menuitem" title="Guardar la clase como PDF: una página o diapositiva por hoja">Guardar como PDF</button>
     <button type="button" class="mi-btn mi-btn--sm" id="printBtn" role="menuitem">Imprimir…</button>
     <hr>
+    <h4>Página</h4>
     <button type="button" class="mi-btn mi-btn--sm" id="clearPage" role="menuitem">Vaciar esta página</button>
     <button type="button" class="mi-btn mi-btn--sm" id="delPage" role="menuitem">Eliminar esta página</button>
     <button type="button" class="mi-btn mi-btn--sm" id="newBoard" role="menuitem">Nueva pizarra</button>
     <hr>
+    <h4>Vista</h4>
+    <button type="button" class="mi-btn mi-btn--sm" id="viewBtn" role="menuitem" aria-haspopup="true" aria-expanded="false">Tamaño de página, letra y tema…</button>
+    <button type="button" class="mi-btn mi-btn--sm" id="fsBtn" role="menuitem" title="Pantalla completa (F)">Pantalla completa <kbd>F</kbd></button>
+    <hr>
+    <button type="button" class="mi-btn mi-btn--sm" id="migrBtn" role="menuitem" aria-haspopup="dialog" title="Exportar o importar todo el historial para llevarlo a otro servidor">Migraciones…</button>
+    <button type="button" class="mi-btn mi-btn--sm" id="helpBtn" role="menuitem" title="Atajos y ayuda (?)">Atajos y ayuda <kbd>?</kbd></button>
     <button type="button" class="mi-btn mi-btn--sm" id="aboutBtn" role="menuitem">Acerca de y derechos</button>
   </div>
   <input type="file" id="fileIn" accept=".json,application/json" hidden>
@@ -437,7 +437,7 @@
         <tr><td>F  H</td><td>Pantalla completa; ocultar barras</td></tr>
         <tr><td>⤓ en un gráfico</td><td>Exportar como PNG, SVG o copiar la imagen (con título, leyenda y resultado)</td></tr>
         <tr><td>Presentar</td><td>Cada página como una diapositiva: → ← espacio para pasar, D para dibujar, Esc para salir</td></tr>
-        <tr><td>Vista ▾</td><td>Tamaño de página (libre, A4, A3, diapositiva 16:9), tamaño de letra y tema</td></tr>
+        <tr><td>⋯ → Tamaño de página, letra y tema</td><td>Tamaño de página (libre, A4, A3, diapositiva 16:9), tamaño de letra y tema</td></tr>
       </tbody></table>
       <p style="font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin:var(--space-2) 0 0">La pizarra se guarda sola en este navegador. Con <b>Historial</b> guardas cada clase como JSON en la carpeta que elijas y vuelves a abrirla cuando quieras.</p>
     </section>
@@ -509,6 +509,7 @@
 <script src="src/js/ui/templates.js"></script>
 <script src="src/js/ui/popovers.js"></script>
 <script src="src/js/ui/toolbar.js"></script>
+<script src="src/js/ui/line-bar.js"></script>
 <script src="src/js/ui/calc.js"></script>
 <script src="src/js/ui/ops-menu.js"></script>
 <script src="src/js/ui/mode-pages.js"></script>
@@ -519,6 +520,8 @@
 <script src="src/js/storage/assets.js"></script>
 <script src="src/js/storage/dirty.js"></script>
 <script src="src/js/storage/file.js"></script>
+<script src="src/js/storage/migration.js"></script>
+<script src="src/js/ui/migrations.js"></script>
 <script src="src/js/ui/examples.js"></script>
 <script src="src/js/ui/print.js"></script>
 <script src="src/js/ui/drawing.js"></script>
@@ -527,29 +530,30 @@
 <script src="src/js/ui/image-insert.js"></script>
 <!-- Banco de ejemplos (carpeta ejemplos/, ver ejemplos/LEEME.md). Un <script> por ejemplo. -->
 <!-- ejemplos: álgebra, cálculo y gráficas -->
-<script src="ejemplos/algebra-sistema-gauss.js"></script>
-<script src="ejemplos/algebra-inversa-determinante.js"></script>
-<script src="ejemplos/algebra-ruffini.js"></script>
-<script src="ejemplos/calculo-derivada-producto.js"></script>
-<script src="ejemplos/calculo-maximos-minimos.js"></script>
-<script src="ejemplos/calculo-integral-barrow.js"></script>
-<script src="ejemplos/calculo-solido-revolucion.js"></script>
-<script src="ejemplos/calculo-jacobiano-polares.js"></script>
-<script src="ejemplos/calculo-hessiana-tres-variables.js"></script>
-<script src="ejemplos/graficas-varias-funciones.js"></script>
-<script src="ejemplos/graficas-superficies-cortan.js"></script>
-<script src="ejemplos/graficas-punto-silla.js"></script>
+<script src="ejemplos/algebra-mezcla-cafe.js"></script>
+<script src="ejemplos/algebra-mensajes-secretos.js"></script>
+<script src="ejemplos/algebra-caja-carton.js"></script>
+<script src="ejemplos/calculo-lata-optima.js"></script>
+<script src="ejemplos/calculo-vender-accion.js"></script>
+<script src="ejemplos/calculo-precio-entrada.js"></script>
+<script src="ejemplos/calculo-frenada.js"></script>
+<script src="ejemplos/calculo-disena-tu-vaso.js"></script>
+<script src="ejemplos/calculo-pizza-polares.js"></script>
+<script src="ejemplos/calculo-ruta-montana.js"></script>
+<script src="ejemplos/graficas-tarifa-movil.js"></script>
+<script src="ejemplos/graficas-tejados.js"></script>
+<script src="ejemplos/graficas-pringles-silla.js"></script>
 <!-- /ejemplos: álgebra, cálculo y gráficas -->
 <!-- ejemplos: estadística, geometría, discreta y presentaciones -->
-<script src="ejemplos/estadistica-resumen-datos.js"></script>
-<script src="ejemplos/estadistica-normal-alturas.js"></script>
-<script src="ejemplos/estadistica-bayes-test.js"></script>
-<script src="ejemplos/geometria-resolver-triangulo.js"></script>
-<script src="ejemplos/geometria-rectas-plano.js"></script>
-<script src="ejemplos/discreta-camino-minimo.js"></script>
-<script src="ejemplos/discreta-conjuntos-venn.js"></script>
-<script src="ejemplos/discreta-tabla-verdad.js"></script>
-<script src="ejemplos/presentaciones-teorema-pitagoras.js"></script>
+<script src="ejemplos/estadistica-examen-justo.js"></script>
+<script src="ejemplos/estadistica-tallas-ropa.js"></script>
+<script src="ejemplos/estadistica-test-medico.js"></script>
+<script src="ejemplos/geometria-altura-edificio.js"></script>
+<script src="ejemplos/geometria-rutas-cruzan.js"></script>
+<script src="ejemplos/discreta-ruta-metro.js"></script>
+<script src="ejemplos/discreta-redes-sociales.js"></script>
+<script src="ejemplos/discreta-anuncio-miente.js"></script>
+<script src="ejemplos/presentaciones-pitagoras-tele.js"></script>
 <!-- /ejemplos: estadística, geometría, discreta y presentaciones -->
 <script src="src/js/app/start.js"></script>
 <!-- @scripts-end -->

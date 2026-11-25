@@ -80,7 +80,7 @@ const MOCK = () => {
   await pg.screenshot({ path: path.join(ROOT, 'src/docs/img/presentacion-barra-texto.png'), clip: { x: 0, y: 0, width: 1400, height: 520 } });
 
   // PDF: botón → ventana MatIA → impresión con una hoja por diapositiva
-  await pg.click('#pdfBtn'); await pg.waitForTimeout(200);
+  await pg.click('#fileBtn'); await pg.click('#pdfBtn'); await pg.waitForTimeout(200);
   ok('PDF: primero la ventana de MatIA', (await pg.textContent('#askTitle')) === 'Guardar como PDF' && (await pg.evaluate(() => window.__printed)) === 0);
   await pg.click('#askActs .mi-btn--primary');
   await pg.waitForFunction(() => window.__printed === 1, null, { timeout: 10000 }).catch(() => {});

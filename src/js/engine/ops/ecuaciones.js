@@ -133,7 +133,7 @@ MatIA.define('engine/ops/ecuaciones', ['engine/core', 'engine/ops/expr', 'engine
     if (D.n < 0n) { rows.push({ l: '\\Delta', r: fLatex(D) + '<0', note: 'Discriminante negativo: no hay soluciones reales', boxed: true }); return rows; }
     rows.push({ l: v, r: '\\frac{-b\\pm\\sqrt{\\Delta}}{2a}=\\frac{' + fLatex(neg(b)) + '\\pm\\sqrt{' + fLatex(D) + '}}{' + (a.n === 1n && a.d === 1n ? '2' : '2\\cdot ' + fParen(a)) + '}', note: isZ(D) ? 'Δ = 0: una solución doble' : 'Fórmula de la ecuación de segundo grado' });
     const sols = quadRootsLatex(poly, v);
-    sols.forEach((s, i) => { const [ll, rr] = s.split('='); rows.push({ l: ll, r: rr, boxed: true, note: i === 0 && sqrtSimp(D).m !== 1n ? 'Simplificamos la raíz' : '' }); });
+    sols.forEach((s, i) => { const [ll, rr] = s.split('='); rows.push({ l: ll, r: rr, boxed: true, note: sols.length === 1 ? 'Solución doble' : (i === 0 ? 'Con el signo +' : 'Con el signo −') + (sqrtSimp(D).m !== 1n ? ' (simplificamos la raíz)' : '') }); });
     return rows;
   }
   function polyFactorLatex(poly, roots, rest, v) {

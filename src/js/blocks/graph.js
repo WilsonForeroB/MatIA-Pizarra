@@ -74,7 +74,15 @@ MatIA.define('blocks/graph', ['core/dom', 'model/board', 'blocks/svg-utils', 'bl
         if (DASH[fs[i].k % 6]) path.style.strokeDasharray = DASH[fs[i].k % 6];
         const lg = document.createElement('span');
         lg.style.setProperty('--sw', color);
-        lg.textContent = fs[i].src.replace(/\\left|\\right|\\cdot/g, '').replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)').replace(/\\sqrt\{([^{}]+)\}/g, '√($1)').replace(/\\(sin|cos|tan|ln|log|pi)/g, (m, f) => (f === 'pi' ? 'π' : f)).replace(/[{}\\]/g, '').replace(/\^2/g, '²').replace(/\^3/g, '³');
+        const plain = fs[i].src.replace(/\\left|\\right|\\cdot/g, '').replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)').replace(/\\sqrt\{([^{}]+)\}/g, '√($1)').replace(/\\(sin|cos|tan|ln|log|pi)/g, (m, f) => (f === 'pi' ? 'π' : f)).replace(/[{}\\]/g, '').replace(/\^2/g, '²').replace(/\^3/g, '³');
+        // la leyenda se escribe como fórmula (fracciones y raíces de verdad); sin MathLive, texto plano
+        if (window.customElements && customElements.get('math-field') && /[\\^_{]/.test(fs[i].src)) {
+          const mf = document.createElement('math-field');
+          mf.readOnly = true; mf.dataset.aux = '1'; mf.className = 'g-leg-mf'; mf.tabIndex = -1;
+          mf.setAttribute('aria-label', plain);
+          mf.value = fs[i].src;
+          lg.appendChild(mf);
+        } else lg.textContent = plain;
         legend.appendChild(lg);
       });
       // puntos notables

@@ -5,13 +5,21 @@ MatIA.define('ui/popovers', ['core/dom', 'ui/state'], (dom, st) => {
   const R = (n) => MatIA.require(n);
   /* ---------------- Ventanas emergentes ---------------- */
   function showPop(id, anchor) {
+    // Si se abre desde dentro de otro menú (p. ej. «Vista» en el menú ⋯), se ancla al botón de ese menú
+    if (st.openPop && anchor.closest('.pop') === st.openPop.p) anchor = st.openPop.anchor;
     closePop();
     const p = $('#' + id);
     p.hidden = false;
     const r = anchor.getBoundingClientRect();
-    const w = p.offsetWidth;
-    p.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px';
-    p.style.top = (r.bottom + 6) + 'px';
+    const w = p.offsetWidth, h = p.offsetHeight;
+    if (anchor.closest('.rail')) {
+      // Barra lateral: la ventana sale a la derecha del botón
+      p.style.left = (r.right + 8) + 'px';
+      p.style.top = Math.max(8, Math.min(r.top, innerHeight - h - 8)) + 'px';
+    } else {
+      p.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px';
+      p.style.top = (r.bottom + 6) + 'px';
+    }
     anchor.setAttribute('aria-expanded', 'true');
     st.openPop = { p, anchor };
     const f = p.querySelector('button');
@@ -23,6 +31,8 @@ MatIA.define('ui/popovers', ['core/dom', 'ui/state'], (dom, st) => {
     st.openPop.anchor.setAttribute('aria-expanded', 'false');
     st.openPop = null;
   }
+  // Las opciones del menú ⋯ que abren otra cosa cierran el menú
+  $('#filePop').addEventListener('click', (e) => { if (e.target.closest('#helpBtn,#fsBtn,#aboutBtn')) closePop(); });
   document.addEventListener('pointerdown', (e) => {
     if (st.openPop && !st.openPop.p.contains(e.target) && !st.openPop.anchor.contains(e.target)) closePop();
   });

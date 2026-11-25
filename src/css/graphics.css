@@ -173,6 +173,8 @@
 :is(.graph,.g3d) .g-ctrl input.g-fns{flex:1 1 220px;min-width:0}
 .graph .g-legend{display:flex;flex-wrap:wrap;gap:4px 16px;font:400 14px/20px var(--font-serif);color:var(--ink)}
 .graph .g-legend span::before{content:"";display:inline-block;width:18px;height:3px;margin-right:6px;vertical-align:middle;background:var(--sw);border-radius:2px}
+.graph .g-legend .g-leg-mf{display:inline-block;font-size:15px;border:0;background:transparent;padding:0;margin:0;vertical-align:middle;pointer-events:none;min-width:0}
+.graph .g-legend .g-leg-mf::part(container){padding:0}
 :is(.graph,.g3d) .g-err{color:var(--warning);font:400 13px/20px var(--font-sans)}
 
 /* Lista de funciones y zoom de la gráfica 2D */

@@ -40,6 +40,8 @@ async function scenario(file) {
     });
     steps.push([label, s]);
   };
+  // En la pizarra nueva Ayuda y Vista están dentro del menú ⋯ (#fileBtn): se abre primero si el botón no se ve
+  const clickMenu = async (sel) => { if (!(await page.locator(sel).isVisible()) && await page.locator('#fileBtn').count()) { await page.click('#fileBtn'); await page.waitForTimeout(150); } await page.click(sel); };
   const typeInActive = async (txt) => { await page.keyboard.type(txt, { delay: 40 }); await page.waitForTimeout(150); };
   await page.click('#blocks .blk math-field');
   await page.waitForTimeout(300); await typeInActive('2+3=');
@@ -55,9 +57,9 @@ async function scenario(file) {
   await page.click('[data-mode="write"]'); await page.waitForTimeout(200);
   await page.click('#histBtn'); await page.waitForTimeout(300); await state('abrir historial');
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
-  await page.click('#helpBtn'); await page.waitForTimeout(300); await state('abrir ayuda');
+  await clickMenu('#helpBtn'); await page.waitForTimeout(300); await state('abrir ayuda');
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
-  await page.click('#viewBtn'); await page.waitForTimeout(200);
+  await clickMenu('#viewBtn'); await page.waitForTimeout(200);
   const dark = page.locator('[data-theme-set="dark"]'); if (await dark.count()) await dark.first().click();
   await page.waitForTimeout(400); await state('tema oscuro');
   await page.keyboard.press('Escape');

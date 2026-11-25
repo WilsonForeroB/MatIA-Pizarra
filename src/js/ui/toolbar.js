@@ -7,8 +7,7 @@ MatIA.define('ui/toolbar', ['core/dom', 'model/board', 'model/schema', 'ui/state
   const R = (n) => MatIA.require(n);
   /* ---------------- Barra de herramientas ---------------- */
   // Los botones no roban el foco a la fórmula activa
-  $('#toolbar').addEventListener('mousedown', (e) => { if (e.target.closest('button')) e.preventDefault(); });
-  $('#toolbar').addEventListener('click', (e) => {
+  const onBar = (e) => {
     const b = e.target.closest('button');
     if (!b) return;
     if (b.dataset.pop) { if (st.openPop && st.openPop.p.id === b.dataset.pop) R('ui/popovers').closePop(); else R('ui/popovers').showPop(b.dataset.pop, b); return; }
@@ -21,7 +20,12 @@ MatIA.define('ui/toolbar', ['core/dom', 'model/board', 'model/schema', 'ui/state
     if (b.dataset.color) { setColor(b.dataset.color); return; }
     if (b.dataset.align) { setAlign(b.dataset.align); return; }
     if (b.dataset.tool) { S.board.tool = b.dataset.tool; R('ui/view').applySettings(); S.save(); }
-  });
+  };
+  // Barra lateral y barrita flotante de la línea activa
+  for (const bar of [$('#toolbar'), $('#lineBar')]) {
+    bar.addEventListener('mousedown', (e) => { if (e.target.closest('button')) e.preventDefault(); });
+    bar.addEventListener('click', onBar);
+  }
   function setColor(name) {
     S.board.color = name;
     R('ui/view').applySettings();
