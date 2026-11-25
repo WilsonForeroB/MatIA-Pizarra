@@ -14,6 +14,9 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
     let pending = null;       // nombre de la carpeta recordada que espera permiso
     let sessionFile = null;   // archivo de la clase actual dentro de la carpeta
     let autoT = null, lastAutoJSON = '';
+    const selected = new Set();   // clases marcadas en la lista (para exportar)
+    let highlight = new Set();    // clases recién importadas (se resaltan una vez)
+    const PKG = /^matia-(migracion|clases)_/i;  // paquetes de exportación: no son clases
 
     /* ---------- Nombres de archivo ---------- */
     const pad2 = (n) => String(n).padStart(2, '0');
@@ -62,15 +65,23 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
       const list = $('#histList');
       list.textContent = '';
       const emptyMsg = (t) => { const d = document.createElement('div'); d.className = 'hist-empty'; d.appendChild(pio.badge('lectura', 'pio-lg', 'Pío leyendo')); const sp = document.createElement('span'); sp.textContent = t; d.appendChild(sp); list.appendChild(d); };
-      if (!folder) { emptyMsg(pending ? 'Pulsa «Reconectar» para volver a abrir la carpeta «' + pending + '».' : 'Conecta una carpeta para ver las clases guardadas.'); return; }
-      let items;
-      try { items = (await folder.list()).filter((it) => !/^matia-migracion_/i.test(it.name)).sort((a, b) => b.name.localeCompare(a.name)); }
-      catch (e) { emptyMsg('No se puede leer la carpeta. Pulsa «Cambiar carpeta» o vuelve a elegirla.'); return; }
+      const done = () => bus.emit('hist:listed', { folder, items: items || [] });
+      let items = null;
+      if (!folder) { done(); emptyMsg(pending ? 'Pulsa «Reconectar» para volver a abrir la carpeta «' + pending + '».' : 'Conecta una carpeta para ver las clases guardadas.'); return; }
+      try { items = (await folder.list()).filter((it) => !PKG.test(it.name)).sort((a, b) => b.name.localeCompare(a.name)); }
+      catch (e) { items = []; done(); emptyMsg('No se puede leer la carpeta. Pulsa «Cambiar carpeta» o vuelve a elegirla.'); return; }
+      for (const n of [...selected]) if (!items.some((it) => it.name === n)) selected.delete(n);
+      done();
       if (!items.length) { emptyMsg('Todavía no hay clases guardadas en esta carpeta. Pulsa «' + $('#histSave').textContent + '».'); return; }
       for (const it of items) {
         const row = document.createElement('div');
-        row.className = 'hist-item' + (it.name === sessionFile ? ' cur' : '');
+        row.className = 'hist-item' + (it.name === sessionFile ? ' cur' : '') + (highlight.has(it.name) ? ' imp' : '');
         row.setAttribute('role', 'listitem');
+        row.dataset.name = it.name;
+        const sel = document.createElement('input');
+        sel.type = 'checkbox'; sel.className = 'hist-sel'; sel.checked = selected.has(it.name);
+        sel.setAttribute('aria-label', 'Seleccionar «' + it.name + '» para exportar');
+        sel.addEventListener('change', () => { if (sel.checked) selected.add(it.name); else selected.delete(it.name); bus.emit('hist:selection', selected); });
         const info = document.createElement('div');
         const nice = it.name.replace(/\.json$/i, '').replace(/^(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})_?/, '').replace(/-/g, ' ');
         info.innerHTML = '<b></b><small></small>';
@@ -86,9 +97,10 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
           if (!ok) return;
           try { await folder.remove(it.name); if (sessionFile === it.name) sessionFile = null; listHist(); } catch (e) { toast('No se ha podido borrar el archivo.', 'aviso'); }
         });
-        row.append(info, acts);
+        row.append(sel, info, acts);
         list.appendChild(row);
       }
+      highlight = new Set();
     }
 
     /* ---------- Abrir ---------- */
@@ -189,6 +201,7 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
     const clearSession = () => { sessionFile = null; lastAutoJSON = ''; };
     return {
       saveToHistory, listHist, clearSession, stampName, slug, useFolder: (f) => use(f),
+      selected, markImported: (names) => { highlight = new Set(names); },
       get histDir() { return writable() ? folder : null; },
       get folder() { return folder; },
     };

@@ -86,7 +86,7 @@ MatIA.define('ui/migrations', ['core/dom', 'model/board', 'storage/migration', '
       q('#mgExpImgsN').textContent = f ? '(contando…)' : '(conecta la carpeta)';
       if (f) {
         try {
-          const n = (await f.list()).filter((it) => !/^matia-migracion_/i.test(it.name)).length;
+          const n = (await f.list()).filter((it) => !/^matia-(migracion|clases)_/i.test(it.name)).length;
           q('#mgExpClasesN').textContent = '(' + plural(n, 'clase', 'clases') + ')';
         } catch (e) { q('#mgExpClasesN').textContent = '(no se puede leer la carpeta)'; }
         try { q('#mgExpImgsN').textContent = '(' + plural((await f.listDir('imagenes')).length, 'imagen', 'imágenes') + ')'; } catch (e) { q('#mgExpImgsN').textContent = ''; }

@@ -328,7 +328,23 @@
       <button type="button" class="mi-btn mi-btn--primary mi-btn--sm" id="histSave">Guardar en la carpeta</button>
       <label class="mi-check"><input type="checkbox" id="histAuto"> Guardado automático</label>
     </div>
+    <div class="hist-row hist-tools" id="histTools">
+      <label class="mi-check"><input type="checkbox" id="histSelAll"> Seleccionar todas</label>
+      <span class="hist-seln" id="histSelN" aria-live="polite"></span>
+      <button type="button" class="mi-btn mi-btn--sm" id="histExport" title="Descarga las clases elegidas (o todas) en un solo archivo para llevarlas a otro ordenador">Exportar todas</button>
+      <button type="button" class="mi-btn mi-btn--sm" id="histImport" title="Añade a esta carpeta clases exportadas desde otro ordenador (o archivos .json sueltos)">Importar clases…</button>
+      <input type="file" id="histImpIn" accept=".json,application/json" multiple hidden>
+    </div>
     <div class="hist-list" id="histList" role="list"></div>
+    <section class="hist-imp" id="histImpPanel" hidden aria-labelledby="histImpH">
+      <h3 id="histImpH">Revisa la importación</h3>
+      <p class="hist-imp-sum" id="histImpSum"></p>
+      <div class="hist-imp-list" id="histImpList" role="list"></div>
+      <div class="hist-imp-acts">
+        <button type="button" class="mi-btn mi-btn--sm mi-btn--ghost" id="histImpCancel">Cancelar</button>
+        <button type="button" class="mi-btn mi-btn--sm mi-btn--primary" id="histImpGo">Importar</button>
+      </div>
+    </section>
   </div>
 </dialog>
 
@@ -522,6 +538,7 @@
 <script src="src/js/storage/file.js"></script>
 <script src="src/js/storage/migration.js"></script>
 <script src="src/js/ui/migrations.js"></script>
+<script src="src/js/ui/history-transfer.js"></script>
 <script src="src/js/ui/examples.js"></script>
 <script src="src/js/ui/print.js"></script>
 <script src="src/js/ui/drawing.js"></script>

@@ -48,7 +48,7 @@ js/
     svg-utils.js        · ayudas SVG comunes
   ui/                   ← interfaz
     state.js            · estado de interfaz compartido (línea activa, celda activa, …)
-    toast.js · dialogs.js · popovers.js · toolbar.js · line-bar.js · migrations.js · templates.js · calc.js · ops-menu.js
+    toast.js · dialogs.js · popovers.js · toolbar.js · line-bar.js · migrations.js · history-transfer.js · templates.js · calc.js · ops-menu.js
     view.js · mode-pages.js · print.js (PDF e impresión) · drawing.js · shortcuts.js
     text-format.js · barra flotante de formato del texto · image-insert.js · botón Imagen, pegar y arrastrar
     examples.js         · ventana «Ejemplos» (temas, buscador, abrir copia, añadir páginas)
@@ -61,7 +61,8 @@ js/
     assets.js           · imágenes de la clase en «imagenes/» (huella, sin duplicados, máx. 1600 px)
     dirty.js            · cambios sin guardar, botón Guardar, «¿guardar antes de…?»
     file.js             · Archivo: descargar/abrir .json, nueva pizarra, acerca de
-    migration.js        · paquete de migración: exportar/importar clases, imágenes y pizarra abierta entre servidores
+    migration.js        · paquete de migración: exportar/importar clases, imágenes y pizarra abierta entre servidores;
+                          planImport revisa nombres y contenido para no duplicar (lo usan Migraciones y Historial → Importar)
   app/start.js          ← arranque (espera a MathLive, primer render)
   app/main.js           ← MatIA.start()
 ejemplos/               ← banco de ejemplos: un <script> por ejemplo con MatIA.ejemplo({…}); miniaturas en ejemplos/img/

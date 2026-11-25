@@ -40,7 +40,7 @@ dialog.ask.aviso .ask-main .mi-label{color:var(--warning)}
 .mi-check{display:flex;gap:var(--space-2);align-items:center;font:400 14px/20px var(--font-sans);color:var(--ink)}
 .mi-check input{accent-color:var(--accent);width:16px;height:16px;margin:0}
 .hist-list{display:flex;flex-direction:column;border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);max-height:46vh;overflow-y:auto}
-.hist-item{display:grid;grid-template-columns:1fr auto;gap:var(--space-1) var(--space-3);align-items:center;padding:var(--space-2) var(--space-3);border-bottom:var(--border-width-thin) solid var(--border)}
+.hist-item{display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-1) var(--space-3);align-items:center;padding:var(--space-2) var(--space-3);border-bottom:var(--border-width-thin) solid var(--border)}
 .hist-item:last-child{border-bottom:0}
 .hist-item.cur{background:var(--accent-soft)}
 .hist-item b{font:600 15px/22px var(--font-sans);color:var(--ink);overflow-wrap:anywhere}
@@ -60,3 +60,25 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
 .ask .ask-field { margin: 0 0 12px; }
 .ask .ask-field input { width: 100%; box-sizing: border-box; font: inherit; padding: 8px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface-raised); color: inherit; }
 .ask .ask-field input:focus { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
+/* Historial: seleccionar, exportar e importar clases (js/ui/history-transfer.js) */
+.hist-sel{accent-color:var(--accent);width:16px;height:16px;margin:0}
+.hist-item.imp{background:var(--brand-soft);animation:mi-rise var(--duration-base) var(--ease-out) both}
+.hist-tools{padding-top:var(--space-2);border-top:var(--border-width-thin) solid var(--border)}
+.hist-tools .mi-check{font-size:13px}
+.hist-seln{font:400 13px/20px var(--font-sans);color:var(--ink-muted);margin-right:auto}
+.hist-imp{display:flex;flex-direction:column;gap:var(--space-3)}
+.hist-imp h3{margin:0;font:600 15px/22px var(--font-sans);color:var(--accent)}
+.hist-imp-sum{margin:0;font:400 14px/22px var(--font-sans);color:var(--ink)}
+.hist-imp-list{display:flex;flex-direction:column;border:var(--border-width-thin) solid var(--border);border-radius:var(--radius-md);max-height:42vh;overflow-y:auto}
+.hist-imp-row{display:grid;grid-template-columns:auto 1fr;gap:var(--space-3);align-items:start;padding:var(--space-2) var(--space-3);border-bottom:var(--border-width-thin) solid var(--border)}
+.hist-imp-row:last-child{border-bottom:0}
+.hist-imp-row b{font:600 14px/21px var(--font-sans);color:var(--ink);overflow-wrap:anywhere}
+.hist-imp-row small{display:block;font:400 12.5px/19px var(--font-sans);color:var(--ink-muted);overflow-wrap:anywhere}
+.hist-imp-row small.hist-imp-warn{color:var(--warning)}
+.hist-imp-tag{min-width:120px;text-align:center;font:600 11px/20px var(--font-sans);letter-spacing:.03em;text-transform:uppercase;border-radius:var(--radius-pill);padding:0 8px;background:var(--surface-sunken);color:var(--ink-muted)}
+.is-nueva .hist-imp-tag{background:var(--brand-soft);color:var(--brand)}
+.is-renombrar .hist-imp-tag{background:color-mix(in srgb,var(--warning) 16%,transparent);color:var(--warning)}
+.is-invalida .hist-imp-tag{background:color-mix(in srgb,var(--warning) 14%,transparent);color:var(--warning)}
+.is-igual{opacity:.75}
+.hist-imp-acts{display:flex;justify-content:flex-end;gap:var(--space-2)}
+@media (max-width:560px){.hist-imp-row{grid-template-columns:1fr}.hist-imp-tag{justify-self:start;min-width:0}}

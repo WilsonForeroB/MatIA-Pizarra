@@ -134,3 +134,15 @@ No existe `beforeunload`, `window.open`, `showOpenFilePicker` ni `showSaveFilePi
 | `js/ui/history-dialog.js` (diálogo `#hist`, `listHist`, `openHist`, modo RO) | 7426, 7445-7455, 7475-7484, 7498-7553, 7607-7624 | `history-fs`, `pioBadge`, `ask`, `guardUnsaved`, `hist.showModal` |
 | `js/storage/dirty.js` (`snap`, `isDirty`, `markSaved`, `updSaved`, `guardUnsaved`) | 7665-7694 | `board`, `ask`, `saveToHistory`, `#saveBtn` |
 | `js/storage/file.js` (descargar/abrir JSON, nueva pizarra) | 7696-7769 | `board`, `sanitize`, `guardUnsaved`, `applySettings`, `renderPage`, `save`, `toast`, `ask`; helper `downloadBlob` compartido con la exportación de gráficos (6181) |
+
+## Exportar e importar clases y Migraciones (versión modular)
+
+- **Historial → Exportar** (`js/ui/history-transfer.js`): casillas por clase y «Seleccionar todas». Descarga `matia-clases_AAAA-MM-DD_HH-MM.json` con las clases marcadas (o todas) y solo las imágenes que usan (`migration.usedImages`). Mismo formato que el paquete de Migraciones (`tipo: 'matia-migracion'`) con `pizarra: null`.
+- **Historial → Importar clases…**: acepta paquetes y clases `.json` sueltas (`migration.fromFiles`). `migration.planImport` decide, sin escribir, qué pasa con cada clase:
+  - `igual`: mismo contenido (sin contar `guardado`, `app` ni `formato`) que una clase de la carpeta, con cualquier nombre → se salta;
+  - `renombrar`: el nombre lo usa otra clase distinta → `…_importada.json` (o `-2`, `-3`…);
+  - `nueva`, con aviso `mismoTitulo` si ya hay otra clase distinta con el mismo título;
+  - `invalida`: no pasa `schema.sanitize`.
+  Se enseña la revisión y solo al pulsar «Importar N clases» se ejecuta `applyPlan`. Las imágenes se llaman por su huella: si existe, es la misma.
+- **⋯ → Migraciones** (`js/ui/migrations.js`): igual, pero con todo el historial, todas las imágenes y la pizarra abierta con sus preferencias; sufijo `_migrada`.
+- La lista del Historial oculta los archivos `matia-migracion_*` y `matia-clases_*` (no son clases).
