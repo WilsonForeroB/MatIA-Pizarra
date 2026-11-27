@@ -50,7 +50,7 @@ js/
     state.js            · estado de interfaz compartido (línea activa, celda activa, …)
     toast.js · dialogs.js · popovers.js · toolbar.js · line-bar.js · migrations.js · history-transfer.js · templates.js · calc.js · ops-menu.js
     view.js · mode-pages.js · print.js (PDF e impresión) · drawing.js · shortcuts.js
-    text-format.js · grupo «Formato» del texto en la barra lateral · image-insert.js · botón Imagen, pegar y arrastrar
+    text-format.js · sección «Formato» del texto en la barra lateral · rail-section.js · secciones desplegables del lateral («Línea», «Formato») · image-insert.js · botón Imagen, pegar y arrastrar
     examples.js         · ventana «Ejemplos» (temas, buscador, abrir copia, añadir páginas)
     export-image.js · bayes-dialog.js · nn-dialog.js · graphics-panel.js
   storage/              ← persistencia

@@ -28,16 +28,14 @@
 .math-inline:focus-within{outline:2px solid var(--accent,var(--selection-strong));outline-offset:1px}
 
 /* grupo «Formato» de la barra lateral (solo con una línea de texto activa) */
-.tf-bar{display:grid;grid-template-columns:repeat(2,34px);gap:3px;justify-content:center;width:100%;font-family:var(--font-sans)}
-.tf-bar[hidden]{display:none}
-.tf-bar[hidden]+.rgrp{border-top:0;margin-top:0;padding-top:4px}
-.tf-head{grid-column:1/-1;justify-self:start;margin:0 0 2px 4px;font:600 10.5px var(--font-sans);color:var(--ink-muted);text-transform:uppercase;letter-spacing:.04em}
+.tf-bar{font-family:var(--font-sans)}
+.tf-bar .rsec-b{display:grid;grid-template-columns:repeat(2,34px);gap:3px;justify-content:center;width:100%}
 .tf-bar .tf-btn{min-width:0;width:34px;height:30px;padding:0;justify-content:center}
 .tf-bar .tf-pop-wrap .tf-btn{width:34px}
 .tf-bar [aria-label^="Insertar una fórmula"]{grid-column:1/-1;width:100%}
 .tf-bar .tf-select{grid-column:1/-1;width:100%;max-width:none;padding:3px 2px;font-size:12px}
 .tf-bar .tf-sep{grid-column:1/-1;width:auto;height:1px;margin:2px 4px;align-self:auto}
-@media (max-width:640px){.tf-bar{grid-template-columns:34px}.tf-head{display:none}}
+@media (max-width:640px){.tf-bar .rsec-b{grid-template-columns:34px}}
 .tf-btn{min-width:30px;padding-left:6px;padding-right:6px;white-space:nowrap}
 .tf-btn[aria-pressed="true"]{background:var(--selection);color:var(--ink)}
 .tf-sep{width:1px;align-self:stretch;margin:2px 3px;background:var(--border)}

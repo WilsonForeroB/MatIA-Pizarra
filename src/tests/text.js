@@ -55,6 +55,10 @@ function pageFile(name) {
   await t0.click();
   ok(await page.locator('.tf-bar').isVisible(), 'la barra aparece al enfocar el texto');
   ok(await page.evaluate(() => document.querySelector('.tf-bar').parentElement.id === 'toolbar'), 'el formato está en la barra lateral (no tapa líneas de la hoja)');
+  ok((await page.getAttribute('.tf-bar .rsec-h', 'aria-expanded')) === 'false' && !(await page.isVisible('.tf-bar button[title="Negrita (Ctrl+B)"]')), '«Formato» empieza plegado');
+  await page.click('.tf-bar .rsec-h');
+  ok(await page.isVisible('.tf-bar button[title="Negrita (Ctrl+B)"]') && await page.evaluate(() => !!document.activeElement.closest('.blk-text')), 'al desplegarlo se ven los botones y el cursor sigue en el texto');
+  ok(await page.isVisible('#lineBar .rsec-h'), 'la sección «Línea» también está en el lateral');
   await page.keyboard.press('Control+A');
   await page.keyboard.press('Control+B');
   await page.locator('.tf-bar button[title="Color del texto"]').click();

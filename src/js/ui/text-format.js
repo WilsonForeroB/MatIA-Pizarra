@@ -1,6 +1,6 @@
 /* Formato del bloque «Texto», en la barra lateral (antes flotaba sobre la línea y tapaba la de arriba): negrita, cursiva, color, tamaño, tipo de letra, alineación, listas, fórmula en línea.
    Colores, tamaños y fuentes se guardan como clases tf-* (nada de style ni <font>), definidas en css/text.css. */
-MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
+MatIA.define('ui/text-format', ['ui/state', 'blocks/text', 'ui/rail-section'], (st, T, section) => {
   'use strict';
   const R = (n) => MatIA.require(n);
   const sheet = document.getElementById('sheet');
@@ -19,12 +19,8 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
   bar.setAttribute('role', 'toolbar');
   bar.setAttribute('aria-label', 'Formato de texto');
   const rail = document.getElementById('toolbar');
-  if (rail) rail.insertBefore(bar, rail.firstChild); else sheet.appendChild(bar);
-  const head = document.createElement('span');
-  head.className = 'tf-head';
-  head.textContent = 'Formato';
-  head.setAttribute('aria-hidden', 'true');
-  bar.appendChild(head);
+  const lineSec = document.getElementById('lineBar');
+  if (rail) rail.insertBefore(bar, lineSec && lineSec.parentNode === rail ? lineSec.nextSibling : rail.firstChild); else sheet.appendChild(bar);
 
   let host = null;       // .blk-text activo
   let saved = null;      // último rango dentro del texto
@@ -227,12 +223,14 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
   sep();
   button('formula', '∑ Fórmula', 'Insertar una fórmula en el texto (o escribe $). Para volver al texto: Intro, Esc o $', formula);
 
+  // sección desplegable (cerrada de entrada: se abre si se necesita y se recuerda)
+  section.make(bar, 'formato', 'Formato', false);
+
   /* ---------- visibilidad ---------- */
   function place() {
     if (!host || !host.isConnected) return hide();
     if (bar.hidden) {
       bar.hidden = false;
-      if (rail) rail.scrollTop = 0; // el grupo está arriba del todo
     }
   }
   function hide() {

@@ -263,7 +263,7 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
     if (b) {
       $$('#alignSeg button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.align === b.align)));
       $('#boxBtn').setAttribute('aria-pressed', String(!!b.boxed));
-      $('#delBtn').textContent = b.type === 'deriv' ? 'Borrar paso' : 'Borrar línea';
+      $('#delBtn span').textContent = b.type === 'deriv' ? 'Borrar paso' : 'Borrar línea';
       $('#delDerivBtn').hidden = b.type !== 'deriv';
     }
   }

@@ -46,6 +46,7 @@ const URL_ = 'file://' + path.resolve(__dirname, '..', '..', 'pizarra.html');
   ok('3D: al tocar el dibujo, su línea queda activa', await pg.evaluate(() => !!document.querySelector('.blk.is-active .g3d')));
 
   // centrar el bloque
+  if ((await pg.getAttribute('#lineBar .rsec-h', 'aria-expanded')) !== 'true') await pg.click('#lineBar .rsec-h'); // sección «Línea» plegada
   await pg.click('#alignSeg [data-align=center]'); await pg.waitForTimeout(250);
   const m = await pg.evaluate(() => { const g = document.querySelector('.g3d').getBoundingClientRect(), s = document.querySelector('.g3d').closest('.blk-body').getBoundingClientRect(); return [g.left - s.left, s.right - g.right]; });
   ok('3D: «Centro» centra el dibujo', (await blk(pg, 1)).align === 'center' && m[0] > 20 && Math.abs(m[0] - m[1]) < 3, m.map(Math.round).join(' / '));

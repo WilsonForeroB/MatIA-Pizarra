@@ -22,8 +22,8 @@ MatIA.define('ui/toolbar', ['core/dom', 'model/board', 'model/schema', 'ui/state
     if (b.dataset.tool) { S.board.tool = b.dataset.tool; R('ui/view').applySettings(); S.save(); }
     for (const k of ['shape', 'dash', 'fill']) if (b.dataset[k]) { S.board[k] = b.dataset[k]; R('ui/view').applySettings(); S.save(); }
   };
-  // Barra lateral y barrita flotante de la línea activa
-  for (const bar of [$('#toolbar'), $('#lineBar')]) {
+  // Barra lateral (incluye la sección «Línea» de la línea activa)
+  for (const bar of [$('#toolbar')]) { // #lineBar está dentro de la barra lateral
     bar.addEventListener('mousedown', (e) => { if (e.target.closest('button')) e.preventDefault(); });
     bar.addEventListener('click', onBar);
   }

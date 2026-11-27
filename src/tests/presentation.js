@@ -57,7 +57,8 @@ const MOCK = () => {
   // imagen: botón «Imagen» → ventana MatIA (no hay carpeta) → se guarda en imagenes/
   const png = await pg.evaluate(async () => { const c = document.createElement('canvas'); c.width = 640; c.height = 360; const x = c.getContext('2d'); const g = x.createLinearGradient(0, 0, 640, 360); g.addColorStop(0, '#0072b2'); g.addColorStop(1, '#009b71'); x.fillStyle = g; x.fillRect(0, 0, 640, 360); x.fillStyle = '#fff'; x.font = 'bold 48px sans-serif'; x.fillText('Imagen de ejemplo', 110, 195); const b = await new Promise((r) => c.toBlob(r, 'image/png')); return Array.from(new Uint8Array(await b.arrayBuffer())); });
   const tmpPng = path.join(require('os').tmpdir(), 'matia-ejemplo.png'); fs.writeFileSync(tmpPng, Buffer.from(png));
-  await pg.locator('#blocks > .blk').nth(1).locator('.blk-text').click();
+  await pg.locator('#blocks > .blk').nth(1).locator('.blk-text').click({ position: { x: 20, y: 10 } }); // en el texto, no en una fórmula
+  await pg.waitForFunction(() => MatIA.require('model/board').page().blocks.findIndex((b) => b.id === MatIA.require('ui/state').activeId) === 1);
   const [fc] = await Promise.all([pg.waitForEvent('filechooser'), pg.click('#imgBtn')]);
   await fc.setFiles(tmpPng);
   await pg.waitForTimeout(300);
@@ -77,6 +78,8 @@ const MOCK = () => {
   await pg.locator('#sheet').screenshot({ path: path.join(ROOT, 'src/docs/img/presentacion-diapositiva.png') });
   await pg.locator('#blocks > .blk').nth(0).locator('.blk-text').click();
   await pg.waitForTimeout(400);
+  for (const h of ['#lineBar .rsec-h', '.tf-bar .rsec-h']) if ((await pg.getAttribute(h, 'aria-expanded')) !== 'true') await pg.click(h); // secciones del lateral abiertas para la captura
+  await pg.waitForTimeout(250);
   await pg.screenshot({ path: path.join(ROOT, 'src/docs/img/presentacion-barra-texto.png'), clip: { x: 0, y: 0, width: 1400, height: 520 } });
 
   // PDF: botón → ventana MatIA → impresión con una hoja por diapositiva

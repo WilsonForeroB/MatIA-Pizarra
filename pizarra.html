@@ -61,6 +61,19 @@
 
 <div class="app-row">
 <aside class="toolbar rail" id="toolbar" role="toolbar" aria-orientation="vertical" aria-label="Herramientas">
+  <div class="rgrp only-write lb-rail" id="lineBar" role="toolbar" aria-label="Línea activa" hidden>
+    <div class="lb-seg" role="group" aria-label="Alineación de la línea" id="alignSeg">
+      <button type="button" class="hb ico" data-align="left" aria-pressed="true" aria-label="Alinear a la izquierda" title="Alinear a la izquierda"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M2.5 8h7M2.5 12h9"/></svg></button>
+      <button type="button" class="hb ico" data-align="center" aria-pressed="false" aria-label="Centrar" title="Centrar"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M4.5 8h7M3.5 12h9"/></svg></button>
+      <button type="button" class="hb ico" data-align="right" aria-pressed="false" aria-label="Alinear a la derecha" title="Alinear a la derecha"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6.5 8h7M4.5 12h9"/></svg></button>
+    </div>
+        <button type="button" class="hb lb-mat" data-cmd="addRowAfter" title="Añadir fila a la matriz o al sistema (Mayús+Intro)"><svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg><span>Fila</span></button>
+    <button type="button" class="hb lb-mat" data-cmd="addColumnAfter" title="Añadir columna a la matriz (Ctrl+Intro)"><svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg><span>Columna</span></button>
+    <button type="button" class="hb" id="boxBtn" title="Recuadrar la línea (resultado final)"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="12" height="8" rx="1"/><path d="M5 8h6"/></svg><span>Recuadrar</span></button>
+    <button type="button" class="hb" id="dupBtn" aria-label="Duplicar" title="Duplicar la línea o el paso activo (Ctrl+D)"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="1.2"/><path d="M3 11V3.5c0-.5.4-1 1-1h7"/></svg><span>Duplicar</span></button>
+    <button type="button" class="hb" id="delBtn" title="Borrar la línea o el paso activo (Alt+Supr)"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.7 9h5.6l.7-9"/></svg><span>Borrar línea</span></button>
+    <button type="button" class="hb" id="delDerivBtn" title="Borrar el desarrollo completo" hidden><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.7 9h5.6l.7-9"/></svg><span>Borrar desarrollo</span></button>
+  </div>
   <div class="rgrp only-write" aria-label="Calcular">
     <button type="button" class="rb" data-pop="opsPop" aria-haspopup="true" title="Operaciones paso a paso: matrices, vectores, ecuaciones, fracciones, polinomios, combinatoria, lógica, conjuntos, derivadas y gráficas"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h7M2.5 8h11M2.5 12h5"/><path d="M11 10.5l1.5 1.5 2.5-3"/></svg><span>Operaciones</span></button>
     <button type="button" class="rb rb-pri" id="calcBtn" title="Calcular la línea activa (Ctrl+=)"><span class="ic gl" aria-hidden="true">=</span><span>Calcular</span></button>
@@ -132,20 +145,6 @@
     <canvas id="ink" role="img" aria-label="Capa de dibujo a mano alzada de la página"></canvas>
     <div id="blocks"></div>
     <button type="button" class="add-line" id="addLineEnd" title="Añadir una línea al final de la página">+ Nueva línea</button>
-  </div>
-  <div class="line-bar" id="lineBar" role="toolbar" aria-label="Línea activa" hidden>
-    <div class="lb-seg" role="group" aria-label="Alineación de la línea" id="alignSeg">
-      <button type="button" class="hb ico" data-align="left" aria-pressed="true" aria-label="Alinear a la izquierda" title="Alinear a la izquierda"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M2.5 8h7M2.5 12h9"/></svg></button>
-      <button type="button" class="hb ico" data-align="center" aria-pressed="false" aria-label="Centrar" title="Centrar"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M4.5 8h7M3.5 12h9"/></svg></button>
-      <button type="button" class="hb ico" data-align="right" aria-pressed="false" aria-label="Alinear a la derecha" title="Alinear a la derecha"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6.5 8h7M4.5 12h9"/></svg></button>
-    </div>
-    <span class="lb-sep" aria-hidden="true"></span>
-    <button type="button" class="hb lb-mat" data-cmd="addRowAfter" title="Añadir fila a la matriz o al sistema (Mayús+Intro)"><svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>Fila</button>
-    <button type="button" class="hb lb-mat" data-cmd="addColumnAfter" title="Añadir columna a la matriz (Ctrl+Intro)"><svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>Columna</button>
-    <button type="button" class="hb" id="boxBtn" title="Recuadrar la línea (resultado final)"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="12" height="8" rx="1"/><path d="M5 8h6"/></svg>Recuadrar</button>
-    <button type="button" class="hb ico" id="dupBtn" aria-label="Duplicar" title="Duplicar la línea o el paso activo (Ctrl+D)"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="1.2"/><path d="M3 11V3.5c0-.5.4-1 1-1h7"/></svg></button>
-    <button type="button" class="hb" id="delBtn" title="Borrar la línea o el paso activo (Alt+Supr)">Borrar línea</button>
-    <button type="button" class="hb" id="delDerivBtn" title="Borrar el desarrollo completo" hidden>Borrar desarrollo</button>
   </div>
 </main>
 </div>
@@ -555,6 +554,7 @@
 <script src="src/js/ui/templates.js"></script>
 <script src="src/js/ui/popovers.js"></script>
 <script src="src/js/ui/toolbar.js"></script>
+<script src="src/js/ui/rail-section.js"></script>
 <script src="src/js/ui/line-bar.js"></script>
 <script src="src/js/ui/calc.js"></script>
 <script src="src/js/ui/ops-menu.js"></script>

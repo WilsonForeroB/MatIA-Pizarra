@@ -104,7 +104,7 @@ Pulsa **?** dentro de la pizarra para ver todos los atajos.
 
 - **Dónde está cada cosa**:
   - **Cabecera**: Escribir/Dibujar, la píldora de páginas (‹ Página 1 / 3 › +), Ejemplos, Historial, Presentar, **Guardar** y el menú **⋯** (archivo, PDF, imprimir, página, vista, pantalla completa, **Migraciones**, ayuda).
-  - **Barra lateral izquierda**: arriba **Operaciones** y **Calcular**; debajo Línea, Texto, Desarrollo, Matriz, Sistema, Símbolos, Cálculo, Gráficos, Imagen y Teclado; abajo los colores. Con una línea de texto activa aparece arriba el grupo **Formato** (negrita, color, tamaño, letra, alineación, listas, ∑ Fórmula), así no tapa ninguna línea de la hoja. En modo Dibujar muestra lápiz, rotulador, flecha, figuras, goma, grosor, deshacer y borrar dibujo.
+  - **Barra lateral izquierda**: arriba **Operaciones** y **Calcular**; debajo Línea, Texto, Desarrollo, Matriz, Sistema, Símbolos, Cálculo, Gráficos, Imagen y Teclado; abajo los colores. Arriba, con una línea activa, están las secciones desplegables **Línea** (alinear, fila/columna de una matriz, recuadrar, duplicar y borrar) y, si es de texto, **Formato** (negrita, color, tamaño, letra, alineación, listas, ∑ Fórmula). Así ninguna ayuda tapa líneas de la hoja; empiezan plegadas, se abren con un clic en su título y la pizarra recuerda cuáles dejaste abiertas. En modo Dibujar muestra lápiz, rotulador, flecha, figuras, goma, grosor, deshacer y borrar dibujo.
   - **Barrita sobre la línea activa**: alinear, recuadrar, duplicar y borrar (y + Fila / + Columna si la línea tiene una matriz o un sistema).
 
 - **Exportar e importar clases** (Historial): para llevar tus ejercicios resueltos a otro PC.
