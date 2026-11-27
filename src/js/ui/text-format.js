@@ -100,8 +100,31 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
     let mf = null;
     if (st.mlReady && customElements.get('math-field')) mf = T.makeMath(sp, '', false);
     else sp.textContent = '∑';
+    // el cursor del texto queda detrás de la fórmula (si no, la siguiente tecla sustituiría la fórmula)
+    const after = document.createRange(); after.setStartAfter(sp); after.collapse(true);
+    s.removeAllRanges(); s.addRange(after);
     changed();
-    if (mf) mf.focus();
+    if (mf) focusMath(mf);
+  }
+  /* Recién creado, el campo de fórmula tarda un instante en montarse y aún no acepta el foco: lo que se
+     escriba mientras tanto (p. ej. «$x» de seguido) se guarda y se pasa a la fórmula en cuanto está lista. */
+  let pending = null;
+  function focusMath(mf) {
+    mf.focus();
+    if (document.activeElement === mf) return;
+    pending = { mf, keys: '' };
+    const t0 = Date.now();
+    const tick = () => {
+      if (!pending || pending.mf !== mf) return;
+      mf.focus();
+      if (document.activeElement === mf || Date.now() - t0 > 1000) {
+        const k = pending.keys; pending = null;
+        if (k && document.activeElement === mf) mf.executeCommand(['typedText', k]);
+        return;
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
   }
 
   /* ---------- construcción de la barra ---------- */
@@ -194,7 +217,7 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
   button('indent', ICON.indent, 'Más sangría', () => exec('indent'));
   button('outdent', ICON.outdent, 'Menos sangría', () => exec('outdent'));
   sep();
-  button('formula', '∑ Fórmula', 'Insertar fórmula en el texto', formula);
+  button('formula', '∑ Fórmula', 'Insertar una fórmula en el texto (o escribe $). Para volver al texto: Intro, Esc o $', formula);
 
   /* ---------- posición y visibilidad ---------- */
   function place() {
@@ -260,6 +283,25 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
       e.preventDefault(); e.stopPropagation();
       document.execCommand('styleWithCSS', false, false);
       document.execCommand({ b: 'bold', i: 'italic', u: 'underline' }[e.key.toLowerCase()]);
+      return;
+    }
+    if (pending && pending.mf.isConnected && !/^(Shift|Control|Alt|Meta|AltGraph|CapsLock|Dead)$/.test(e.key)) { // la fórmula aún se está montando
+      e.preventDefault(); e.stopPropagation();
+      if (/^(Enter|Escape|Tab|\$)$/.test(e.key)) { // ya se sale de la fórmula: lo escrito va a ella y lo siguiente, al texto
+        const { mf, keys } = pending; pending = null;
+        mf.value = keys;
+        const sp = mf.closest('.math-inline');
+        if (sp) sp.setAttribute('data-latex', keys);
+        changed();
+      } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) pending.keys += e.key;
+      return;
+    }
+    // «$» abre una fórmula dentro del texto (y otro «$», Intro, Esc o Espacio al final vuelven al texto)
+    if (e.key === '$' && !e.ctrlKey && !e.metaKey && !e.altKey && e.target === h) {
+      e.preventDefault(); e.stopPropagation();
+      const s = getSelection();
+      if (s.rangeCount) saved = s.getRangeAt(0).cloneRange();
+      formula();
       return;
     }
     // dentro de una lista, Enter crea un elemento nuevo (el editor crearía otra línea)

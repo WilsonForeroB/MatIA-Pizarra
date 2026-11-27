@@ -64,7 +64,7 @@ function pageFile(name) {
   await page.locator('.tf-bar button[title="Centrar"]').click();
   await page.keyboard.press('Control+End');
   await page.waitForTimeout(300);
-  await page.locator('.tf-bar button[title="Insertar fórmula en el texto"]').click();
+  await page.locator('.tf-bar button[title^="Insertar una fórmula en el texto"]').click();
   await page.waitForTimeout(400);
   await page.keyboard.type('x^2');
   await page.waitForTimeout(500);
@@ -118,6 +118,39 @@ function pageFile(name) {
   }
   // atajo + clases sin style
   ok(!(await page.evaluate(() => /style=/.test(JSON.stringify(JSON.parse(localStorage.getItem('matia-pizarra-v1')).pages[0].blocks.map((b) => b.html))))), 'no se guarda style');
+  // «$» abre una fórmula dentro del texto; Intro / Esc / $ vuelven al texto para seguir escribiendo
+  for (const [how, key] of [['Intro', 'Enter'], ['Esc', 'Escape'], ['$', '$']]) {
+    await page.click('#textBtn'); await page.waitForTimeout(200);
+    await page.keyboard.type('Sea $x'); // de seguido: la «x» va a la fórmula aunque aún se esté montando
+    await page.keyboard.press(key);
+    await page.keyboard.type(' positivo');
+    await page.waitForTimeout(300);
+    const v = await page.evaluate(() => { const bl = MatIA.require('model/board').page().blocks; return bl.find((b) => b.id === MatIA.require('ui/state').activeId).v; });
+    ok(v === 'Sea $x$ positivo', 'texto + fórmula + texto saliendo con ' + how + ': ' + v);
+  }
+  // líneas de fórmula: el espacio se escribe y las palabras no se convierten en símbolos a medias
+  {
+    await page.click('#addLineBtn').catch(() => {});
+    const mf = await page.evaluateHandle(() => { const b = MatIA.require('blocks/editor').addBlockAfter(null, MatIA.require('model/schema').newBlock('math', '')); return document.querySelector('.blk[data-id="' + b.id + '"] math-field'); });
+    await page.waitForTimeout(300);
+    await mf.asElement().click();
+    await page.keyboard.type('el valor de pi es 3 y nueve mucho sin x');
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(200);
+    const lx = await mf.evaluate((m) => m.value);
+    ok(/el\\ valor\\ de\\ \\pi\\ es\\ 3/.test(lx), 'espacios y «pi» → π (sin romper «valor»): ' + lx);
+    ok(/nueve\\ mucho\\ \\sin\\ x/.test(lx), '«nueve» y «mucho» se respetan; «sin» → función: ' + lx);
+    await mf.evaluate((m) => { m.value = ''; m.focus(); });
+    await page.waitForTimeout(100);
+    await page.keyboard.type('pizarra');
+    await page.keyboard.press('Tab');
+    { const v2 = await mf.evaluate((m) => m.value); ok(v2 === 'pizarra', '«pizarra» no se convierte en πzarra: ' + v2); }
+    await mf.evaluate((m) => { m.value = ''; m.focus(); });
+    await page.waitForTimeout(100);
+    await page.keyboard.type('AA x in RR, x<=sqrt2');
+    await page.keyboard.press('Tab');
+    { const v3 = await mf.evaluate((m) => m.value); ok(/\\forall/.test(v3) && /\\in/.test(v3) && /\\mathbb\{R\}/.test(v3) && /\\le/.test(v3) && /\\sqrt/.test(v3), 'siguen los atajos de símbolos (AA, in, RR, <=, sqrt): ' + v3); }
+  }
   // barra oculta al salir
   await page.evaluate(() => document.querySelectorAll('#blocks .blk-text')[1].focus());
   await page.mouse.click(5, 5);

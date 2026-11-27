@@ -60,7 +60,7 @@ Notas: `role="menu"` sin navegación con flechas (no hay manejador de roving foc
 - `insertLatex(latex)` (5383): cambia a modo escribir, usa `activeField()`, `mf.insert(..., selectionMode:'placeholder')`, llama a `syncBlock`, `hidePio`. Si MathLive no está listo: `toast(..., 'aviso')`.
 - `SYM_GROUPS` (5393): Básicos, Lógica, Conjuntos, Números, Relaciones, Operaciones, Flechas, Probabilidad y estadística, Trigonometría y geometría, Letras griegas. `CALC_GROUPS` (5466): Derivadas, Integrales, Límites. Formato de cada elemento: `[etiqueta, LaTeX, nombre/atajo]`.
 - `buildSymPop` (5485): botones `.sym` con `title` y `aria-label`; `mousedown` previene pérdida de foco.
-- Atajos de teclado de MathLive propios (`inlineShortcuts`, 4764): RR NN ZZ QQ CC lam pp.
+- Atajos de escritura: palabras completas (`WORDS` en `js/blocks/editor.js`: pi, alpha, sin, in, lam, pp…) al terminarlas, y los de MathLive sin letras; ver `atajos.md`.
 
 ## 5. Menú Operaciones (6984-7245)
 

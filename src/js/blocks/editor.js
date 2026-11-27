@@ -20,17 +20,72 @@ MatIA.define('blocks/editor', ['core/dom', 'model/board', 'model/schema', 'ui/st
   // campo principal de la línea; los math-field auxiliares (data-aux: funciones de gráficas, sólidos…) no cuentan
   const fieldOf = (el) => el && (el.querySelector('math-field:not([data-aux])') || el.querySelector('.blk-text'));
 
+  /* Palabras que se convierten en símbolo (pi → π, sin → sin, in → ∈…). MathLive las cambia en cuanto
+     coinciden las letras, así que destrozaba palabras normales («valor» → val∨r, «pizarra» → πzarra).
+     Aquí solo se convierten cuando la palabra ENTERA es una de estas y se termina (espacio, signo, número,
+     Intro o al salir del campo). */
+  const WORDS = {
+    alpha: '\\alpha', beta: '\\beta', gamma: '\\gamma', Gamma: '\\Gamma', delta: '\\delta', Delta: '\\Delta', epsilon: '\\epsilon', varepsilon: '\\varepsilon',
+    zeta: '\\zeta', eta: '\\eta', theta: '\\theta', Theta: '\\Theta', vartheta: '\\vartheta', iota: '\\iota', kappa: '\\kappa', lambda: '\\lambda', Lambda: '\\Lambda', lam: '\\lambda',
+    mu: '\\mu', nu: '\\nu', xi: '\\xi', Xi: '\\Xi', pi: '\\pi', Pi: '\\Pi', rho: '\\rho', sigma: '\\sigma', Sigma: '\\Sigma', tau: '\\tau', upsilon: '\\upsilon',
+    phi: '\\phi', Phi: '\\Phi', varphi: '\\varphi', chi: '\\chi', psi: '\\psi', Psi: '\\Psi', omega: '\\omega', Omega: '\\Omega',
+    sin: '\\sin', sen: '\\operatorname{sen}', cos: '\\cos', tan: '\\tan', tg: '\\operatorname{tg}', sec: '\\sec', csc: '\\csc', cot: '\\cot',
+    arcsin: '\\arcsin', arccos: '\\arccos', arctan: '\\arctan', sinh: '\\sinh', cosh: '\\cosh', tanh: '\\tanh',
+    ln: '\\ln', log: '\\log', exp: '\\exp', lim: '\\lim', det: '\\det', max: '\\max', min: '\\min', gcd: '\\gcd',
+    arctg: '\\operatorname{arctg}', cotg: '\\operatorname{cotg}', cosec: '\\operatorname{cosec}', mod: '\\bmod',
+    sum: '\\sum', int: '\\int', prod: '\\prod', in: '\\in', oo: '\\infty', forall: '\\forall', exists: '\\exists', pp: '\\partial', setminus: '\\setminus',
+  };
+  // atajos de MathLive con letras que se mantienen al momento (no forman parte de palabras normales);
+  // los que no tienen letras (<= != -> +- ... !in) se mantienen todos
+  const KEEP = new Set(['sqrt', 'cbrt', 'nthroot', 'nabla', 'infty', 'AA', 'EE', 'RR', 'NN', 'ZZ', 'QQ', 'CC', 'xx']);
+  /** Si justo antes del cursor hay una palabra completa de WORDS, la cambia por su símbolo. */
+  function convertWord(mf) {
+    if (!mf || mf.mode !== 'math' || mf.readOnly || typeof mf.getValue !== 'function') return false;
+    const sel = mf.selection;
+    if (!sel || !sel.ranges || sel.ranges[0][0] !== sel.ranges[0][1]) return false;
+    const pos = mf.position;
+    let w = '';
+    while (pos - w.length > 0 && w.length < 12) {
+      const ch = mf.getValue(pos - w.length - 1, pos - w.length, 'latex');
+      if (!/^[A-Za-z]$/.test(ch)) break;
+      w = ch + w;
+    }
+    if (!w || !Object.prototype.hasOwnProperty.call(WORDS, w)) return false;
+    mf.selection = { ranges: [[pos - w.length, pos]], direction: 'forward' };
+    mf.insert(WORDS[w], { insertionMode: 'replaceSelection', selectionMode: 'after', format: 'latex' });
+    return true;
+  }
+  let wordsHooked = false;
+  function hookWords() {
+    if (wordsHooked) return;
+    wordsHooked = true;
+    // en la fase de captura de window: antes que MathLive y que el Intro de las líneas
+    window.addEventListener('keydown', (e) => {
+      const mf = e.target;
+      if (!mf || mf.tagName !== 'MATH-FIELD' || e.ctrlKey || e.metaKey || e.altKey) return;
+      if ((e.key.length === 1 && !/[A-Za-z]/.test(e.key)) || e.key === 'Enter' || e.key === 'Tab') convertWord(mf);
+    }, true);
+    document.addEventListener('focusout', (e) => { if (e.target && e.target.tagName === 'MATH-FIELD') convertWord(e.target); }, true);
+  }
+
   function configureField(mf) {
     mf.smartFence = true;
     mf.smartSuperscript = true;
     mf.mathVirtualKeyboardPolicy = 'manual';
     mf.popoverPolicy = 'auto';
+    mf.mathModeSpace = '\\ '; // la barra espaciadora escribe un espacio (MathLive la ignora por defecto)
     mf.colorMap = (name) => (R('ui/view').COLOR_NAMES.includes(name) ? cssVar(name) : undefined);
-    try {
-      mf.inlineShortcuts = Object.assign({}, mf.inlineShortcuts, {
-        RR: '\\mathbb{R}', NN: '\\mathbb{N}', ZZ: '\\mathbb{Z}', QQ: '\\mathbb{Q}', CC: '\\mathbb{C}', lam: '\\lambda', pp: '\\partial',
-      });
-    } catch (e) { /* opción no disponible */ }
+    // los atajos de MathLive que son palabras se anulan (de ellos se ocupa convertWord); el resto se deja igual
+    const noShortcuts = () => {
+      try {
+        const all = Object.assign({}, mf.inlineShortcuts || {});
+        for (const k of Object.keys(all)) if (/^[A-Za-z]+$/.test(k) && !KEEP.has(k)) all[k] = '';
+        mf.inlineShortcuts = all;
+      } catch (e) { /* opción no disponible */ }
+    };
+    noShortcuts();
+    mf.addEventListener('mount', noShortcuts, { once: true }); // si aún no estaba montado, sus atajos aparecen al montarse
+    hookWords();
   }
 
   /* Explicación de una línea de fórmula (campo b.note), con el estilo de las notas del desarrollo. */

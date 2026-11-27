@@ -73,9 +73,11 @@ Excluidos los gráficos/SVG/INPUT (5285).
 | Tab / flechas en la nota | Cambio de celda/fila | 5108-5115 |
 | Ctrl+D dentro del paso | Duplica el paso (vía global 8055) | 5646, 8055 |
 
-## Atajos de escritura MathLive (`inlineShortcuts`, 4764)
+## Atajos de escritura MathLive (`inlineShortcuts`)
 
-Añadidos por la pizarra: `RR NN ZZ QQ CC` (ℝ ℕ ℤ ℚ ℂ), `lam` (λ), `pp` (∂). El resto (`x^2`, `/`, `sqrt`, `in`, `EE`, `->`, ...) vienen de MathLive y se documentan en la ayuda (852-875). Tab salta al siguiente hueco (861).
+`configureField` (`js/blocks/editor.js`) cambia el comportamiento de MathLive: la barra espaciadora escribe `\ ` (`mathModeSpace`), y los atajos que son **palabras** (`pi`, `alpha`, `sin`, `in`, `del`…) se anulan porque MathLive los aplicaba en cuanto coincidían las letras y rompía palabras normales («valor» → val∨r, «pizarra» → πzarra). En su lugar, `WORDS` convierte la palabra **entera** antes del cursor al terminarla (cualquier tecla que no sea letra, Intro, Tab o al salir del campo). Se mantienen al momento los atajos sin letras (`<=`, `!=`, `->`, `+-`, `...`, `!in`…) y `KEEP`: `sqrt cbrt nthroot nabla infty AA EE RR NN ZZ QQ CC xx`. Tab salta al siguiente hueco.
+
+En una línea de texto, `$` abre una fórmula en línea (`js/ui/text-format.js`); dentro de ella Intro, Esc, Tab o `$` vuelven al texto detrás de la fórmula (`exitMath` en `js/blocks/text.js`). Lo tecleado mientras el campo se monta se guarda y se le pasa después.
 
 ## Otros handlers de teclado (fuera de los rangos principales)
 

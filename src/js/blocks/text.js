@@ -81,11 +81,24 @@ MatIA.define('blocks/text', ['blocks/registry'], (registry) => {
     c.remove();
     return out.replace(/\u200b/g, '').replace(/\n$/, '');
   }
+  /** Deja el cursor del texto justo antes o después de la fórmula en línea, para seguir escribiendo. */
+  function exitMath(sp, where) {
+    const host = sp.closest('.blk-text');
+    if (!host) return;
+    if (where === 'after' && !sp.nextSibling) sp.after(document.createTextNode('\u200b'));
+    host.focus();
+    const r = document.createRange();
+    if (where === 'before') r.setStartBefore(sp); else r.setStartAfter(sp);
+    r.collapse(true);
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    host.dispatchEvent(new Event('input', { bubbles: true })); // guarda la fórmula escrita
+  }
   function makeMath(sp, latex, ro) {
     const mf = document.createElement('math-field');
     mf.setAttribute('data-aux', '1');
     mf.setAttribute('aria-label', 'Fórmula en línea');
     if (ro) mf.setAttribute('read-only', '');
+    else mf.setAttribute('placeholder', '\\text{fórmula · Intro: volver al texto}');
     sp.appendChild(mf);
     try { R('blocks/editor').configureField(mf); } catch (e) { /* editor aún no listo */ }
     mf.value = latex;
@@ -93,15 +106,17 @@ MatIA.define('blocks/text', ['blocks/registry'], (registry) => {
       mf.addEventListener('input', () => { sp.setAttribute('data-latex', mf.getValue('latex')); });
       mf.addEventListener('move-out', (e) => {
         const d = e.detail && e.detail.direction;
-        const host = sp.closest('.blk-text');
-        if (!host) return;
         e.preventDefault();
-        host.focus();
-        const r = document.createRange();
-        if (d === 'backward' || d === 'upward') r.setStartBefore(sp); else r.setStartAfter(sp);
-        r.collapse(true);
-        const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+        exitMath(sp, d === 'backward' || d === 'upward' ? 'before' : 'after');
       });
+      // salir de la fórmula para seguir escribiendo texto: Intro, Esc, Tab o «$» (y → al final, con move-out)
+      mf.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey || e.altKey || mf.mode === 'latex') return;
+        if (!(e.key === 'Enter' || e.key === 'Escape' || (e.key === 'Tab' && !e.shiftKey) || e.key === '$')) return;
+        e.preventDefault(); e.stopPropagation();
+        sp.setAttribute('data-latex', mf.getValue('latex'));
+        exitMath(sp, 'after');
+      }, true);
     }
     return mf;
   }
@@ -115,7 +130,7 @@ MatIA.define('blocks/text', ['blocks/registry'], (registry) => {
       t.setAttribute('role', 'textbox');
       t.setAttribute('aria-multiline', 'true');
       t.setAttribute('aria-label', 'Línea de texto');
-      t.dataset.ph = 'Escribe un texto…';
+      t.dataset.ph = 'Escribe un texto… ($ para una fórmula)';
     }
     if (typeof b.html === 'string' && b.html) t.innerHTML = sanitize(b.html); else t.textContent = b.v || '';
     hydrateMath(t, ro);

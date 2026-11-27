@@ -62,7 +62,7 @@ div.blk[data-id][data-align]  (.is-boxed, .is-result, .is-active, .blk-deriv)
 Tipos simples:
 
 - **`text`** (4839-4848): `div.blk-text[contenteditable]`, `b.v = innerText` en `input`.
-- **`math`** (4849-4863, si `mlReady`): `math-field` configurado con `configureField` (4757-4768: `smartFence`, `smartSuperscript`, teclado virtual manual, `colorMap` con `COLOR_NAMES`/`cssVar`, atajos `RR,NN,ZZ,QQ,CC,lam,pp`); en `input`: `b.v = getValue('latex')`, `b.result=false`, `hidePio()`, `save()`; en `move-out` salta a la línea anterior/siguiente con `focusSibling`.
+- **`math`** (4849-4863, si `mlReady`): `math-field` configurado con `configureField` (4757-4768: `smartFence`, `smartSuperscript`, teclado virtual manual, `colorMap` con `COLOR_NAMES`/`cssVar`, espacio `\ `, atajos de palabras completas `WORDS` en lugar de los de MathLive; ver `atajos.md`); en `input`: `b.v = getValue('latex')`, `b.result=false`, `hidePio()`, `save()`; en `move-out` salta a la línea anterior/siguiente con `focusSibling`.
 - **Sin MathLive** (`mlReady=false`, 4864-4869): `div.blk-text` de solo lectura con `b.v`. Al cargar MathLive, `start()` (8075) pone `mlReady=true` y llama `renderPage()`. Si no carga en 4 s se hace `renderPage()` igualmente y un aviso (8092-8099).
 - El `mousedown` sobre el hueco de `blk-body` enfoca el final del bloque (4870-4872).
 
@@ -159,7 +159,7 @@ Interacciones con el resto (acoplamientos): `activeField()` (5268), `setActive` 
 
 Estos tipos no existen en `legacy/pizarra.html`: cada uno vive en su fichero y se registra con `registry.register` (no entra en el `if` de §3).
 
-- **`text`** (`js/blocks/text.js`, `js/ui/text-format.js`, `css/text.css`): línea de texto con formato. Negrita, cursiva, subrayado, tachado (Ctrl+B/I/U), color, resaltado, tamaño, tipo de letra (incluida la manuscrita Caveat, en `vendor/fonts/`), alineación (también justificar), listas, sangría y «∑ Fórmula» (fórmula editable dentro del texto). Se guarda en `html` (saneado) y en `v` (texto plano); ver `FORMATO-JSON.md` §4.2.
+- **`text`** (`js/blocks/text.js`, `js/ui/text-format.js`, `css/text.css`): línea de texto con formato. Negrita, cursiva, subrayado, tachado (Ctrl+B/I/U), color, resaltado, tamaño, tipo de letra (incluida la manuscrita Caveat, en `vendor/fonts/`), alineación (también justificar), listas, sangría y «∑ Fórmula» o `$` (fórmula editable dentro del texto; Intro, Esc, Tab o `$` vuelven al texto). Se guarda en `html` (saneado) y en `v` (texto plano); ver `FORMATO-JSON.md` §4.2.
 - **`image`** (`js/blocks/image.js`, `js/storage/assets.js`, `js/ui/image-insert.js`, `css/image.css`): botón «Imagen», Ctrl+V o arrastre a la hoja. El archivo va a `imagenes/` de la carpeta de clases y el bloque solo guarda la ruta (`src`); ver `FORMATO-JSON.md` §4.14. No es exportable como imagen de gráfico.
 - **Ajuste de fórmulas** (`js/blocks/fit.js`, `css/fit.css`): una fórmula más ancha que la hoja reduce su letra hasta el 60 %. Si aun así no cabe, aparece «No cabe en la hoja» con **Partir** (convierte en desarrollo si hay «=»). Una línea que es solo `\text{…}` pasa a línea de texto al salir de ella, con un aviso «Deshacer».
 
