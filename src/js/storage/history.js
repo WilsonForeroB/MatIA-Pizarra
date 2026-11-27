@@ -141,7 +141,20 @@ MatIA.define('storage/history', ['core/dom', 'model/board', 'model/schema', 'ui/
       R('storage/dirty').markSaved();
       return true;
     }
+    /* Sin nombre no se guarda: se pide uno (no se acepta vacío). Devuelve false si se cancela. */
+    async function ensureTitle() {
+      if ((S.board.title || '').trim()) return true;
+      const t = await R('ui/dialogs').prompt('¿Cómo se llama esta clase?',
+        'Ponle un nombre para encontrarla después en el Historial (por ejemplo «Sistemas por Gauss» o «Derivadas 2.º ESO»).',
+        { placeholder: 'Nombre de la clase', ok: 'Guardar', required: true });
+      if (!t) return false;
+      S.board.title = t.slice(0, 120);
+      S.save();
+      if ($('#histName')) $('#histName').value = S.board.title;
+      return true;
+    }
     async function saveToHistory() {
+      if (!(await ensureTitle())) return false;
       if (!writable() && access.supported) {
         // sin carpeta: si hay una recordada se pide permiso; si no, se elige una
         const f = pending ? await access.reconnect() : await access.pick({ reason: 'Para guardar la clase necesito una carpeta.' });

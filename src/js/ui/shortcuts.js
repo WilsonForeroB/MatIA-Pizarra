@@ -43,7 +43,7 @@ MatIA.define('ui/shortcuts', ['core/dom', 'model/board', 'ui/state'], (dom, S, s
     if (k === 'h' || k === 'H') { R('ui/mode-pages').toggleChrome(); return; }
     if (k === 'f' || k === 'F') { R('ui/mode-pages').toggleFull(); return; }
     if (body.dataset.mode === 'draw') {
-      const map = { p: 'pen', r: 'hl', a: 'arrow', e: 'eraser' };
+      const map = { p: 'pen', r: 'hl', a: 'arrow', g: 'shape', e: 'eraser' };
       if (map[k.toLowerCase()]) { S.board.tool = map[k.toLowerCase()]; R('ui/view').applySettings(); S.save(); return; }
     }
     if (k === 'd' || k === 'D') { R('ui/mode-pages').setMode(body.dataset.mode === 'draw' ? 'write' : 'draw'); return; }

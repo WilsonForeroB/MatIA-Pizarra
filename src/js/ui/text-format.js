@@ -1,4 +1,4 @@
-/* Barra flotante de formato del bloque «Texto»: negrita, cursiva, color, tamaño, tipo de letra, alineación, listas, fórmula en línea.
+/* Formato del bloque «Texto», en la barra lateral (antes flotaba sobre la línea y tapaba la de arriba): negrita, cursiva, color, tamaño, tipo de letra, alineación, listas, fórmula en línea.
    Colores, tamaños y fuentes se guardan como clases tf-* (nada de style ni <font>), definidas en css/text.css. */
 MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
   'use strict';
@@ -9,15 +9,22 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
   const COLORS = [['c0', 'Tinta', 'var(--ink)'], ['c1', 'Verde', 'var(--data-1)'], ['c2', 'Azul', 'var(--data-2)'], ['c3', 'Ocre', 'var(--data-3)'], ['c4', 'Rosa', 'var(--data-4)'], ['c5', 'Naranja', 'var(--data-5)'], ['c6', 'Celeste', 'var(--data-6)']];
   const HLS = [['hl0', 'Sin resaltado', 'transparent'], ['hl1', 'Amarillo suave', 'color-mix(in srgb, var(--data-3) 38%, transparent)'], ['hl2', 'Verde suave', 'color-mix(in srgb, var(--data-1) 32%, transparent)'], ['hl3', 'Azul suave', 'color-mix(in srgb, var(--selection) 85%, transparent)']];
   const SIZES = [['n', 'Normal'], ['lg', 'Grande'], ['sub', 'Subtítulo'], ['title', 'Título']];
-  const FONTS = [['', 'Tipo de letra'], ['def', 'Predeterminada'], ['sans', 'Sans (IBM Plex Sans)'], ['serif', 'Serif (Source Serif 4)'], ['mono', 'Mono (JetBrains Mono)'], ['hand', 'Manuscrita (Caveat)']];
+  const FONTS = [['', 'Letra'], ['def', 'Predeterminada'], ['sans', 'Sans (IBM Plex Sans)'], ['serif', 'Serif (Source Serif 4)'], ['mono', 'Mono (JetBrains Mono)'], ['hand', 'Manuscrita (Caveat)']];
   const GROUP = { c: /^tf-c[0-6]$/, hl: /^tf-hl[0-3]$/, sz: /^tf-sz-/, f: /^tf-f-/ };
 
+  // grupo «Formato» al principio de la barra lateral; solo se ve con una línea de texto activa
   const bar = document.createElement('div');
-  bar.className = 'tf-bar';
+  bar.className = 'rgrp only-write tf-bar';
   bar.hidden = true;
   bar.setAttribute('role', 'toolbar');
   bar.setAttribute('aria-label', 'Formato de texto');
-  sheet.appendChild(bar);
+  const rail = document.getElementById('toolbar');
+  if (rail) rail.insertBefore(bar, rail.firstChild); else sheet.appendChild(bar);
+  const head = document.createElement('span');
+  head.className = 'tf-head';
+  head.textContent = 'Formato';
+  head.setAttribute('aria-hidden', 'true');
+  bar.appendChild(head);
 
   let host = null;       // .blk-text activo
   let saved = null;      // último rango dentro del texto
@@ -170,7 +177,7 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
     list.forEach(([k, name, col]) => {
       const sw = document.createElement('button');
       sw.type = 'button';
-      sw.className = 'tf-sw' + (k.endsWith('0') ? ' tf-sw--none' : '');
+      sw.className = 'tf-sw' + (group === 'hl' && k.endsWith('0') ? ' tf-sw--none' : ''); // «Tinta» (c0) es un color, no «sin color»
       sw.style.setProperty('--sw', col);
       sw.title = name;
       sw.setAttribute('aria-label', name);
@@ -193,6 +200,7 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
       bar.querySelectorAll('[aria-haspopup]').forEach((x) => x.setAttribute('aria-expanded', 'false'));
       pop.hidden = !open;
       btn.setAttribute('aria-expanded', String(open));
+      if (open) { const r = btn.getBoundingClientRect(); pop.style.left = (r.right + 8) + 'px'; pop.style.top = r.top + 'px'; } // a la derecha de la barra lateral
     });
     wrap.append(btn, pop);
     bar.appendChild(wrap);
@@ -219,34 +227,19 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
   sep();
   button('formula', '∑ Fórmula', 'Insertar una fórmula en el texto (o escribe $). Para volver al texto: Intro, Esc o $', formula);
 
-  /* ---------- posición y visibilidad ---------- */
+  /* ---------- visibilidad ---------- */
   function place() {
     if (!host || !host.isConnected) return hide();
-    const sr = sheet.getBoundingClientRect(), hr = host.getBoundingClientRect();
-    const z = st.zoomF || 1;
-    bar.hidden = false;
-    const bh = bar.offsetHeight, bw = bar.offsetWidth, sw = sheet.clientWidth;
-    // si no cabe encima (primera línea de la hoja), se hace sitio desplazando la línea hacia abajo
-    // en vez de poner la barra debajo, donde taparía la línea siguiente
-    const blk = host.closest('.blk');
-    let top = (hr.top - sr.top) / z - bh - 6;
-    if (top < 0 && blk) {
-      const push = Math.ceil(-top + 4);
-      if (shifted !== blk) { if (shifted) shifted.style.marginTop = ''; shifted = blk; }
-      blk.style.marginTop = (parseFloat(blk.style.marginTop) || 0) + push + 'px';
-      top = (host.getBoundingClientRect().top - sr.top) / z - bh - 6;
+    if (bar.hidden) {
+      bar.hidden = false;
+      if (rail) rail.scrollTop = 0; // el grupo está arriba del todo
     }
-    let left = (hr.left - sr.left) / z;
-    left = Math.max(4, Math.min(left, sw - bw - 4));
-    bar.style.top = top + 'px';
-    bar.style.left = left + 'px';
   }
-  let shifted = null; // línea desplazada para dejar sitio a la barra
   function hide() {
-    if (shifted) { shifted.style.marginTop = ''; shifted = null; }
     bar.hidden = true;
     host = null;
     bar.querySelectorAll('.tf-pop').forEach((p) => { p.hidden = true; });
+    bar.querySelectorAll('[aria-haspopup]').forEach((x) => x.setAttribute('aria-expanded', 'false'));
   }
   function refresh() {
     if (bar.hidden) return;
@@ -270,9 +263,14 @@ MatIA.define('ui/text-format', ['ui/state', 'blocks/text'], (st, T) => {
     const r = s.getRangeAt(0);
     if (host.contains(r.commonAncestorContainer) && !document.activeElement.matches('math-field')) { saved = r.cloneRange(); refresh(); }
   });
-  document.addEventListener('mousedown', (e) => { if (host && !bar.contains(e.target) && !host.contains(e.target)) hide(); }, true);
+  // un clic en la barra lateral no la oculta (si no, los botones se moverían bajo el cursor):
+  // se oculta cuando el foco pasa a otra línea (focusin) o con un clic fuera del texto en la hoja
+  document.addEventListener('mousedown', (e) => {
+    if (!host || bar.contains(e.target) || host.contains(e.target) || (rail && rail.contains(e.target))) return;
+    if (e.target.closest && e.target.closest('.tf-pop, dialog, .pop, [role="menu"]')) return;
+    hide();
+  }, true);
   sheet.addEventListener('input', () => { if (host) place(); });
-  window.addEventListener('resize', () => { if (host) place(); });
   // al cambiar de página (Alt+AvPág…) se redibuja #blocks sin focusin: si la línea ya no está, fuera la barra
   new MutationObserver(() => { if (host && !host.isConnected) hide(); }).observe(document.getElementById('blocks'), { childList: true });
   document.addEventListener('keydown', (e) => {

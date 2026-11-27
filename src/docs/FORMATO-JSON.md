@@ -32,7 +32,10 @@ Documento deducido del código de `pizarra.html` (rama `dev`, 8103 líneas), no 
 | `accent` | `'math'`\|`''` | `''` | |
 | `scale` | número 80–260 | `140` | Acotado; no numérico = 140. |
 | `color` | `'ink'`\|`'data-1'`..`'data-6'` | `'ink'` | Regex `^(ink\|data-[1-6])$`. Color de trazo/fórmula actual. |
-| `tool` | `'pen'`\|`'hl'`\|`'arrow'`\|`'eraser'` | `'pen'` | |
+| `tool` | `'pen'`\|`'hl'`\|`'arrow'`\|`'shape'`\|`'eraser'` | `'pen'` | |
+| `shape` | `'line'`\|`'rect'`\|`'ellipse'`\|`'tri'`\|`'rtri'`\|`'diamond'`\|`'para'`\|`'hex'` | `'rect'` | Figura elegida para la herramienta «Figuras». |
+| `dash` | `'solid'`\|`'dash'`\|`'dot'` | `'solid'` | Tipo de línea de figuras y flechas. |
+| `fill` | `'none'`\|`'soft'`\|`'solid'` | `'none'` | Relleno de las figuras. |
 | `width` | número 1–12 | `3` | Grosor del lápiz. |
 | `histAuto` | boolean | `false` | `!!b.histAuto`. Guardado automático en historial. |
 | `lineNums` | boolean | `true` | `b.lineNums !== false`. |
@@ -46,7 +49,7 @@ Los campos de ajustes (`theme`…`lineNums`) son preferencias de vista guardadas
 | Campo | Tipo | Defecto | Validación |
 | --- | --- | --- | --- |
 | `blocks` | array de bloque | `[newBlock()]` (una línea `math` vacía) | Si falta o está vacío se crea una línea vacía. |
-| `strokes` | array de trazo | `[]` | Solo se filtra que cada elemento sea objeto con `pts` array (4664). **No se validan** `tool`, `color`, `w` ni los puntos. |
+| `strokes` | array de trazo | `[]` | Solo se filtra que cada elemento sea objeto con `pts` array y, si es una figura (`tool:'shape'`), que `shape` sea una de las conocidas. **No se validan** `color`, `w` ni los puntos. |
 | `minH` | número | `0` | `+p.minH \|\| 0`. Altura mínima de la hoja en px (crece cuando se dibuja cerca del borde inferior, `pizarra.html:7987`). |
 
 ## 4. Campos comunes de todo bloque
@@ -261,7 +264,10 @@ Se crean en `endStroke` (`pizarra.html:7990-8002`) con `cur = { tool, color: boa
 
 | Campo | Tipo | Notas |
 | --- | --- | --- |
-| `tool` | `'pen'`\|`'hl'`\|`'arrow'` | `'eraser'` no se guarda (solo elimina trazos). `hl` = resaltador (alfa 0,32, ancho ×5); `arrow` usa solo primer y último punto. |
+| `tool` | `'pen'`\|`'hl'`\|`'arrow'`\|`'shape'` | `'eraser'` no se guarda (solo elimina trazos). `hl` = resaltador (alfa 0,32, ancho ×5); `arrow` y `shape` usan solo el primer y el último punto. |
+| `shape` | ver `board.shape` | Solo figuras. Entre el punto inicial `a` y el final `b`: `tri` tiene el vértice en el lado de `a`; `rtri` el ángulo recto en `(a.x, b.y)`; `ellipse` inscrita en el recuadro. |
+| `dash` | `'solid'`\|`'dash'`\|`'dot'` | Figuras (siempre) y flechas (solo si no es continua). |
+| `fill` | `'none'`\|`'soft'`\|`'solid'` | Solo figuras: `soft` = color con alfa 0,2. |
 | `color` | string | Nombre de tema `'ink'`, `'data-1'`…`'data-6'` (se resuelve con `cssVar` según tema). Si no se resuelve, cae a `ink` (`drawStroke`, 7878). El golden usa `"#000"` y también funciona (cae a tinta). |
 | `w` | número | Grosor base en px (1–12). |
 | `pts` | `[x, y, presión][]` | Coordenadas en píxeles de la hoja **sin zoom** (`sheetPoint`, 7931: `/zoomF`), redondeadas a 0,1; `presión` 0,35–1,65 con lápiz, `1` con ratón/dedo. El código de dibujo accede a `p[2]` (presión) sin comprobar: con puntos de 2 elementos (como el del golden) el grosor del `pen` sale `NaN` y el navegador lo ignora (se pinta con el grosor anterior). |

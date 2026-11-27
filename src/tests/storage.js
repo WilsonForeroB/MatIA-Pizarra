@@ -65,6 +65,10 @@ const MOCK = () => {
     const p = await ctx.newPage();
     await p.goto(URL_); await p.waitForFunction(() => !!customElements.get('math-field')); await p.waitForTimeout(300);
     await p.click('#saveBtn'); await p.waitForTimeout(300);
+    check('Guardar sin nombre pide un nombre y no deja aceptarlo vacío', (await p.textContent('#askTitle')) === '¿Cómo se llama esta clase?' && await p.isDisabled('#askActs [data-ok]'));
+    await p.press('#askInput', 'Enter'); await p.waitForTimeout(150);
+    check('Intro con el nombre vacío no guarda', (await p.evaluate(() => document.getElementById('ask').open)) && (await p.textContent('#askTitle')) === '¿Cómo se llama esta clase?');
+    await p.fill('#askInput', 'Repaso'); await p.click('#askActs [data-ok]'); await p.waitForTimeout(300);
     check('Guardar sin carpeta explica antes de abrir el selector', (await p.evaluate(() => document.getElementById('ask').open && window.__fs.pickerCalls === 0)), await p.textContent('#askTitle'));
     await ctx.close();
   }
@@ -76,6 +80,7 @@ const MOCK = () => {
     await p.click('#blocks .blk math-field'); await p.keyboard.type('x+1', { delay: 40 }); await p.waitForTimeout(600);
     await p.click('#fileBtn'); await p.click('#newBoard'); await p.waitForTimeout(300);
     await p.locator('#askActs button', { hasText: 'Guardar y continuar' }).click(); await p.waitForTimeout(300);
+    await p.fill('#askInput', 'Clase de prueba'); await p.click('#askActs [data-ok]'); await p.waitForTimeout(300); // primero, el nombre
     check('«Guardar y continuar» muestra la ventana de carpeta y sigue abierta', await p.evaluate(() => document.getElementById('ask').open), await p.textContent('#askTitle'));
     await p.click('#askActs .mi-btn--primary'); await p.waitForTimeout(600);
     const r = await p.evaluate(() => ({ calls: window.__fs.pickerCalls, files: window.__fs.files.size, blank: MatIA.require('model/board').board.pages[0].blocks[0].v === '' }));

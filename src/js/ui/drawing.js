@@ -1,4 +1,4 @@
-/* Dibujo a mano alzada: lienzo, trazos, borrador, deshacer (pizarra.html 7849-8025). */
+/* Dibujo: lápiz, rotulador, flecha, figuras geométricas (con tipo de línea y relleno), goma y deshacer. */
 MatIA.define('ui/drawing', ['core/dom', 'model/board', 'ui/state', 'ui/toast'], (dom, S, ST, toast) => {
   'use strict';
   const { $, $$ } = dom;
@@ -33,6 +33,57 @@ MatIA.define('ui/drawing', ['core/dom', 'model/board', 'ui/state', 'ui/toast'], 
   new ResizeObserver(() => sizeCanvas()).observe(wrap);
   new ResizeObserver(() => sizeCanvas()).observe(blocksEl);
 
+  /* ---------------- Figuras ---------------- */
+  // Vértices de la figura entre el punto inicial a y el final b (para la elipse, puntos de su contorno)
+  function shapePts(s) {
+    const a = s.pts[0], b = s.pts[s.pts.length - 1];
+    const x0 = Math.min(a[0], b[0]), x1 = Math.max(a[0], b[0]), y0 = Math.min(a[1], b[1]), y1 = Math.max(a[1], b[1]);
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, w = x1 - x0;
+    switch (s.shape) {
+      case 'line': return [a, b];
+      case 'rect': return [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+      case 'tri': return [[cx, a[1]], [b[0], b[1]], [a[0], b[1]]]; // vértice en el lado donde se empieza
+      case 'rtri': return [[a[0], a[1]], [a[0], b[1]], [b[0], b[1]]]; // ángulo recto bajo el punto inicial
+      case 'diamond': return [[cx, y0], [x1, cy], [cx, y1], [x0, cy]];
+      case 'para': { const o = w * 0.25; return [[x0 + o, y0], [x1, y0], [x1 - o, y1], [x0, y1]]; }
+      case 'hex': { const o = w * 0.25; return [[x0 + o, y0], [x1 - o, y0], [x1, cy], [x1 - o, y1], [x0 + o, y1], [x0, cy]]; }
+      case 'ellipse': { const out = []; for (let k = 0; k < 48; k++) { const t = k / 48 * Math.PI * 2; out.push([cx + (x1 - x0) / 2 * Math.cos(t), cy + (y1 - y0) / 2 * Math.sin(t)]); } return out; }
+      default: return [a, b];
+    }
+  }
+  function setDash(c, s) {
+    if (s.dash === 'dash') c.setLineDash([s.w * 3 + 6, s.w * 2 + 5]);
+    else if (s.dash === 'dot') { c.setLineDash([0.01, s.w * 2 + 4]); c.lineCap = 'round'; }
+  }
+  function drawShape(c, s, col) {
+    const a = s.pts[0], b = s.pts[s.pts.length - 1];
+    c.lineWidth = s.w;
+    c.beginPath();
+    if (s.shape === 'ellipse') {
+      c.ellipse((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, Math.abs(b[0] - a[0]) / 2, Math.abs(b[1] - a[1]) / 2, 0, 0, Math.PI * 2);
+    } else {
+      const v = shapePts(s);
+      c.moveTo(v[0][0], v[0][1]);
+      for (let i = 1; i < v.length; i++) c.lineTo(v[i][0], v[i][1]);
+      if (s.shape !== 'line') c.closePath();
+    }
+    if (s.shape !== 'line' && (s.fill === 'soft' || s.fill === 'solid')) {
+      c.save(); c.globalAlpha = s.fill === 'soft' ? 0.2 : 1; c.fillStyle = col; c.fill(); c.restore();
+    }
+    setDash(c, s);
+    c.stroke();
+  }
+  // Mayús: cuadrado / círculo / triángulo de lados iguales en el recuadro, y segmentos cada 45°
+  function constrain(a, p, shape) {
+    const dx = p[0] - a[0], dy = p[1] - a[1];
+    if (shape === 'line') {
+      const ang = Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) * (Math.PI / 4), L = Math.hypot(dx, dy);
+      return [Math.round((a[0] + L * Math.cos(ang)) * 10) / 10, Math.round((a[1] + L * Math.sin(ang)) * 10) / 10, p[2]];
+    }
+    const m = Math.max(Math.abs(dx), Math.abs(dy));
+    return [a[0] + Math.sign(dx || 1) * m, a[1] + Math.sign(dy || 1) * m, p[2]];
+  }
+
   function drawStroke(c, s, colorOf = R('ui/view').cssVar) {
     const col = colorOf(s.color) || colorOf('ink');
     const pts = s.pts;
@@ -42,7 +93,9 @@ MatIA.define('ui/drawing', ['core/dom', 'model/board', 'ui/state', 'ui/toast'], 
     c.lineJoin = 'round';
     c.strokeStyle = col;
     c.fillStyle = col;
-    if (s.tool === 'hl') {
+    if (s.tool === 'shape') {
+      drawShape(c, s, col);
+    } else if (s.tool === 'hl') {
       c.globalAlpha = 0.32;
       c.lineWidth = s.w * 5;
       c.lineCap = 'butt';
@@ -53,7 +106,11 @@ MatIA.define('ui/drawing', ['core/dom', 'model/board', 'ui/state', 'ui/toast'], 
     } else if (s.tool === 'arrow') {
       const [a, b] = [pts[0], pts[pts.length - 1]];
       c.lineWidth = s.w;
-      c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke();
+      // la línea discontinua o punteada se corta antes de la punta para que esta quede limpia
+      const ang0 = Math.atan2(b[1] - a[1], b[0] - a[0]), cut = s.dash && s.dash !== 'solid' ? 6 + s.w * 2 : 0;
+      c.save(); setDash(c, s);
+      c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0] - cut * Math.cos(ang0), b[1] - cut * Math.sin(ang0)); c.stroke();
+      c.restore();
       const ang = Math.atan2(b[1] - a[1], b[0] - a[0]), L = 10 + s.w * 3;
       c.beginPath();
       c.moveTo(b[0], b[1]);
@@ -100,14 +157,24 @@ MatIA.define('ui/drawing', ['core/dom', 'model/board', 'ui/state', 'ui/toast'], 
     const x = a[0] + t * dx - p[0], y = a[1] + t * dy - p[1];
     return Math.sqrt(x * x + y * y);
   }
+  function inside(p, poly) { // punto dentro de un polígono (regla par-impar)
+    let r = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i], [xj, yj] = poly[j];
+      if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) r = !r;
+    }
+    return r;
+  }
   function eraseAt(p) {
     const st = S.page().strokes;
     const removed = [];
     for (let i = st.length - 1; i >= 0; i--) {
       const s = st[i];
       const tol = 10 + (s.tool === 'hl' ? s.w * 2.5 : s.w);
-      const pts = s.tool === 'arrow' ? [s.pts[0], s.pts[s.pts.length - 1]] : s.pts;
-      let hit = pts.length === 1 ? Math.hypot(pts[0][0] - p[0], pts[0][1] - p[1]) < tol : false;
+      const pts = s.tool === 'arrow' ? [s.pts[0], s.pts[s.pts.length - 1]] : s.tool === 'shape' ? shapePts(s) : s.pts;
+      if (s.tool === 'shape' && s.shape !== 'line') pts.push(pts[0]); // contorno cerrado
+      let hit = s.tool === 'shape' && s.fill && s.fill !== 'none' && s.shape !== 'line' && inside(p, pts);
+      hit = hit || (pts.length === 1 ? Math.hypot(pts[0][0] - p[0], pts[0][1] - p[1]) < tol : false);
       for (let k = 1; k < pts.length && !hit; k++) if (distSeg(p, pts[k - 1], pts[k]) < tol) hit = true;
       if (hit) { removed.push({ s, i }); st.splice(i, 1); }
     }
@@ -126,6 +193,8 @@ MatIA.define('ui/drawing', ['core/dom', 'model/board', 'ui/state', 'ui/toast'], 
     const tool = e.pointerType === 'pen' && e.button === 5 ? 'eraser' : S.board.tool;
     const p = sheetPoint(e);
     cur = { tool, color: S.board.color, w: S.board.width, pts: [p], erased: [], pid: e.pointerId };
+    if (tool === 'shape') Object.assign(cur, { shape: S.board.shape, dash: S.board.dash, fill: S.board.fill });
+    if (tool === 'arrow' && S.board.dash !== 'solid') cur.dash = S.board.dash;
     if (tool === 'eraser') eraseAt(p);
     R('blocks/editor').hidePio();
     scheduleRedraw();
@@ -137,7 +206,8 @@ MatIA.define('ui/drawing', ['core/dom', 'model/board', 'ui/state', 'ui/toast'], 
     for (const ev of evs.length ? evs : [e]) {
       const p = sheetPoint(ev);
       if (cur.tool === 'eraser') { eraseAt(p); continue; }
-      if (cur.tool === 'arrow') { cur.pts[1] = p; continue; }
+      if (cur.tool === 'arrow') { cur.pts[1] = e.shiftKey ? constrain(cur.pts[0], p, 'line') : p; continue; }
+      if (cur.tool === 'shape') { cur.pts[1] = e.shiftKey ? constrain(cur.pts[0], p, cur.shape) : p; continue; }
       const l = cur.pts[cur.pts.length - 1];
       if (Math.hypot(p[0] - l[0], p[1] - l[1]) >= 1.5) cur.pts.push(p);
     }
@@ -152,7 +222,7 @@ MatIA.define('ui/drawing', ['core/dom', 'model/board', 'ui/state', 'ui/toast'], 
     cur = null;
     if (s.tool === 'eraser') {
       if (s.erased.length) undoStack.push({ type: 'erase', items: s.erased });
-    } else if (!(s.tool === 'arrow' && s.pts.length < 2)) {
+    } else if (!((s.tool === 'arrow' || s.tool === 'shape') && (s.pts.length < 2 || Math.hypot(s.pts[1][0] - s.pts[0][0], s.pts[1][1] - s.pts[0][1]) < 3))) {
       delete s.erased; delete s.pid;
       S.page().strokes.push(s);
       undoStack.push({ type: 'add', s });
@@ -182,5 +252,5 @@ MatIA.define('ui/drawing', ['core/dom', 'model/board', 'ui/state', 'ui/toast'], 
   });
   $('#penWidth').addEventListener('input', (e) => { S.board.width = +e.target.value; R('ui/view').applySettings(); S.save(); });
   const resetUndo = () => { undoStack = []; };
-  return { ctx, sizeCanvas, drawStroke, redraw, scheduleRedraw, sheetPoint, distSeg, eraseAt, endStroke, undo, resetUndo };
+  return { ctx, sizeCanvas, drawStroke, shapePts, redraw, scheduleRedraw, sheetPoint, distSeg, eraseAt, endStroke, undo, resetUndo };
 });

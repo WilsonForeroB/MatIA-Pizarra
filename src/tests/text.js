@@ -54,6 +54,7 @@ function pageFile(name) {
   const t0 = page.locator('#blocks .blk-text').first();
   await t0.click();
   ok(await page.locator('.tf-bar').isVisible(), 'la barra aparece al enfocar el texto');
+  ok(await page.evaluate(() => document.querySelector('.tf-bar').parentElement.id === 'toolbar'), 'el formato está en la barra lateral (no tapa líneas de la hoja)');
   await page.keyboard.press('Control+A');
   await page.keyboard.press('Control+B');
   await page.locator('.tf-bar button[title="Color del texto"]').click();

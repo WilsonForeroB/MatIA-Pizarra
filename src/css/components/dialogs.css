@@ -82,3 +82,4 @@ dialog::backdrop{background:color-mix(in srgb,var(--surface) 70%,transparent)}
 .is-igual{opacity:.75}
 .hist-imp-acts{display:flex;justify-content:flex-end;gap:var(--space-2)}
 @media (max-width:560px){.hist-imp-row{grid-template-columns:1fr}.hist-imp-tag{justify-self:start;min-width:0}}
+.ask .ask-field.is-empty::after { content: attr(data-hint); display: block; margin-top: 6px; font-size: 12.5px; color: var(--ink-muted); }

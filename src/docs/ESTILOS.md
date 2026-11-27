@@ -266,7 +266,7 @@ Se cargan en `pizarra.html` en este orden (ver la tabla de la §5 para las demá
 | Fichero | Contenido |
 | --- | --- |
 | `css/fit.css` | Fórmulas que no caben: aviso «No cabe en la hoja» y botón «Partir». Va después de `blocks.css`. |
-| `css/text.css` | Texto enriquecido: barra flotante de formato y clases `tf-*`. |
+| `css/text.css` | Texto enriquecido: grupo «Formato» de la barra lateral y clases `tf-*`. |
 | `css/image.css` | Bloque imagen: figura, pie de foto y ancho. |
 
 Clases `tf-*` (las pone la barra de formato y se validan al cargar, ver `FORMATO-JSON.md` §4.2): color `tf-c0`…`tf-c6`, resaltado `tf-hl0`…`tf-hl3`, tamaño `tf-sz-n|lg|sub|title`, tipo de letra `tf-f-def|sans|serif|mono|hand`, alineación `tf-al-left|center|right|justify` y sangría `tf-indent-1`…`tf-indent-6`. La letra manuscrita es Caveat (`vendor/fonts/fonts.css`, SIL OFL 1.1).

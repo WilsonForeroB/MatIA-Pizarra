@@ -20,6 +20,7 @@ MatIA.define('ui/toolbar', ['core/dom', 'model/board', 'model/schema', 'ui/state
     if (b.dataset.color) { setColor(b.dataset.color); return; }
     if (b.dataset.align) { setAlign(b.dataset.align); return; }
     if (b.dataset.tool) { S.board.tool = b.dataset.tool; R('ui/view').applySettings(); S.save(); }
+    for (const k of ['shape', 'dash', 'fill']) if (b.dataset[k]) { S.board[k] = b.dataset[k]; R('ui/view').applySettings(); S.save(); }
   };
   // Barra lateral y barrita flotante de la línea activa
   for (const bar of [$('#toolbar'), $('#lineBar')]) {

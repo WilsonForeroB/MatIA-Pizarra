@@ -36,6 +36,12 @@ MatIA.define('ui/view', ['core/dom', 'model/board', 'ui/state'], (dom, S, st) =>
     $$('[data-theme-set]').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.themeSet === 'dark') === isDark())));
     $$('.sw').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.color === S.board.color)));
     $$('#toolSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tool === S.board.tool)));
+    $$('#shapeOpts [data-shape]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.shape === S.board.shape)));
+    $$('#shapeOpts [data-dash]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.dash === S.board.dash)));
+    $$('#shapeOpts [data-fill]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.fill === S.board.fill)));
+    // opciones de figura: forma y relleno con «Figuras»; el tipo de línea también con «Flecha»
+    $('#shapeOpts').hidden = S.board.tool !== 'shape' && S.board.tool !== 'arrow';
+    $$('#shapeOpts .so-shape').forEach((x) => { x.hidden = S.board.tool !== 'shape'; });
     $('#penWidth').value = S.board.width;
     $('#widthOut').textContent = S.board.width + ' px';
     body.classList.toggle('no-ln', S.board.lineNums === false);

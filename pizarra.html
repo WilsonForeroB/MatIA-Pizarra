@@ -84,7 +84,33 @@
     <button type="button" class="rb" data-tool="pen" aria-pressed="true" title="Lápiz (P)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.5l3 3-8 8H2.5v-3z"/></svg><span>Lápiz</span></button>
     <button type="button" class="rb" data-tool="hl" aria-pressed="false" title="Rotulador fluorescente (R)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5l4 4-5 5-4-4z"/><path d="M4.5 7.5l-2 4.5 1.5 1.5 4.5-2"/></svg><span>Rotulador</span></button>
     <button type="button" class="rb" data-tool="arrow" aria-pressed="false" title="Flecha recta (A)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13L13 3M7 3h6v6"/></svg><span>Flecha</span></button>
+    <button type="button" class="rb" data-tool="shape" aria-pressed="false" title="Figuras geométricas: segmento, rectángulo, círculo, triángulos… (G). Mayús: cuadrado, círculo o ángulos de 45°"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="8" width="6" height="6"/><circle cx="11" cy="5" r="3"/></svg><span>Figuras</span></button>
     <button type="button" class="rb" data-tool="eraser" aria-pressed="false" title="Goma: borra trazos completos (E)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5l4.5 4.5-6.5 6.5H4L2.5 12z"/><path d="M6 5.5l4.5 4.5M7 13.5h6.5"/></svg><span>Goma</span></button>
+  </div>
+  <div class="rgrp only-draw shape-opts" id="shapeOpts" role="group" aria-label="Opciones de figura" hidden>
+    <span class="so-h so-shape">Figura</span>
+    <div class="so-grid so-shape">
+      <button type="button" class="so-b" data-shape="line" aria-pressed="false" title="Segmento (Mayús: ángulos de 45°)" aria-label="Segmento (Mayús: ángulos de 45°)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13L13 3"/></svg></button>
+      <button type="button" class="so-b" data-shape="rect" aria-pressed="false" title="Rectángulo (Mayús: cuadrado)" aria-label="Rectángulo (Mayús: cuadrado)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="11" height="8"/></svg></button>
+      <button type="button" class="so-b" data-shape="ellipse" aria-pressed="false" title="Círculo o elipse (Mayús: círculo)" aria-label="Círculo o elipse (Mayús: círculo)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="8" rx="5.5" ry="4.5"/></svg></button>
+      <button type="button" class="so-b" data-shape="tri" aria-pressed="false" title="Triángulo (el vértice queda en el lado donde empiezas)" aria-label="Triángulo (el vértice queda en el lado donde empiezas)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3l5.5 10h-11z"/></svg></button>
+      <button type="button" class="so-b" data-shape="rtri" aria-pressed="false" title="Triángulo rectángulo (el ángulo recto queda bajo el punto inicial)" aria-label="Triángulo rectángulo (el ángulo recto queda bajo el punto inicial)"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v10h10z"/><path d="M3 10.5h2.5V13"/></svg></button>
+      <button type="button" class="so-b" data-shape="diamond" aria-pressed="false" title="Rombo" aria-label="Rombo"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5l5 5.5-5 5.5-5-5.5z"/></svg></button>
+      <button type="button" class="so-b" data-shape="para" aria-pressed="false" title="Paralelogramo" aria-label="Paralelogramo"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h9l-3 8H2z"/></svg></button>
+      <button type="button" class="so-b" data-shape="hex" aria-pressed="false" title="Hexágono" aria-label="Hexágono"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h6l3 5-3 5H5L2 8z"/></svg></button>
+    </div>
+    <span class="so-h">Línea</span>
+    <div class="so-grid so-3">
+      <button type="button" class="so-b" data-dash="solid" aria-pressed="false" title="Línea continua" aria-label="Línea continua"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8h12"/></svg></button>
+      <button type="button" class="so-b" data-dash="dash" aria-pressed="false" title="Línea discontinua" aria-label="Línea discontinua"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8h3.5M7 8h3.5M12 8h2"/></svg></button>
+      <button type="button" class="so-b" data-dash="dot" aria-pressed="false" title="Línea punteada" aria-label="Línea punteada"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8h.01M5.5 8h.01M8.5 8h.01M11.5 8h.01M14 8h.01" stroke-width="2.2"/></svg></button>
+    </div>
+    <span class="so-h so-shape">Relleno</span>
+    <div class="so-grid so-3 so-shape">
+      <button type="button" class="so-b" data-fill="none" aria-pressed="false" title="Sin relleno" aria-label="Sin relleno"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="10" height="10" rx="1"/></svg></button>
+      <button type="button" class="so-b" data-fill="soft" aria-pressed="false" title="Relleno suave" aria-label="Relleno suave"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="10" height="10" rx="1" fill="currentColor" fill-opacity=".25"/></svg></button>
+      <button type="button" class="so-b" data-fill="solid" aria-pressed="false" title="Relleno sólido" aria-label="Relleno sólido"><svg class="ic" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="10" height="10" rx="1" fill="currentColor"/></svg></button>
+    </div>
   </div>
   <div class="rgrp only-draw">
     <label class="rail-width">Grosor <output id="widthOut">3 px</output><input type="range" id="penWidth" min="1" max="12" step="1" value="3" aria-label="Grosor del trazo"></label>
@@ -285,7 +311,7 @@
       <span class="mi-label" id="askLabel">Pío pregunta</span>
       <h2 id="askTitle"></h2>
       <p id="askText"></p>
-      <div class="ask-field" id="askField" hidden><input type="text" id="askInput" aria-labelledby="askTitle"></div>
+      <div class="ask-field" id="askField" data-hint="Escribe un nombre para poder continuar." hidden><input type="text" id="askInput" aria-labelledby="askTitle"></div>
       <div class="ask-acts" id="askActs"></div>
     </div>
   </div>
@@ -449,7 +475,8 @@
       <h3>Dibujar y clase</h3>
       <table class="keys"><tbody>
         <tr><td>Alt+D</td><td>Alternar Escribir / Dibujar</td></tr>
-        <tr><td>P R A E</td><td>Lápiz, rotulador, flecha, goma (en modo Dibujar)</td></tr>
+        <tr><td>P R A G E</td><td>Lápiz, rotulador, flecha, figuras, goma (en modo Dibujar)</td></tr>
+        <tr><td>Mayús + arrastrar</td><td>Figuras: cuadrado, círculo; segmentos y flechas cada 45°</td></tr>
         <tr><td>Ctrl+Z</td><td>Deshacer trazo (en modo Dibujar)</td></tr>
         <tr><td>Lápiz digital</td><td>Dibuja siempre, aunque estés en modo Escribir</td></tr>
         <tr><td>Alt+RePág/AvPág</td><td>Página anterior / siguiente</td></tr>

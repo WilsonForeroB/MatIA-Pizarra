@@ -10,7 +10,11 @@ MatIA.define('model/schema', [], () => {
   const newRow = (l = '', r = '', note = '') => ({ l, r, note, boxed: false });
   const newDeriv = (rows) => ({ id: uid(), type: 'deriv', rows: rows || [newRow()], align: 'left', boxed: false });
   const newPage = () => ({ blocks: [newBlock()], strokes: [], minH: 0 });
-  const defaults = () => ({ v: 1, paper: 'free', pages: [newPage()], cur: 0, theme: null, accent: '', scale: 140, color: 'ink', tool: 'pen', width: 3 });
+  // figuras del modo Dibujar: forma, tipo de línea y relleno
+  const SHAPES = ['line', 'rect', 'ellipse', 'tri', 'rtri', 'diamond', 'para', 'hex'];
+  const DASHES = ['solid', 'dash', 'dot'];
+  const FILLS = ['none', 'soft', 'solid'];
+  const defaults = () => ({ v: 1, paper: 'free', pages: [newPage()], cur: 0, theme: null, accent: '', scale: 140, color: 'ink', tool: 'pen', shape: 'rect', dash: 'solid', fill: 'none', width: 3 });
 
   const MARK_KINDS = ['min', 'max', 'absmin', 'absmax', 'infl', 'saddle', 'deg'];
   function cleanMarks(ms, three) {
@@ -100,7 +104,10 @@ MatIA.define('model/schema', [], () => {
       accent: b.accent === 'math' ? 'math' : '',
       scale: Math.min(260, Math.max(80, +b.scale || 140)),
       color: typeof b.color === 'string' && /^(ink|data-[1-6])$/.test(b.color) ? b.color : 'ink',
-      tool: ['pen', 'hl', 'arrow', 'eraser'].includes(b.tool) ? b.tool : 'pen',
+      tool: ['pen', 'hl', 'arrow', 'shape', 'eraser'].includes(b.tool) ? b.tool : 'pen',
+      shape: SHAPES.includes(b.shape) ? b.shape : 'rect',
+      dash: DASHES.includes(b.dash) ? b.dash : 'solid',
+      fill: FILLS.includes(b.fill) ? b.fill : 'none',
       histAuto: !!b.histAuto,
       lineNums: b.lineNums !== false,
       paper: ['free', 'a4p', 'a4l', 'a3l', 'slide'].includes(b.paper) ? b.paper : 'free',
@@ -109,7 +116,7 @@ MatIA.define('model/schema', [], () => {
     });
     out.pages = b.pages.map((p) => ({
       blocks: (Array.isArray(p.blocks) && p.blocks.length ? p.blocks : [newBlock()]).map(sanitizeBlock),
-      strokes: Array.isArray(p.strokes) ? p.strokes.filter((s) => s && Array.isArray(s.pts)) : [],
+      strokes: Array.isArray(p.strokes) ? p.strokes.filter((s) => s && Array.isArray(s.pts) && (s.tool !== 'shape' || SHAPES.includes(s.shape))) : [],
       minH: +p.minH || 0,
     }));
     out.cur = Math.min(out.pages.length - 1, Math.max(0, +b.cur || 0));
@@ -117,7 +124,7 @@ MatIA.define('model/schema', [], () => {
   }
 
   return {
-    uid, newBlock, newRow, newDeriv, newPage, defaults, sanitize, cleanMarks, MARK_KINDS,
+    SHAPES, DASHES, FILLS, uid, newBlock, newRow, newDeriv, newPage, defaults, sanitize, cleanMarks, MARK_KINDS,
     register(type, fn) { SANITIZERS[type] = fn; },
   };
 });
